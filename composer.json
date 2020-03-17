@@ -1,0 +1,24 @@
+{
+  "name": "gregorip02/restql",
+  "description": "A data resolution package for Laravel",
+  "type": "library",
+  "license": "GPL",
+  "authors": [
+    {
+      "name": "Gregori Piñeres",
+      "email": "gregori.pineres02@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "RestQL\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^7.1",
+    "laravel/framework": "^5.8"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  }
+}
