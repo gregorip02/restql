@@ -1,5 +1,6 @@
 {
   "name": "gregorip02/restql",
+  "version": "0.0.1-dev",
   "description": "A data resolution package for Laravel",
   "type": "library",
   "license": "LGPL-3.0",
