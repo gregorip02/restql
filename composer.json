@@ -2,7 +2,7 @@
   "name": "gregorip02/restql",
   "description": "A data resolution package for Laravel",
   "type": "library",
-  "license": "GPL",
+  "license": "LGPL-3.0",
   "authors": [
     {
       "name": "Gregori Piñeres",
