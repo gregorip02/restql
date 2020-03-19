@@ -1,24 +1,24 @@
 <?php
 
-namespace App\RestQL;
+namespace Restql;
 
-use App\RestQL\Builder;
-use App\RestQL\RequestParser;
-use Illuminate\Support\Collection;
+use Restql\Builder;
+use Restql\RequestParser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 trait Resolve
 {
     /**
-     * El nombre del paremetro que sera evaluado en la petición.
+     * The parameter name that will be evaluated in the request.
      *
      * @var string
      */
     protected $queryParam = 'query';
 
     /**
-     * Punto de entrada de la resolución de atributos.
+     * Start data resolution from the eloquent model.
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Eloquent\Builder

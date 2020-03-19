@@ -1,8 +1,10 @@
 {
   "name": "gregorip02/restql",
-  "version": "0.0.1-dev",
+  "version": "0.0.2-dev",
   "description": "A data resolution package for Laravel",
   "type": "library",
+  "keywords": ["restql", "eloquent", "laravel", "graphql", "drp"],
+  "url": "https://github.com/gregorip02/restql",
   "license": "LGPL-3.0",
   "authors": [
     {
@@ -10,10 +12,9 @@
       "email": "gregori.pineres02@gmail.com"
     }
   ],
-  "autoload": {
-    "psr-4": {
-      "RestQL\\": "src/"
-    }
+  "support": {
+    "issues": "https://github.com/gregorip02/restql/issues",
+    "source": "https://github.com/gregorip02/restql"
   },
   "require": {
     "php": "^7.1",
@@ -21,5 +22,21 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Restql\\": "src/Restql/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "App\\": "test/laravel/app/"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist"
   }
 }

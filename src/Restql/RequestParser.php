@@ -1,29 +1,29 @@
 <?php
 
-namespace App\RestQL;
+namespace Restql;
 
 use Illuminate\Http\Request;
-use App\RestQL\RequestConstrains;
 use Illuminate\Support\Collection;
+use Restql\ClausuleExecutor;
 
 class RequestParser
 {
     /**
-     * La petición entrante.
+     * The HTTP incoming request.
      *
      * @var \Illuminate\Http\Request
      */
     protected $request;
 
     /**
-     * El nombre del paremetro que sera evaluado en la petición.
+     * The parameter name that will be evaluated in the request.
      *
      * @var string
      */
     protected $param;
 
     /**
-     * Instancia de la clase.
+     * Class instance.
      *
      * @param \Illuminate\Http\Request $request
      * @param string $param
@@ -35,7 +35,7 @@ class RequestParser
     }
 
     /**
-     * Instancia estatica de la clase.
+     * Static class instance and parser.
      *
      * @param  \Illuminate\Http\Request $request
      * @param  string $param
@@ -47,7 +47,7 @@ class RequestParser
     }
 
     /**
-     * Decodifica el parametro y devuelve una colección con el.
+     * Decode the parameter and return a collection with it.
      *
      * @return \Illuminate\Support\Collection
      */
@@ -61,7 +61,7 @@ class RequestParser
     }
 
     /**
-     * Determina si se envio el parametro en la petición.
+     * Determine if the parameter was sent in the request.
      *
      * @return boolean
      */
@@ -71,7 +71,7 @@ class RequestParser
     }
 
     /**
-     * Obtiene el parametro en la petición.
+     * Get the request param value.
      *
      * @return string
      */
@@ -81,7 +81,7 @@ class RequestParser
     }
 
     /**
-     * Decodifica el parametro recibido en la petición.
+     * Decode the parameter.
      *
      * @return \Illuminate\Support\Collection
      */
@@ -95,12 +95,12 @@ class RequestParser
     }
 
     /**
-     * Los nombres de las clausulas aceptadas.
+     * The accepted clauses names.
      *
      * @return array
      */
     protected function acceptedClausules(): array
     {
-        return array_keys(RequestConstrains::$clausules);
+        return array_keys(ClausuleExecutor::$accepted);
     }
 }
