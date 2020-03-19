@@ -1,6 +1,5 @@
 {
   "name": "gregorip02/restql",
-  "version": "0.0.2-dev",
   "description": "A data resolution package for Laravel",
   "type": "library",
   "keywords": ["restql", "eloquent", "laravel", "graphql", "drp"],
