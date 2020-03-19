@@ -7,11 +7,11 @@ multiple endpoints but the idea is to simplify this using just one.
 
 # Why?
 
-Imagine you have an application that manages users, these authors can publish
+Imagine you have an application that manages authors, these authors can publish
 articles and those articles can have comments from different authors.
 
 You have a web client, for example, that uses axios to consume the data offered
-by your service. Somewhere in your code, you need a list of the **authors' names only**.
+by your service. Somewhere in your code, you need a list of the **author's names only**.
 
 They wear something like that.
 
