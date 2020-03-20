@@ -1,10 +1,11 @@
 # RestQL
 
 RestQL is a Laravel eloquent-based data resolution package. This library tries to
-adopt GraphQL principles solving only the data that the client requests.
+adopt GraphQL principles solving only the data that the client requests. RestQL uses
+the eloquent clauses as an entry point to add queries to the constructor that can then
+be obtained by the user using the `get` or` paginate` method.
 
-RestQL uses the eloquent clauses as an entry point to add queries to the constructor
-that can then be obtained by the user using the `get` or` paginate` method.
+<img src="./img/example.png" alt="RestQL example"/>
 
 # Why?
 
