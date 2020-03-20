@@ -5,7 +5,7 @@ namespace Restql;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Restql\Builder;
-/* Register the package clausules */
+/* RestQL clausules */
 use Restql\Clausules\OrderByClausule;
 use Restql\Clausules\SelectClausule;
 use Restql\Clausules\WithClausule;

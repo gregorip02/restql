@@ -66,11 +66,75 @@ But what if you only need the name of the author? Imagine that your application
 becomes huge and your user model handles a large number of attributes. This is where
 data resolution packages come into play.
 
+# Install
+
+- Add the composer dependencie.
+
+```bash
+composer require gregorip02/restql
+```
+
+- Add the RestQL trait to the parent model.
+
+```php
+<?php
+
+namespace App;
+
+use Restql\Resolve;
+// ...
+
+class Author extends Model
+{
+    use Resolve;
+
+    // ...
+}
+
+```
+
+Now your model has a method called resolve for data resolution from an http request.
+
 # Data Resolution Packages
 
 Data resolution packages are the way to optimize queries and responses based on
 parameters received from the client. Fortunately, Laravel has a powerful ORM and makes
-this implementation extremely compatible. Let's see how to do it using the RestQL package.
+this implementation extremely compatible.
+
+# How it works
+
+Basically, RestQL maps the keys of the data sent in the request and filters them
+based on the accepted clauses. These clauses are commonly the names of the eloquent
+methods to query the model, the arguments of these clauses are sent as values in the
+clause array.
+
+For example, if a params like the following is sent in the request.
+
+```json
+{
+    "select": ["name", "email"],
+    "with": {
+        "articles": {
+            "select": ["title", "content"]
+        }
+    }
+}
+```
+
+RestQL will interpret this as the following.
+
+```php
+// Assuming that the parent model we want to obtain is the author's data.
+// The variable $query represents the query constructor of the parent model,
+// in this example, the Author model.
+$query->select(['name', 'email'])->with([
+    'articles' => static function ($relation) {
+        $relation->select(['title', 'content']);
+    }
+]);
+```
+
+Let's see how to do it using the RestQL package.
 
 ### Define your endpoint
 
