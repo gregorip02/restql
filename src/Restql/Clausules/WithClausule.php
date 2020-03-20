@@ -18,12 +18,14 @@ class WithClausule implements ClausuleContract
     public function build(Builder $builder, Collection $attributes): void
     {
         $builder->executeQuery(function (QueryBuilder $query) use ($attributes) {
-            $query->with($this->args($query->getModel(), $attributes));
+            $arguments = $this->args($query->getModel(), $attributes);
+
+            $query->with($arguments);
         });
     }
 
     /**
-     * Filtra la lista de relaciones como llaves y callbacks como valores.
+     * Create an array that corresponds to the relation name => callback.
      *
      * @param  \Illuminate\Database\Eloquent\Model $model
      * @param  \Illuminate\Support\Collection $attributes
@@ -42,7 +44,7 @@ class WithClausule implements ClausuleContract
     }
 
     /**
-     * Construye la lista de relaciones como llaves y callbacks como valores.
+     * Returns the callback with the list of queries generated for the relation.
      *
      * @param  \Illuminate\Support\Collection $clausules
      * @return Clousure
@@ -51,19 +53,18 @@ class WithClausule implements ClausuleContract
     {
         return function (Relation $relation) use ($clausules) {
             $clausules->filter(function ($arguments, $clausule) {
-                // Filtrar las clausulas que seran ejecutadas con respecto
-                // a las clausulas aceptadas por la propiedad $accepted, en
-                // la clase ClausuleExcecutor.
+                // Filter the clauses that will be executed with respect
+                // to the clauses accepted by the property $accepted, in
+                // the ClausuleExcecutor class.
                 return key_exists($clausule, ClausuleExecutor::$accepted);
             })
             ->each(function ($arguments, $clausule) use ($relation) {
-                // Ejecutar la clausula con la query de la relación.
                 $arguments = collect($arguments)->push(
-                    // Por defecto se agrega el nombre de la llave relacionada
-                    // con el modelo padre.
+                    // By default the name of the related key is added.
                     $relation->getForeignKeyName()
                 );
 
+                // Execute the clause with the relation query.
                 ClausuleExecutor::execWithQuery($relation->getQuery(), $clausule, $arguments);
             });
         };
