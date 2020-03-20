@@ -1,9 +1,10 @@
 # RestQL
 
-RestQL is a data resolution package for your impressive Laravel REST API. This
-package tries to adopt the GraphQL principle: **Get only what you need**,
-but add eloquent's known flexibilities like request verbs. For now, restql supports
-multiple endpoints but the idea is to simplify this using just one.
+RestQL is a Laravel eloquent-based data resolution package. This library tries to
+adopt GraphQL principles solving only the data that the client requests.
+
+RestQL uses the eloquent clauses as an entry point to add queries to the constructor
+that can then be obtained by the user using the `get` or` paginate` method.
 
 # Why?
 
@@ -25,10 +26,10 @@ axios.get('http://laravel.app/api/authors').then(({ data }) => {
 So, you have a route like this.
 
 ```php
-# api.php
+// api.php
 <?php
 
-# Get all the authors using your typical laravel implementation.
+// Get all the authors using your typical laravel implementation.
 Route::get('authors', function (Request $request, Author $author) {
     // Do something...
     return $authors->all();
@@ -36,7 +37,6 @@ Route::get('authors', function (Request $request, Author $author) {
 ```
 
 Most likely you will use a controller and then use the author model and query the data.
-
 Then you would have a response similar to this.
 
 ```js
@@ -62,33 +62,42 @@ Then you would have a response similar to this.
 ```
 
 But what if you only need the name of the author? Imagine that your application
-becomes huge and your user model handles a large number of attributes.
-This is where data resolution packages come into play.
+becomes huge and your user model handles a large number of attributes. This is where
+data resolution packages come into play.
 
 # Data Resolution Packages
 
 Data resolution packages are the way to optimize queries and responses based on
-parameters received from the client. Fortunately, laravel has a powerful ORM and makes
+parameters received from the client. Fortunately, Laravel has a powerful ORM and makes
 this implementation extremely compatible. Let's see how to do it using the RestQL package.
 
-They wear something like that.
+### Define your endpoint
+
+You can continue using multiple endpoints, you could also define a single endpoint
+for your queries, but now let's see an example similar to the one shown above.
 
 ```php
-# api.php
+// api.php
 <?php
 
-# Get all the authors using data resolution package.
+// Get all the authors using data resolution package.
 Route::get('authors', function (Request $request, Author $author) {
+    // The resolve method is available on your model
+    // using the RestQL Resolve trait.
     return $author->resolve($request)->get();
 });
 ```
 
 Now, you can re-factor your client's code so that it sends a parameter in the
-request with the data it needs, in this case a list of author names.
+request with the data it needs, in this case a list of author names. They wear
+something like that.
 
-They wear something like that.
+The parameters of the query can be a json object that defines the clauses accepted
+by RestQL, or you can encode this JSON in base64 if you want your URL to
+appear "more secure".
 
 ```js
+// This is an example using the request parameters directly.
 axios.get('http://laravel.app/api/authors', {
     params: {
         select: 'name'
@@ -97,10 +106,25 @@ axios.get('http://laravel.app/api/authors', {
     // Do something...
     console.log(data)
 });
+
+// This is an example using the base64 encoded request parameters.
+const toBase64(string) = () => new Buffer.from(string).toString('base64');
+axios.get('http://laravel.app/api/authors', {
+    params: {
+        query: toBase64(JSON.stringify({
+            select: 'name'
+        })) // eyJzZWxlY3QiOiJuYW1lIn0=
+    }
+}).then(({ data }) => {
+    // Do something...
+    console.log(data)
+});
 ```
 
-Instead of having a long json response with unnecessary data, you would get
-something like this.
+Instead of having a long JSON response with unnecessary data, you would get
+something like this. Likewise, this will considerably optimize your queries to
+the database management system. In this case, it will run just a
+`select id, name from authors` for example.
 
 
 ```js
@@ -122,3 +146,8 @@ something like this.
 This is a personal project that can be very useful, if you believe it, help me
 develop new functionalities and create a pull request, I will be
 happy to review and add it.
+
+You can also contribute to the team by buying a coffee.
+
+
+<style>.bmc-button img{height: 34px !important;width: 35px !important;margin-bottom: 1px !important;box-shadow: none !important;border: none !important;vertical-align: middle !important;}.bmc-button{padding: 7px 10px 7px 10px !important;line-height: 35px !important;height:51px !important;min-width:217px !important;text-decoration: none !important;display:inline-flex !important;color:#ffffff !important;background-color:#FF5F5F !important;border-radius: 5px !important;border: 1px solid transparent !important;padding: 7px 10px 7px 10px !important;font-size: 28px !important;letter-spacing:0.6px !important;box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;margin: 0 auto !important;font-family:'Cookie', cursive !important;-webkit-box-sizing: border-box !important;box-sizing: border-box !important;-o-transition: 0.3s all linear !important;-webkit-transition: 0.3s all linear !important;-moz-transition: 0.3s all linear !important;-ms-transition: 0.3s all linear !important;transition: 0.3s all linear !important;}.bmc-button:hover, .bmc-button:active, .bmc-button:focus {-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;text-decoration: none !important;box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;opacity: 0.85 !important;color:#ffffff !important;}</style><link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet"><a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/BgHiZ9b"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy us a coffee"><span style="margin-left:15px;font-size:28px !important;">Buy us a coffee</span></a>
