@@ -5,7 +5,6 @@ namespace Restql\Clausules;
 use Restql\Builder;
 use Illuminate\Support\Collection;
 use Restql\Contracts\ClausuleContract;
-use Illuminate\Database\Eloquent\Model;
 
 class OrderByClausule implements ClausuleContract
 {

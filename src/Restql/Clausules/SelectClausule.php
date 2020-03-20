@@ -18,18 +18,18 @@ class SelectClausule implements ClausuleContract
             $model = $query->getModel();
             // Excecute the select with the model non-hidden attributes
             // only.
-            $query->select($this->attrs($model, $attributes));
+            $query->select($this->args($model, $attributes));
         });
     }
 
     /**
-     * Get the select attributes.
+     * Get the select arguments.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Support\Collection $attributes
      * @return array
      */
-    public function attrs(Model $model, Collection $attributes): array
+    public function args(Model $model, Collection $attributes): array
     {
         $hidden = $model->getHidden();
 

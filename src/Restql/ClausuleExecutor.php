@@ -2,11 +2,13 @@
 
 namespace Restql;
 
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Collection;
 use Restql\Builder;
+/* Register the package clausules */
 use Restql\Clausules\OrderByClausule;
 use Restql\Clausules\SelectClausule;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Restql\Clausules\WithClausule;
 
 class ClausuleExecutor
 {
@@ -17,7 +19,8 @@ class ClausuleExecutor
      */
     public static $accepted = [
         'select' => SelectClausule::class,
-        'orderBy' => OrderByClausule::class
+        'orderBy' => OrderByClausule::class,
+        'with' => WithClausule::class
     ];
 
     /**
@@ -66,6 +69,21 @@ class ClausuleExecutor
     public static function exec(Builder $builder, string $clausule, Collection $arguments): void
     {
         (new ClausuleExecutor(...func_get_args()))->make();
+    }
+
+    /**
+     * The static class instance with the query.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $clausule
+     * @param \Illuminate\Support\Collection $arguments
+     * @return void
+     */
+    public static function execWithQuery(QueryBuilder $query, string $clausule, Collection $arguments): void
+    {
+        $builder = new Builder($query, $arguments);
+
+        (new ClausuleExecutor($builder, $clausule, $arguments))->make();
     }
 
     /**
