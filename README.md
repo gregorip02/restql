@@ -109,7 +109,7 @@ axios.get('http://laravel.app/api/authors', {
 });
 
 // This is an example using the base64 encoded request parameters.
-const toBase64(string) = () => new Buffer.from(string).toString('base64');
+const toBase64 = (string) => new Buffer.from(string).toString('base64');
 axios.get('http://laravel.app/api/authors', {
     params: {
         query: toBase64(JSON.stringify({
