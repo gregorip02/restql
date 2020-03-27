@@ -5,7 +5,6 @@ namespace Restql;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Restql\Builder;
-/* RestQL clausules */
 use Restql\Clausules\OrderByClausule;
 use Restql\Clausules\SelectClausule;
 use Restql\Clausules\WithClausule;
@@ -18,9 +17,9 @@ class ClausuleExecutor
      * @var array
      */
     public static $accepted = [
+        'with' => WithClausule::class,
         'select' => SelectClausule::class,
         'orderBy' => OrderByClausule::class,
-        'with' => WithClausule::class
     ];
 
     /**

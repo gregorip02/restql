@@ -2,13 +2,15 @@
 
 namespace Restql\Clausules;
 
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Collection;
 use Restql\Builder;
 use Restql\ClausuleExecutor;
 use Restql\Contracts\ClausuleContract;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class WithClausule implements ClausuleContract
 {
@@ -61,12 +63,28 @@ class WithClausule implements ClausuleContract
             ->each(function ($arguments, $clausule) use ($relation) {
                 $arguments = collect($arguments)->push(
                     // By default the name of the related key is added.
-                    $relation->getForeignKeyName()
+                    $this->getRelatedKeyName($relation)
                 );
 
                 // Execute the clause with the relation query.
                 ClausuleExecutor::execWithQuery($relation->getQuery(), $clausule, $arguments);
             });
         };
+    }
+
+    /**
+     * [getRelatedKeyName description]
+     * @param  Relation $relation [description]
+     * @return [type]             [description]
+     */
+    protected function getRelatedKeyName(Relation $relation): string
+    {
+        if ($relation instanceof BelongsTo) {
+            /// Get the associated key of the relationship.
+            return $relation->getOwnerKeyName();
+        }
+
+        // Get the foreign key of the relationship.
+        return $relation->getForeignKeyName();
     }
 }
