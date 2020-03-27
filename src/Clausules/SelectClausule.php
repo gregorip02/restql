@@ -2,7 +2,7 @@
 
 namespace Restql\Clausules;
 
-use Restql\Builder;
+use Restql\ClausuleExecutor;
 use Illuminate\Support\Collection;
 use Restql\Contracts\ClausuleContract;
 use Illuminate\Database\Eloquent\Model;
@@ -13,28 +13,31 @@ class SelectClausule implements ClausuleContract
     /**
      * {@inheritdoc}
      */
-    public function build(Builder $builder, Collection $attributes): void
+    public function build(ClausuleExecutor $executor, Collection $arguments): void
     {
-        $builder->executeQuery(function ($query) use ($builder, $attributes) {
-            /// Obtener el modelo padre del constructor
-            /// de consultas eloquent. Con esto determinamos los attributos
-            /// que pueden ser consultados por el cliente.
-            $model = $query->getModel();
+        $executor->executeQuery(function ($query) use ($executor, $arguments) {
+            /// Obtener el modelo padre del constructor de consultas eloquent.
+            /// Con esto determinamos los attributos que pueden ser consultados
+            /// por el cliente.
+            $model = $executor->getModel();
 
             /// En primera instancia es necesario añadir los atributos
             /// solicitados por el cliente.
-            $attributes = $this->parseAttributes($model, $attributes);
+            $arguments = $this->parseArguments($model, $arguments);
 
             /// Es necesario determinar si se estan queriendo obtener
             /// datos de una relación de tipo BelongsTo, de ser verdadero
             /// es oportuno seleccionar el nombre de la llave foranea en la
             /// relación.
-            if ($with = $builder->getOffsetContext()->get('with')) {
-                $with = collect($with)->keys();
-                $attributes->push(...$this->getBelongsToAttributes($with, $model));
+            $withModelNames = $executor->getWithModelKeyNames();
+            if ($withModelNames->count()) {
+                $belongsTo = $this->getBelongsToAttributes($withModelNames, $model);
+                if (count($belongsTo)) {
+                    $arguments->push(...$belongsTo);
+                }
             }
 
-            $query->select($attributes->toArray());
+            $query->select($arguments->toArray());
         });
     }
 
@@ -49,13 +52,14 @@ class SelectClausule implements ClausuleContract
     {
         return $withParams->filter(function ($method) use ($model) {
             /// Es necesario determinar si la relación solicitada
-            /// esta definida en el modelo padre. De ser verdadero,
-            /// determinar si es una relación de tipo BelongsTo.
-            if (method_exists($model, $method)) {
-                return $model->{$method}() instanceof BelongsTo;
+            /// esta definida en el modelo padre.
+            if (!method_exists($model, $method)) {
+                return false;
             }
-
-            return false;
+            /// En caso de que el metodo exista, hay que determinar
+            /// si su valor de retorno es una relación de tipo
+            /// BelongsTo.
+            return $model->{$method}() instanceof BelongsTo;
         })->map(function ($method) use ($model) {
             /// Get the foreign key of the relationship.
             return $model->{$method}()->getForeignKeyName();
@@ -66,19 +70,15 @@ class SelectClausule implements ClausuleContract
      * Get the select arguments.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
-     * @param \Illuminate\Support\Collection $attributes
-     * @return Collection
+     * @param \Illuminate\Support\Collection $arguments
+     * @return \Illuminate\Support\Collection
      */
-    public function parseAttributes(Model $model, Collection $attributes): Collection
+    public function parseArguments(Model $model, Collection $arguments): Collection
     {
         $hidden = $model->getHidden();
 
-        return $attributes->filter(function ($value, $key) use ($hidden) {
-            // Don't include hiddens attributes or associative values
-            // on the select.
-            return is_numeric($key) && !in_array($value, $hidden);
-        })
-        // Add the primary key name for every select.
-        ->add($model->getKeyName())->unique();
+        return $arguments->forget($hidden)->add(
+            $model->getKeyName()
+        )->unique();
     }
 }

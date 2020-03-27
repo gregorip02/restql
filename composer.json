@@ -27,12 +27,19 @@
   },
   "autoload": {
     "psr-4": {
-      "Restql\\": "src/Restql/"
+      "Restql\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
       "App\\": "test/laravel/app/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Restql\\RestqlServiceProvider"
+      ]
     }
   },
   "minimum-stability": "dev",

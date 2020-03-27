@@ -4,7 +4,6 @@ namespace Restql;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Restql\ClausuleExecutor;
 
 class RequestParser
 {
@@ -16,34 +15,24 @@ class RequestParser
     protected $request;
 
     /**
-     * The parameter name that will be evaluated in the request.
-     *
-     * @var string
-     */
-    protected $param;
-
-    /**
      * Class instance.
      *
      * @param \Illuminate\Http\Request $request
-     * @param string $param
      */
-    public function __construct(Request $request, string $param)
+    public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->param = $param;
     }
 
     /**
-     * Static class instance and parser.
+     * Static class instance.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  string $param
      * @return \Illuminate\Support\Collection
      */
-    public static function filter(Request $request, string $param): Collection
+    public static function filter(Request $request): Collection
     {
-        return (new RequestParser(...func_get_args()))->parse();
+        return (new RequestParser($request))->decode();
     }
 
     /**
@@ -51,12 +40,10 @@ class RequestParser
      *
      * @return \Illuminate\Support\Collection
      */
-    protected function parse(): Collection
+    protected function decode(): Collection
     {
         return $this->hasParam() ? $this->decodeParam() : collect(
-            $this->request->only(
-                $this->acceptedClausules()
-            )
+            $this->request->only($this->allowesModels())
         );
     }
 
@@ -67,7 +54,8 @@ class RequestParser
      */
     protected function hasParam(): bool
     {
-        return $this->request->has($this->param);
+        /// TODO: get this value from a config file.
+        return $this->request->has('query');
     }
 
     /**
@@ -77,7 +65,8 @@ class RequestParser
      */
     protected function getParam(): string
     {
-        return $this->request->get($this->param) ?? '';
+        /// TODO: get this value from a config file.
+        return (string) collect($this->request->get('query'));
     }
 
     /**
@@ -87,10 +76,8 @@ class RequestParser
      */
     protected function decodeParam(): Collection
     {
-        $param = $this->getParam();
-
-        return collect(json_decode(base64_decode($param)))->only(
-            $this->acceptedClausules()
+        return collect(json_decode(base64_decode($this->getParam())))->only(
+            $this->allowesModels()
         );
     }
 
@@ -99,8 +86,13 @@ class RequestParser
      *
      * @return array
      */
-    protected function acceptedClausules(): array
+    protected function allowesModels(): array
     {
-        return array_keys(ClausuleExecutor::$accepted);
+        /// TODO: get this value from a config file.
+        return array_keys([
+            'authors' => 'App\Author',
+            'articles' => 'App\Article',
+            'comments' => 'App\Comment'
+        ]);
     }
 }
