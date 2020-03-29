@@ -4,6 +4,7 @@ namespace Restql;
 
 use Restql\ClausuleExecutor;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
@@ -23,12 +24,12 @@ class Builder
      */
     protected $response = [];
 
-    /// TODO: get this value from a config file.
-    protected $allowedModels = [
-        'authors' => 'App\Author',
-        'articles' => 'App\Article',
-        'comments' => 'App\Comment'
-    ];
+    /**
+     * The application config.
+     *
+     * @var \Illuminate\Support\Collection
+     */
+    protected $config;
 
     /**
      * Builder instance.
@@ -38,6 +39,8 @@ class Builder
     public function __construct(Collection $query)
     {
         $this->query = $query;
+
+        $this->config = collect(Config::get('restql', []));
     }
 
     /**
@@ -86,9 +89,14 @@ class Builder
         return collect($this->response);
     }
 
-    /// @deprecated This method shoud be removed.
+    /**
+     * Get the model classname for the instance.
+     *
+     * @param  string $modelKeyName
+     * @return string
+     */
     protected function getModelClassName($modelKeyName): string
     {
-        return $this->allowedModels[$modelKeyName];
+        return $this->config->get('allowed_models', [])[$modelKeyName];
     }
 }

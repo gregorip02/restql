@@ -29,11 +29,6 @@
       "Restql\\": "src/"
     }
   },
-  "autoload-dev": {
-    "psr-4": {
-      "App\\": "test/laravel/app/"
-    }
-  },
   "extra": {
     "laravel": {
       "providers": [

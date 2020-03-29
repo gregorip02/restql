@@ -4,6 +4,7 @@ namespace Restql;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 
 class RequestParser
 {
@@ -15,6 +16,13 @@ class RequestParser
     protected $request;
 
     /**
+     * The application config.
+     *
+     * @var \Illuminate\Support\Collection
+     */
+    protected $config;
+
+    /**
      * Class instance.
      *
      * @param \Illuminate\Http\Request $request
@@ -22,6 +30,8 @@ class RequestParser
     public function __construct(Request $request)
     {
         $this->request = $request;
+
+        $this->config = collect(Config::get('restql', []));
     }
 
     /**
@@ -43,7 +53,7 @@ class RequestParser
     protected function decode(): Collection
     {
         return $this->hasParam() ? $this->decodeParam() : collect(
-            $this->request->only($this->allowesModels())
+            $this->request->only($this->allowedModels())
         );
     }
 
@@ -54,8 +64,9 @@ class RequestParser
      */
     protected function hasParam(): bool
     {
-        /// TODO: get this value from a config file.
-        return $this->request->has('query');
+        return $this->request->has(
+            $this->getQueryParamName()
+        );
     }
 
     /**
@@ -63,10 +74,21 @@ class RequestParser
      *
      * @return string
      */
-    protected function getParam(): string
+    protected function getQueryParamValue(): string
     {
-        /// TODO: get this value from a config file.
-        return (string) collect($this->request->get('query'));
+        return (string) $this->request->get(
+            $this->getQueryParamName()
+        );
+    }
+
+    /**
+     * Get the query param name defined in the configuration.
+     *
+     * @return string
+     */
+    protected function getQueryParamName(): string
+    {
+        return $this->config->get('query_param', 'query');
     }
 
     /**
@@ -76,8 +98,28 @@ class RequestParser
      */
     protected function decodeParam(): Collection
     {
-        return collect(json_decode(base64_decode($this->getParam())))->only(
-            $this->allowesModels()
+        /// Get the client query value.
+        $query = $this->getQueryParamValue();
+
+        /// Get the client query param name.
+        $name = $this->getQueryParamName();
+
+        if (!preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $query)) {
+            /// Cuando el cliente envia valores en los parametros
+            /// de la petición, deben estar codificados en base64.
+            throw new \Exception('The param \'$name\' isn\'t a base64 string encoded', 1);
+        }
+
+        $value = json_decode(base64_decode($query));
+
+        if (!is_array($value)) {
+            /// Los datos decodificados en base64 deben tener un
+            /// valor de tipo array.
+            throw new \Exception('The param \'$name\' decoded isn\'t a array', 1);
+        }
+
+        return collect($value)->only(
+            $this->allowedModels()
         );
     }
 
@@ -86,13 +128,8 @@ class RequestParser
      *
      * @return array
      */
-    protected function allowesModels(): array
+    protected function allowedModels(): array
     {
-        /// TODO: get this value from a config file.
-        return array_keys([
-            'authors' => 'App\Author',
-            'articles' => 'App\Article',
-            'comments' => 'App\Comment'
-        ]);
+        return array_keys($this->config->get('allowed_models', []));
     }
 }
