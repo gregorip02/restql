@@ -4,3 +4,4 @@
 /tests/axios/
 .env
 .phpunit.result.cache
+/config/restql.example.php
