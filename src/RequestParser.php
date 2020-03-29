@@ -5,6 +5,7 @@ namespace Restql;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Restql\Exceptions\InvalidEncodingValue;
 
 class RequestParser
 {
@@ -52,7 +53,21 @@ class RequestParser
      */
     protected function decode(): Collection
     {
-        return $this->hasParam() ? $this->decodeParam() : collect(
+        if (strlen($this->getQueryParamName()) && $this->hasParam()) {
+            /// Si el usuario decide darle un valor al atributo en la
+            /// configuración "query_param", entonces se asumirá que
+            /// la aplicación acepta consultas codificadas en base64
+            /// enviadas como parámetros en la petición HTTP.
+
+            /// De igual manera, cuando esto sucede, el valor de la
+            /// consulta debe estar obligatoria-mente codificada en
+            /// base64.
+            return $this->decodeParam();
+        }
+
+        /// Por defecto, restql acepta consultas que vienen en el cuerpo
+        /// de la petición HTTP y no están codificadas en base64.
+        return collect(
             $this->request->only($this->allowedModels())
         );
     }
@@ -88,7 +103,7 @@ class RequestParser
      */
     protected function getQueryParamName(): string
     {
-        return $this->config->get('query_param', 'query');
+        return $this->config->get('query_param', '');
     }
 
     /**
@@ -99,26 +114,15 @@ class RequestParser
     protected function decodeParam(): Collection
     {
         /// Get the client query value.
-        $query = $this->getQueryParamValue();
+        $queryValue = $this->getQueryParamValue();
 
-        /// Get the client query param name.
-        $name = $this->getQueryParamName();
-
-        if (!preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $query)) {
+        if (!preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $queryValue)) {
             /// Cuando el cliente envia valores en los parametros
             /// de la petición, deben estar codificados en base64.
-            throw new \Exception('The param \'$name\' isn\'t a base64 string encoded', 1);
+            throw new InvalidEncodingValue($this->getQueryParamName());
         }
 
-        $value = json_decode(base64_decode($query));
-
-        if (!is_array($value)) {
-            /// Los datos decodificados en base64 deben tener un
-            /// valor de tipo array.
-            throw new \Exception('The param \'$name\' decoded isn\'t a array', 1);
-        }
-
-        return collect($value)->only(
+        return collect(json_decode(base64_decode($queryValue)))->only(
             $this->allowedModels()
         );
     }

@@ -6,7 +6,7 @@ return [
      *
      * @var string
      */
-    'query_param' => 'query',
+    'query_param' => '',
 
     /**
      * The eloquent key names and class names allowed for data resolution.
