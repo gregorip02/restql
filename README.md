@@ -2,25 +2,23 @@
 
 RestQL is a Laravel eloquent-based data resolution package. This library tries to
 adopt GraphQL principles solving only the data that the client requests. RestQL uses
-the eloquent clauses as an entry point to add queries to the constructor that can then
-be obtained by the user using the `get` or` paginate` method.
+the eloquent models as an entry point to add queries to then.
 
-<img src="./img/example.png" alt="RestQL example"/>
+<img src="./img/example.png" alt="Laravel RestQL"/>
 
-# Why?
+## **Why?**
 
 Imagine you have an application that manages authors, these authors can publish
-articles and those articles can have comments from different authors.
-
-You have a web client, for example, that uses axios to consume the data offered
-by your service. Somewhere in your code, you need a list of the **author's names only**.
+articles and those articles can have comments from different authors. You have a
+web client, for example, that uses axios to consume the data offered by your service.
+Somewhere in your code, you need a list of the **author's names only**.
 
 They wear something like that.
 
 ```js
 axios.get('http://laravel.app/api/authors').then(({ data }) => {
-    // Do something...
-    console.log(data)
+  // Do something...
+  console.log(data)
 });
 ```
 
@@ -32,8 +30,8 @@ So, you have a route like this.
 
 // Get all the authors using your typical laravel implementation.
 Route::get('authors', function (Request $request, Author $author) {
-    // Do something...
-    return $authors->all();
+  // Do something...
+  return $authors->all();
 });
 ```
 
@@ -42,23 +40,23 @@ Then you would have a response similar to this.
 
 ```js
 [
-    {
-      "id": 1,
-      "name": "Lazaro Kohler",
-      "email": "greenfelder.jenifer@example.org",
-      "email_verified_at": "2020-03-19T18:11:36.000000Z",
-      "created_at": "2020-03-19T18:11:36.000000Z",
-      "updated_at": "2020-03-19T18:11:36.000000Z"
-    },
-    {
-      "id": 2,
-      "name": "Miss Anastasia Klocko DVM",
-      "email": "lemke.trinity@example.org",
-      "email_verified_at": "2020-03-19T18:11:36.000000Z",
-      "created_at": "2020-03-19T18:11:36.000000Z",
-      "updated_at": "2020-03-19T18:11:36.000000Z"
-    },
-    {...}
+  {
+    "id": 1,
+    "name": "Lazaro Kohler",
+    "email": "greenfelder.jenifer@example.org",
+    "email_verified_at": "2020-03-19T18:11:36.000000Z",
+    "created_at": "2020-03-19T18:11:36.000000Z",
+    "updated_at": "2020-03-19T18:11:36.000000Z"
+  },
+  {
+    "id": 2,
+    "name": "Miss Anastasia Klocko DVM",
+    "email": "lemke.trinity@example.org",
+    "email_verified_at": "2020-03-19T18:11:36.000000Z",
+    "created_at": "2020-03-19T18:11:36.000000Z",
+    "updated_at": "2020-03-19T18:11:36.000000Z"
+  },
+  {...}
 ]
 ```
 
@@ -66,7 +64,7 @@ But what if you only need the name of the author? Imagine that your application
 becomes huge and your user model handles a large number of attributes. This is where
 data resolution packages come into play.
 
-# Install
+## **Install**
 
 - Add the composer dependencie.
 
@@ -74,50 +72,53 @@ data resolution packages come into play.
 composer require gregorip02/restql
 ```
 
-- Add the RestQL trait to the parent model.
+- Publish the package configuration.
 
-```php
-<?php
-
-namespace App;
-
-use Restql\Resolve;
-// ...
-
-class Author extends Model
-{
-    use Resolve;
-
-    // ...
-}
-
+```bash
+php artisan vendor:publish
 ```
 
-Now your model has a method called resolve for data resolution from an http request.
+- Adds a list of model keys that point to the actual classes of the eloquent model.
 
-# Data Resolution Packages
+```php
+// config/restql.php
+<?php
+//...
+  'allowed_models' => [
+    'authors' => 'App\Author'
+  ]
+```
+
+With this configuration, your Author model can now be an automatic data resolution model.
+
+## **The Data Resolution Packages**
 
 Data resolution packages are the way to optimize queries and responses based on
-parameters received from the client. Fortunately, Laravel has a powerful ORM and makes
-this implementation extremely compatible.
+parameters received from the client. This is based on the REST fundamentals but tries
+to add GraphQL principles. Fortunately, Laravel has a powerful ORM and makes
+this implementation easy.
 
-# How it works
+## **How it works**
 
-Basically, RestQL maps the keys of the data sent in the request and filters them
-based on the accepted clauses. These clauses are commonly the names of the eloquent
-methods to query the model, the arguments of these clauses are sent as values in the
-clause array.
+Basically, RestQL filters the keys of the models received in the HTTP request and
+compares them with the keys of the user configuration. These keys represent a
+specific eloquent model.
+
+The values of these keys are eloquent clauses (methods) accepted by RestQL and
+the arguments of these clauses are sent as values.
 
 For example, if a params like the following is sent in the request.
 
 ```json
 {
-    "select": ["name", "email"],
+  "authors": {
+    "select": "name",
     "with": {
-        "articles": {
-            "select": ["title", "content"]
-        }
+      "articles": {
+        "select": "title"
+      }
     }
+  }
 }
 ```
 
@@ -127,29 +128,30 @@ RestQL will interpret this as the following.
 // Assuming that the parent model we want to obtain is the author's data.
 // The variable $query represents the query constructor of the parent model,
 // in this example, the Author model.
-$query->select(['name', 'email'])->with([
-    'articles' => static function ($relation) {
-        $relation->select(['title', 'content']);
-    }
+$query->select(['name'])->with([
+  'articles' => static function (Relation $relation) {
+    $relation->select(['title']);
+  }
 ]);
 ```
 
 Let's see how to do it using the RestQL package.
 
-### Define your endpoint
+## **Using**
 
-You can continue using multiple endpoints, you could also define a single endpoint
-for your queries, but now let's see an example similar to the one shown above.
+Starting with the first version of RestQL, you can define a single endpoint.
+For this example we will do it in the routes file `api.php`.
 
 ```php
 // api.php
 <?php
 
-// Get all the authors using data resolution package.
-Route::get('authors', function (Request $request, Author $author) {
-    // The resolve method is available on your model
-    // using the RestQL Resolve trait.
-    return $author->resolve($request)->get();
+use Restql\Restql;
+
+// The RestQL endpoint.
+Route::get('restql', function (Request $request) {
+  // This is not a facade.
+  return Restql::resolve($request);
 });
 ```
 
@@ -163,10 +165,12 @@ appear "more secure".
 
 ```js
 // This is an example using the request parameters directly.
-axios.get('http://laravel.app/api/authors', {
-    params: {
-        select: 'name'
+axios.get('http://laravel.app/api/restql', {
+  params: {
+    authors: {
+      select: 'name'
     }
+  }
 }).then(({ data }) => {
     // Do something...
     console.log(data)
@@ -174,15 +178,17 @@ axios.get('http://laravel.app/api/authors', {
 
 // This is an example using the base64 encoded request parameters.
 const toBase64 = (string) => new Buffer.from(string).toString('base64');
-axios.get('http://laravel.app/api/authors', {
-    params: {
-        query: toBase64(JSON.stringify({
-            select: 'name'
-        })) // eyJzZWxlY3QiOiJuYW1lIn0=
-    }
+axios.get('http://laravel.app/api/restql', {
+  params: {
+    query: toBase64(JSON.stringify({
+      authors: {
+        select: 'name'
+      }
+    }))
+  }
 }).then(({ data }) => {
-    // Do something...
-    console.log(data)
+  // Do something...
+  console.log(data)
 });
 ```
 
@@ -193,20 +199,17 @@ the database management system. In this case, it will run just a
 
 
 ```js
-[
-    {
-      "id": 1,
-      "name": "Lazaro Kohler",
-    },
-    {
-      "id": 2,
-      "name": "Miss Anastasia Klocko DVM",
-    },
+{
+  "authors": [
+    { "id": 1, "name": "Kasey Yost" },
+    { "id": 2, "name": "Ike Barton" },
+    { "id": 3, "name": "Emie Daniel" },
     {...}
-]
+  ]
+}
 ```
 
-## Please support it
+# **Please support it**
 
 This is a personal project that can be very useful, if you believe it, help me
 develop new functionalities and create a pull request, I will be happy to review
