@@ -1,0 +1,11 @@
+{
+  "repositories": {
+    "gregorip02/restql": {
+      "type": "path",
+      "url": "/var/www/restql",
+      "options": {
+        "symlink": true
+      }
+    }
+  }
+}

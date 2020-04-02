@@ -3,3 +3,4 @@
 /.gitignore         export-ignore
 /tests              export-ignore
 /img                export-ignore
+/docker             export-ignore

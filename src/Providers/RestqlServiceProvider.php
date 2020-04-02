@@ -1,6 +1,6 @@
 <?php
 
-namespace Restql;
+namespace Restql\Providers;
 
 use Illuminate\Support\ServiceProvider;
 

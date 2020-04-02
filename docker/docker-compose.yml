@@ -1,0 +1,74 @@
+version: "3.4"
+
+volumes:
+  laravel-app:
+    driver: local
+  composer-cache:
+    driver: local
+  mysql-data:
+    driver: local
+
+networks:
+  nginx-network:
+    driver: bridge
+  mysql-network:
+    driver: bridge
+
+services:
+  fpm:
+    image: gregorip02/laravel-fpm:mysql
+    working_dir: /var/www
+    container_name: fpm
+    restart: on-failure
+    volumes:
+      - .:${USER_FILES}
+      # Mount the composer cache directory.
+      # This will "increase laravel installation speed considerably".
+      - laravel-app:${APP_PATH}
+      - composer-cache:${COMPOSER_CACHE_DIR}
+      # Mount the restql package.
+      - ../src:/var/www/restql/src
+      - ../tests:/var/www/restql/tests
+      - ../config:/var/www/restql/config
+      - ../composer.json:/var/www/restql/composer.json
+    expose:
+      - "9000"
+    networks:
+      - "nginx-network"
+      - "mysql-network"
+    env_file: .env
+    command: ["${USER_FILES}/app.sh"]
+    depends_on:
+      - "mysql"
+
+  # If you want use MySQL instead.
+  # Remember to change the DB_HOST with the service name.
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: on-failure
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - "mysql-network"
+    env_file:
+      - ".env.laravel"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+
+  www:
+    image: nginx:1.17-alpine
+    working_dir: /var/www/app
+    container_name: nginx
+    restart: on-failure
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+      # Mount public laravel path only
+      # in the nginx web server.
+      - ./public:/usr/share/nginx/html/public
+    networks:
+      - "nginx-network"
+    ports:
+      - "8080:80"
+    depends_on:
+      - "fpm"
