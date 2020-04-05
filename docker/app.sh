@@ -34,9 +34,10 @@ APP_FILES="${APP_PATH:-/var/www/apps}/${APP_VERSION}"
 create_laravel_app()
 {
   COMPOSER_ROOT_FILE="/root/.composer/composer.json"
-  if ! test -f "${COMPOSER_ROOT_FILE}"; then
+  COMPOSER_USER_FILE="${USER_FILES}/composer.json"
+  if test -f "${COMPOSER_USER_FILE}"; then
     # Add the root composer file if not exists
-    echo "{}" > "${COMPOSER_ROOT_FILE}"
+    ln -vfs "${COMPOSER_USER_FILE}" "${COMPOSER_ROOT_FILE}"
   fi
 
   # Verificar que exista el proyecto y sea
@@ -73,37 +74,24 @@ link_user_files()
   ln -vfs ${USER_FILES}/database ${APP_FILES}/database
 }
 
-merge_composer_file()
-{
-  if ! test -f "${USER_FILES}/composer.override.json"; then
-    echo "Actualizando archivo ${APP_FILES}/composer.json"
-    # TODO: implement merge json files here.
-  fi
-}
-
 if create_laravel_app
 then
   if link_user_files
-  then
-    if merge_composer_file
     then
-      # Update composer.json
-      # composer --working-dir=${APP_FILES} -vvv require gregorip02/restql @dev
+    # Update composer.json
+    # composer --working-dir=${APP_FILES} -vvv require gregorip02/restql @dev
 
-      # Link the public folder for nginx compatibility.
-      if ! test -d "/usr/share/nginx"; then
-        mkdir -vp /usr/share/nginx
-      else
-        rm -vrf /usr/share/nginx/html
-      fi
-      ln -vfs ${APP_FILES} /usr/share/nginx/html
-
-      # Start the FPM Service
-      echo "Starting..."
-      exec php-fpm
+    # Link the public folder for nginx compatibility.
+    if ! test -d "/usr/share/nginx"; then
+      mkdir -vp /usr/share/nginx
     else
-      ups "Merging composer.json files"
+      rm -vrf /usr/share/nginx/html
     fi
+    ln -vfs ${APP_FILES} /usr/share/nginx/html
+
+    # Start the FPM Service
+    echo "Starting..."
+    exec php-fpm
   else
     ups "Error creado los enlaces simbolicos"
   fi
