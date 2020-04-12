@@ -2,13 +2,13 @@
 
 namespace Restql;
 
-use Restql\Builder;
-use Restql\Clausules\OrderByClausule;
-use Restql\Clausules\SelectClausule;
-use Restql\Clausules\WithClausule;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Restql\Builder;
+use Restql\Clausules\SelectClausule;
+use Restql\Clausules\SortClausule;
+use Restql\Clausules\WithClausule;
 
 class ClausuleExecutor
 {
@@ -19,7 +19,7 @@ class ClausuleExecutor
      */
     public const ACCEPTED_CLAUSULES = [
         'select' => SelectClausule::class,
-        'orderBy' => OrderByClausule::class,
+        'sort' => SortClausule::class,
         'with' => WithClausule::class
     ];
 

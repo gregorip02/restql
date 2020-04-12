@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class Restql implements Responsable
 {
@@ -68,17 +69,19 @@ class Restql implements Responsable
      */
     public function get($callback = null)
     {
-        return $this->response->map(function ($query) use ($callback) {
+        return $this->response->map(function (QueryBuilder $builder) use ($callback) {
             /// You can pass a clousure with the eloquente query
             /// builder has argument. This allow you to add and
             /// resolve the data based on your logic.
             if (is_callable($callback)) {
-                return $callback($query);
+                return $callback($builder);
             }
 
             /// By default Restql get the first 15 results and
             /// dispatch the get method on the query.
-            return $query->take(15)->get();
+            $limit = $builder->getQuery()->limit ?? 15;
+
+            return $builder->take($limit)->{$limit > 1 ? 'get' : 'first' }();
         });
     }
 
