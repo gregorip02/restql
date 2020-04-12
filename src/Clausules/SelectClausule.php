@@ -16,19 +16,16 @@ class SelectClausule implements ClausuleContract
     public function build(ClausuleExecutor $executor, Collection $arguments): void
     {
         $executor->executeQuery(function ($query) use ($executor, $arguments) {
-            /// Obtener el modelo padre del constructor de consultas eloquent.
-            /// Con esto determinamos los attributos que pueden ser consultados
-            /// por el cliente.
+            /// Get the model associated with the eloquent query constructor
             $model = $executor->getModel();
 
-            /// En primera instancia es necesario añadir los atributos
-            /// solicitados por el cliente.
+            /// Get the arguments requested by the client
             $arguments = $this->parseArguments($model, $arguments);
 
-            /// Es necesario determinar si se estan queriendo obtener
-            /// datos de una relación de tipo BelongsTo, de ser verdadero
-            /// es oportuno seleccionar el nombre de la llave foranea en la
-            /// relación.
+            /// You have to determine if the client requests BelongsTo
+            /// relationships in the "with" clause. If true, the foreign key
+            /// name must be added to the query so that the eloquent collection
+            /// knows where it belongs.
             $withModelNames = $executor->getWithModelKeyNames();
             if ($withModelNames->count()) {
                 $belongsTo = $this->getBelongsToAttributes($withModelNames, $model);
@@ -42,7 +39,7 @@ class SelectClausule implements ClausuleContract
     }
 
     /**
-     * Obtiene los nombres de las llaves foraneas para relaciones de tipo BelongsTo.
+     * Gets the names of the foreign keys for relationships of type BelongsTo.
      *
      * @param  \Illuminate\Support\Collection $withParams
      * @param  \Illuminate\Database\Model $model
@@ -51,14 +48,11 @@ class SelectClausule implements ClausuleContract
     protected function getBelongsToAttributes(Collection $withParams, Model $model): array
     {
         return $withParams->filter(function ($method) use ($model) {
-            /// Es necesario determinar si la relación solicitada
-            /// esta definida en el modelo padre.
+            /// Determine if the relationship does not exists.
             if (!method_exists($model, $method)) {
                 return false;
             }
-            /// En caso de que el metodo exista, hay que determinar
-            /// si su valor de retorno es una relación de tipo
-            /// BelongsTo.
+            /// Determine if the relationship is of type BelongsTo.
             return $model->{$method}() instanceof BelongsTo;
         })->map(function ($method) use ($model) {
             /// Get the foreign key of the relationship.
@@ -67,7 +61,7 @@ class SelectClausule implements ClausuleContract
     }
 
     /**
-     * Get the select arguments.
+     * Get the select arguments requested by the client.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Support\Collection $arguments
@@ -76,7 +70,7 @@ class SelectClausule implements ClausuleContract
     public function parseArguments(Model $model, Collection $arguments): Collection
     {
         $hidden = $model->getHidden();
-
+        /// NEVER include the hidden attributes.
         return $arguments->forget($hidden)->add(
             $model->getKeyName()
         )->unique();

@@ -18,8 +18,8 @@ if (! (file_exists($firstPath) && file_exists($secondPath))) {
 }
 
 $output = array_merge(
-    (array) json_decode(file_get_contents($firstPath)),
-    (array) json_decode(file_get_contents($secondPath))
+    (array) json_decode(file_get_contents($firstPath), true),
+    (array) json_decode(file_get_contents($secondPath), true)
 );
 
 $fp = fopen($outputPath, 'w');

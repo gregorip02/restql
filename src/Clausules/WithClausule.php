@@ -4,7 +4,6 @@ namespace Restql\Clausules;
 
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
@@ -35,14 +34,15 @@ class WithClausule implements ClausuleContract
     protected function args(Model $model, Collection $arguments): array
     {
         return $arguments->filter(function ($null, $relationName) use ($model) {
+            /// Determine if the relationship does not exists.
             if (!method_exists($model, $relationName)) {
                 return false;
             }
 
+            /// Determine if the relationship is of type Relation.
             return $model->{$relationName}() instanceof Relation;
         })->map(function ($clausules) {
-            // Ejecutar los callbacks, probablemente mas clausulas. Estas
-            // serán añadidas a la relación en vez del modelo padre.
+            /// Build the related model query.
             return $this->buildRelationQuery(collect($clausules));
         })->toArray();
     }
@@ -56,14 +56,9 @@ class WithClausule implements ClausuleContract
     protected function buildRelationQuery(Collection $clausules)
     {
         return function (Relation $relation) use ($clausules) {
-            /// Cuando se intentan obtener datos de una relación de tipo
-            /// HasMany, es requerido añadir el nombre de la llave foranea
-            /// de la relación para que los datos puedan ser mapeados
-            /// correctamente por Laravel.
             if ($args = $clausules->get('select', false)) {
+                /// Add the foreign key name in HasMany type relationships
                 if ($relation instanceof HasMany) {
-                    /// Añade el nombre de la llave foranea a los argumentos
-                    /// de la clausula select.
                     $args = collect($args)->add(
                         $relation->getForeignKeyName()
                     )->toArray();

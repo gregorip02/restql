@@ -3,30 +3,28 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Nombre del atributo enviado en la petición.
+    | Name of the parameter intercepted in the request
     |--------------------------------------------------------------------------
     |
-    | Esta opción controla el nombre del parametro recibido en la petición HTTP
-    | que RestQL interceptará como los filtros del constructor de consultas.
-    |
-    | Si el valor de este parametro esta vació, RestQL asumirá que los datos
-    | son enviados en el cuerpo de la petición.
+    | If the value of this parameter is empty, RestQL will assume that the data
+    | is sent in the body of the request.
     */
 
     'query_param' => env('RESTQL_PARAM_NAME', ''),
 
     /*
     |--------------------------------------------------------------------------
-    | Modelos de resolución de datos.
+    | Data resolution models
     |--------------------------------------------------------------------------
     |
-    | Defina una lista que represente un nombre de acceso como llave y una clase
-    | de su modelo eloquent explicitamente. Los modelos definidos aqui, estarán
-    | disponibles para la resolución automatica de datos.
+    | An associative array containing the name to access the model as a key and
+    | the eloquent model class as a value.
     |
-    | @example 'authors' => 'App\Author'
+    | @example [ 'authors' => 'App\Author', 'articles' => 'App\Article' ]
     */
     'allowed_models' => [
-        'authors' => 'App\Author'
+        'authors' => 'App\Author',
+        'articles' => 'App\Article',
+        'comments' => 'App\Comment'
     ]
 ];

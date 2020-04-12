@@ -34,6 +34,6 @@ class RestqlServiceProvider extends ServiceProvider
     {
         $this->publishes([
             $this->configPath() => config_path('restql.php')
-        ], 'restql');
+        ], 'restql-config');
     }
 }

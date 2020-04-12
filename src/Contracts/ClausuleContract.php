@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 interface ClausuleContract
 {
     /**
-     * Get the clausule arguments.
+     * Build the clausule.
      *
      * @param \Restql\ClausuleExecutor $executor
      * @param \Illuminate\Support\Collection $arguments

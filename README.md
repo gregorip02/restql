@@ -28,10 +28,10 @@ So, you have a route like this.
 // api.php
 <?php
 
-// Get all the authors using your typical laravel implementation.
-Route::get('authors', function (Request $request, Author $author) {
+// Get 25 authors using your typical laravel implementation.
+Route::get('authors', function (Request $request) {
   // Do something...
-  return $authors->all();
+  return App\Author::take(25)->get();
 });
 ```
 
@@ -56,7 +56,7 @@ Then you would have a response similar to this.
     "created_at": "2020-03-19T18:11:36.000000Z",
     "updated_at": "2020-03-19T18:11:36.000000Z"
   },
-  {...}
+  { /* 23 more authors */}
 ]
 ```
 
@@ -64,32 +64,36 @@ But what if you only need the name of the author? Imagine that your application
 becomes huge and your user model handles a large number of attributes. This is where
 data resolution packages come into play.
 
-## **Install**
+## **Get started**
 
-- Add the composer dependencie.
+1. Install **RestQL** using composer.
 
 ```bash
 composer require gregorip02/restql
 ```
 
-- Publish the package configuration.
+2. Publish the package configuration.
 
 ```bash
-php artisan vendor:publish
+php artisan vendor:publish --tag=restql-config
 ```
 
-- Adds a list of model keys that point to the actual classes of the eloquent model.
+3. Set your allowed data resolution models.
 
 ```php
 // config/restql.php
 <?php
-//...
+
+return [
+  /* more config */
   'allowed_models' => [
     'authors' => 'App\Author'
   ]
+];
 ```
 
-With this configuration, your Author model can now be an automatic data resolution model.
+With this configuration, your **Author** model can now be an automatic data
+resolution model.
 
 ## **The Data Resolution Packages**
 
@@ -137,7 +141,7 @@ $query->select(['name'])->with([
 
 Let's see how to do it using the RestQL package.
 
-## **Using**
+## **Your first automatic consultation**
 
 Starting with the first version of RestQL, you can define a single endpoint.
 For this example we will do it in the routes file `api.php`.

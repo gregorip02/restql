@@ -54,19 +54,19 @@ class RequestParser
     protected function decode(): Collection
     {
         if (strlen($this->getQueryParamName()) && $this->hasParam()) {
-            /// Si el usuario decide darle un valor al atributo en la
-            /// configuración "query_param", entonces se asumirá que
-            /// la aplicación acepta consultas codificadas en base64
-            /// enviadas como parámetros en la petición HTTP.
+            /// If the user decides to give a value to the attribute in the
+            /// "query_param" setting, then it will be assumed that
+            /// the application accepts base64 encoded queries
+            /// sent as parameters in the HTTP request.
 
-            /// De igual manera, cuando esto sucede, el valor de la
-            /// consulta debe estar obligatoria-mente codificada en
+            /// Similarly, when this happens, the value of the
+            /// query must be compulsorily encoded in
             /// base64.
             return $this->decodeParam();
         }
 
-        /// Por defecto, restql acepta consultas que vienen en el cuerpo
-        /// de la petición HTTP y no están codificadas en base64.
+        /// By default, restql accepts queries that come in the body
+        /// of the HTTP request and are not base64 encoded.
         return collect(
             $this->request->only($this->allowedModels())
         );
@@ -116,9 +116,9 @@ class RequestParser
         /// Get the client query value.
         $queryValue = $this->getQueryParamValue();
 
+        /// When the client sends values in the parameters
+        /// of the request, must be base64 encoded.
         if (!preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $queryValue)) {
-            /// Cuando el cliente envia valores en los parametros
-            /// de la petición, deben estar codificados en base64.
             throw new InvalidEncodingValue($this->getQueryParamName());
         }
 
