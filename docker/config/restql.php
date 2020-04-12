@@ -27,8 +27,6 @@ return [
     | @example 'authors' => 'App\Author'
     */
     'allowed_models' => [
-        'authors' => 'App\Author',
-        'articles' => 'App\Article',
-        'comments' => 'App\Comment'
+        'authors' => 'App\Author'
     ]
 ];

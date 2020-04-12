@@ -23,7 +23,7 @@ class RestqlServiceProvider extends ServiceProvider
      */
     protected function configPath(): string
     {
-        return __DIR__ . '/../config/restql.php';
+        return __DIR__ . '/../../config/restql.php';
     }
 
     /**
