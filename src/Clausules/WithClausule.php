@@ -7,20 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
+use Restql\Clausule;
 use Restql\ClausuleExecutor;
-use Restql\Contracts\ClausuleContract;
 
-class WithClausule implements ClausuleContract
+class WithClausule extends Clausule
 {
     /**
      * {@inheritdoc}
      */
-    public function build(ClausuleExecutor $executor, Collection $arguments): void
+    public function build(): void
     {
-        $executor->executeQuery(function (QueryBuilder $query) use ($arguments, $executor) {
-            $arguments = $this->args($executor->getModel(), $arguments);
+        $this->executor->executeQuery(function (QueryBuilder $builder) {
+            $arguments = $this->parseArguments($this->executor->getModel());
 
-            $query->with($arguments);
+            $builder->with($arguments);
         });
     }
 
@@ -28,12 +28,12 @@ class WithClausule implements ClausuleContract
      * Create an array that corresponds to the relation key name => callback.
      *
      * @param  \Illuminate\Database\Eloquent\Model $model
-     * @param  \Illuminate\Support\Collection $arguments
+     *
      * @return array
      */
-    protected function args(Model $model, Collection $arguments): array
+    protected function parseArguments(Model $model): array
     {
-        return $arguments->filter(function ($null, $relationName) use ($model) {
+        return $this->arguments->filter(function ($null, $relationName) use ($model) {
             /// Determine if the relationship does not exists.
             if (!method_exists($model, $relationName)) {
                 return false;
@@ -51,6 +51,7 @@ class WithClausule implements ClausuleContract
      * Build the clousure called in the select clausule.
      *
      * @param  \Illuminate\Support\Collection $clausules
+     *
      * @return Clousure
      */
     protected function buildRelationQuery(Collection $clausules)
@@ -66,6 +67,9 @@ class WithClausule implements ClausuleContract
                     $clausules->offsetSet('select', $args);
                 }
             }
+
+            /// Unnecesary include the take or limit clausule.
+            $clausules->forget(['take', 'limit']);
 
             ClausuleExecutor::exec($relation->getRelated(), $clausules, $relation->getQuery());
         };

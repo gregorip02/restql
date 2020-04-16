@@ -5,16 +5,12 @@ namespace Restql\Clausules;
 use Restql\Clausule;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
-class SortClausule extends Clausule
+class WhereClausule extends Clausule
 {
-    /**
-     * The argument validation rules.
-     *
-     * @var array
-     */
     public $rules = [
-        'column'    => ['required', 'string'],
-        'direction' => ['sometimes', 'in:desc,asc']
+        'column'   => ['required'],
+        'operator' => ['sometimes', 'nullable'],
+        'value'    => ['sometimes', 'nullable']
     ];
 
     /**
@@ -25,7 +21,7 @@ class SortClausule extends Clausule
     public function build(): void
     {
         $this->executor->executeQuery(function (QueryBuilder $builder) {
-            $builder->orderBy(...$this->getQueryArguments());
+            $builder->where(...$this->getQueryArguments());
         });
     }
 
@@ -40,7 +36,10 @@ class SortClausule extends Clausule
 
         if (!array_key_exists('column', $arguments)) {
             $arguments['column'] = $arguments[0];
-            $arguments['direction'] = $arguments[1] ?? 'asc';
+        }
+
+        if (!array_key_exists('value', $arguments)) {
+            $arguments['value'] = $arguments[1];
         }
 
         return $arguments;

@@ -32,8 +32,11 @@ class RestqlServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->publishes([
-            $this->configPath() => config_path('restql.php')
-        ], 'restql-config');
+        if ($this->app->runningInConsole()) {
+            /// Register the RestQL config.
+            $this->publishes([
+                $this->configPath() => config_path('restql.php')
+            ], 'restql-config');
+        }
     }
 }
