@@ -2,13 +2,14 @@
 
 namespace Restql;
 
-use Restql\Builder;
-use Restql\Clausules\OrderByClausule;
-use Restql\Clausules\SelectClausule;
-use Restql\Clausules\WithClausule;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Restql\Builder;
+use Restql\Clausules\WhereClausule;
+use Restql\Clausules\SelectClausule;
+use Restql\Clausules\SortClausule;
+use Restql\Clausules\WithClausule;
 
 class ClausuleExecutor
 {
@@ -19,8 +20,9 @@ class ClausuleExecutor
      */
     public const ACCEPTED_CLAUSULES = [
         'select' => SelectClausule::class,
-        'orderBy' => OrderByClausule::class,
-        'with' => WithClausule::class
+        'sort' => SortClausule::class,
+        'with' => WithClausule::class,
+        'where' => WhereClausule::class
     ];
 
     /**
@@ -81,7 +83,7 @@ class ClausuleExecutor
         $this->clausules->each(function ($arguments, $clausuleName) {
             $clausuleClassName = $this->getClausuleClassName($clausuleName);
             if (class_exists($clausuleClassName)) {
-                app($clausuleClassName)->build($this, collect($arguments));
+                (new $clausuleClassName($this, collect($arguments)))->build();
             }
         });
 

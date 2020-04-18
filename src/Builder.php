@@ -62,25 +62,22 @@ class Builder
     protected function dispatch(): Collection
     {
         $this->query->each(function ($clausules, $modelKeyName) {
-            /// Obtener el nombre de clase del modelo eloquent basado en
-            /// los modelos permitidos para la resolución automatica
-            /// de datos registrados en la configuración del usuario.
+            /// Obtain the class name of the eloquent model based on the models
+            /// allowed for the automatic resolution of data registered in the
+            /// user configuration.
             $modelClassName = $this->getModelClassName($modelKeyName);
 
             if (class_exists($modelClassName)) {
-                /// Determinar si la clase existe y esta sea una instancia
-                /// de la clase \Illuminate\Database\Eloquent\Model.
+                /// Determine if the class exists and is an instance of Model.
                 $model = app($modelClassName);
                 if ($model instanceof Model) {
-                    /// Ejecutar las clausulas recibidas por el cliente, solo
-                    /// permitiendo las clausulas aceptadas por RestQL.
+                    /// Execute only the clauses allowed by RestQL.
+                    /// TODO: Allow the user to create their own clauses.
                     $builder = ClausuleExecutor::exec($model, collect($clausules)->only(
                         array_keys(ClausuleExecutor::ACCEPTED_CLAUSULES)
                     ));
 
-                    /// Añadir a la respuesta un item que representa el nombre
-                    /// del modelo como llave y una instancia de
-                    /// \Illuminate\Database\Eloquent\Builder como valor.
+                    /// Build the answer collection.
                     $this->response[$modelKeyName] = $builder;
                 }
             }
@@ -97,6 +94,7 @@ class Builder
      */
     protected function getModelClassName($modelKeyName): string
     {
-        return $this->config->get('allowed_models', [])[$modelKeyName];
+        $config = $this->config->get('allowed_models', [])[$modelKeyName];
+        return $config;
     }
 }

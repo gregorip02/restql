@@ -1,7 +1,1 @@
 /vendor/
-# No incluir la app de pruebas de laravel aun.
-/tests/laravel/
-/tests/axios/
-.env
-.phpunit.result.cache
-/config/restql.example.php

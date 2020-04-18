@@ -1,6 +1,6 @@
 <?php
 
-namespace Restql;
+namespace Restql\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -23,7 +23,7 @@ class RestqlServiceProvider extends ServiceProvider
      */
     protected function configPath(): string
     {
-        return __DIR__ . '/../config/restql.php';
+        return __DIR__ . '/../../config/restql.php';
     }
 
     /**
@@ -32,8 +32,11 @@ class RestqlServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->publishes([
-            $this->configPath() => config_path('restql.php')
-        ], 'restql');
+        if ($this->app->runningInConsole()) {
+            /// Register the RestQL config.
+            $this->publishes([
+                $this->configPath() => config_path('restql.php')
+            ], 'restql-config');
+        }
     }
 }
