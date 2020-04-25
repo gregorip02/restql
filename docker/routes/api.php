@@ -7,3 +7,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('restql', function (Request $request) {
     return Restql::resolve($request);
 });
+
+Route::get('version', function () {
+    $app = app();
+
+    return $app::VERSION;
+});

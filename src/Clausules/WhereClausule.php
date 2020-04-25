@@ -3,10 +3,17 @@
 namespace Restql\Clausules;
 
 use Restql\Clausule;
+use Restql\Argument;
+use Restql\Arguments\WhereArgument;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class WhereClausule extends Clausule
 {
+    /**
+     * The arguments rules.
+     *
+     * @var array
+     */
     public $rules = [
         'column'   => ['required'],
         'operator' => ['sometimes', 'nullable'],
@@ -16,32 +23,22 @@ class WhereClausule extends Clausule
     /**
      * Implement the clausule query builder.
      *
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     *
      * @return void
      */
-    public function build(): void
+    public function build(QueryBuilder $builder): void
     {
-        $this->executor->executeQuery(function (QueryBuilder $builder) {
-            $builder->where(...$this->getQueryArguments());
-        });
+        $builder->where(...$this->getValidatedData());
     }
 
     /**
-     * Get the parsed validation data.
+     * Get the clausule arguments.
      *
-     * @return array
+     * @return \Restql\Arguments\WhereArgument
      */
-    public function getValidatorData(): array
+    public function getArgumentInstance(): Argument
     {
-        $arguments = $this->arguments->toArray();
-
-        if (!array_key_exists('column', $arguments)) {
-            $arguments['column'] = $arguments[0];
-        }
-
-        if (!array_key_exists('value', $arguments)) {
-            $arguments['value'] = $arguments[1];
-        }
-
-        return $arguments;
+        return new WhereArgument($this->arguments);
     }
 }

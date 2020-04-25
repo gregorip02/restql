@@ -13,31 +13,31 @@ class SelectClausule extends Clausule
     /**
      * Implement the clausule query builder.
      *
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     *
      * @return void
      */
-    public function build(): void
+    public function build(QueryBuilder $builder): void
     {
-        $this->executor->executeQuery(function (QueryBuilder $query) {
-            /// Get the model associated with the eloquent query constructor
-            $model = $this->executor->getModel();
+        /// Get the model associated with the eloquent query constructor
+        $model = $this->executor->getModel();
 
-            /// Get the arguments requested by the client
-            $arguments = $this->parseArguments($model);
+        /// Get the arguments requested by the client
+        $arguments = $this->parseArguments($model);
 
-            /// You have to determine if the client requests BelongsTo
-            /// relationships in the "with" clause. If true, the foreign key
-            /// name must be added to the query so that the eloquent collection
-            /// knows where it belongs.
-            $withModelNames = $this->executor->getWithModelKeyNames();
-            if ($withModelNames->count()) {
-                $belongsTo = $this->getBelongsToAttributes($withModelNames, $model);
-                if (count($belongsTo)) {
-                    $arguments->push(...$belongsTo);
-                }
+        /// You have to determine if the client requests BelongsTo
+        /// relationships in the "with" clause. If true, the foreign key
+        /// name must be added to the query so that the eloquent collection
+        /// knows where it belongs.
+        $withModelNames = $this->executor->getWithModelKeyNames();
+        if ($withModelNames->count()) {
+            $belongsTo = $this->getBelongsToAttributes($withModelNames, $model);
+            if (count($belongsTo)) {
+                $arguments->push(...$belongsTo);
             }
+        }
 
-            $query->select($arguments->toArray());
-        });
+        $builder->select($arguments->toArray());
     }
 
     /**
@@ -73,6 +73,7 @@ class SelectClausule extends Clausule
     public function parseArguments(Model $model): Collection
     {
         $hidden = $model->getHidden();
+
         /// NEVER include the hidden attributes.
         return $this->arguments->forget($hidden)->add(
             $model->getKeyName()

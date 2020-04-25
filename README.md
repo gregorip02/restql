@@ -23,7 +23,7 @@ Somewhere in your code, you need a list of the **author's names only**.
 They wear something like that.
 
 ```js
-axios.get('http://laravel.app/api/authors').then(({ authors: data }) => {
+axios.get('http://laravel.app/api/authors').then(({ data: authors }) => {
   // Do something...
   console.log(authors)
 });
@@ -135,14 +135,14 @@ axios.get('http://laravel.app/api/restql', {
       select: 'name'
     }
   }
-}).then(({ authors: data }) => {
+}).then(({ data: authors }) => {
     // Do something...
     console.log(authors)
 });
 ```
 
 The parameters of the query can be a json object that defines the clauses accepted
-by RestQL, or you can encode this JSON in base64 if you want your URL to
+by RestQL, or **you can encode this JSON in base64** if you want your URL to
 appear "more secure".
 
 ```js
@@ -156,7 +156,7 @@ axios.get('http://laravel.app/api/restql', {
       }
     }))
   }
-}).then(({ authors: data }) => {
+}).then(({ data: authors }) => {
   // Do something...
   console.log(authors)
 });
@@ -215,6 +215,10 @@ $query->select(['name'])->with([
   }
 ]);
 ```
+
+You can read more about the RestQL Clausules <a href="./docs/Clausules.md"
+                                                title="RestQL Documentation">here</a>.
+
 # **Please support it**
 
 This is a personal project that can be very useful, if you believe it, help me
