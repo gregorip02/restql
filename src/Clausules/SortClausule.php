@@ -2,7 +2,9 @@
 
 namespace Restql\Clausules;
 
+use Restql\Argument;
 use Restql\Clausule;
+use Restql\Arguments\SortArgument;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class SortClausule extends Clausule
@@ -20,29 +22,22 @@ class SortClausule extends Clausule
     /**
      * Implement the clausule query builder.
      *
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     *
      * @return void
      */
-    public function build(): void
+    public function build(QueryBuilder $builder): void
     {
-        $this->executor->executeQuery(function (QueryBuilder $builder) {
-            $builder->orderBy(...$this->getQueryArguments());
-        });
+        $builder->orderBy(...$this->getValidatedData());
     }
 
     /**
-     * Get the parsed validation data.
+     * Get the clausule arguments.
      *
-     * @return array
+     * @return \Restql\Arguments\WhereArgument
      */
-    public function getValidatorData(): array
+    public function getArgumentInstance(): Argument
     {
-        $arguments = $this->arguments->toArray();
-
-        if (!array_key_exists('column', $arguments)) {
-            $arguments['column'] = $arguments[0];
-            $arguments['direction'] = $arguments[1] ?? 'asc';
-        }
-
-        return $arguments;
+        return new SortArgument($this->arguments);
     }
 }

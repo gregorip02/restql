@@ -13,15 +13,17 @@ use Restql\ClausuleExecutor;
 class WithClausule extends Clausule
 {
     /**
-     * {@inheritdoc}
+     * Implement the clausule query builder.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     *
+     * @return void
      */
-    public function build(): void
+    public function build(QueryBuilder $builder): void
     {
-        $this->executor->executeQuery(function (QueryBuilder $builder) {
-            $arguments = $this->parseArguments($this->executor->getModel());
+        $arguments = $this->parseArguments($this->executor->getModel());
 
-            $builder->with($arguments);
-        });
+        $builder->with($arguments);
     }
 
     /**

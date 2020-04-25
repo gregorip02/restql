@@ -69,14 +69,14 @@ services:
 
   www:
     image: nginx:1.17-alpine
-    working_dir: /var/www/app
+    working_dir: /usr/share/nginx/html
     container_name: nginx
     restart: on-failure
     volumes:
       - ./default.conf:/etc/nginx/conf.d/default.conf
       # Mount public laravel path only
       # in the nginx web server.
-      - ./public:/usr/share/nginx/html/public
+      - ./public:/usr/share/nginx/html
     networks:
       - "nginx-network"
     ports:

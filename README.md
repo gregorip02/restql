@@ -1,10 +1,17 @@
 # RestQL
 
-RestQL is a Laravel eloquent-based data resolution package. This library tries to
-adopt GraphQL principles solving only the data that the client requests. RestQL uses
-the eloquent models as an entry point to add queries to then.
+RestQL is a Laravel eloquent-based data resolution package. This package tries to
+adopt **GraphQL** principles solving only the data that the client requests.
+RestQL uses your **Laravel** models as an entry point to add queries to then
+based in the eloquent methods.
 
 <img src="./img/example.png" alt="Laravel RestQL"/>
+
+## **The Data Resolution Packages**
+
+Data resolution packages are the way to optimize queries and responses based on
+parameters received from the client. This is based on the REST fundamentals but tries
+to add GraphQL principles.
 
 ## **Why?**
 
@@ -16,9 +23,9 @@ Somewhere in your code, you need a list of the **author's names only**.
 They wear something like that.
 
 ```js
-axios.get('http://laravel.app/api/authors').then(({ data }) => {
+axios.get('http://laravel.app/api/authors').then(({ data: authors }) => {
   // Do something...
-  console.log(data)
+  console.log(authors)
 });
 ```
 
@@ -28,15 +35,17 @@ So, you have a route like this.
 // api.php
 <?php
 
-// Get 25 authors using your typical laravel implementation.
+use App\Author;
+use Illuminate\Http\Request;
+
 Route::get('authors', function (Request $request) {
   // Do something...
-  return App\Author::take(25)->get();
+  return Author::take(25)->get();
 });
 ```
 
-Most likely you will use a controller and then use the author model and query the data.
-Then you would have a response similar to this.
+Most likely you will use a controller, then use the author model and query the data.
+Finally you would have a response similar to this.
 
 ```js
 [
@@ -60,9 +69,9 @@ Then you would have a response similar to this.
 ]
 ```
 
-But what if you only need the name of the author? Imagine that your application
-becomes huge and your user model handles a large number of attributes. This is where
-data resolution packages come into play.
+But what if you only need a **author's names** collection for example? Imagine
+that your application becomes huge and your user model handles a large number of
+attributes.
 
 ## **Get started**
 
@@ -87,20 +96,88 @@ php artisan vendor:publish --tag=restql-config
 return [
   /* more config */
   'allowed_models' => [
-    'authors' => 'App\Author'
+    'authors' => 'App\Author',
+    /* more allowed models */
   ]
 ];
 ```
 
-With this configuration, your **Author** model can now be an automatic data
-resolution model.
+With this configuration, your **Author** model can now be an automatic data resolution model.
 
-## **The Data Resolution Packages**
+4. Configure your endpoint
 
-Data resolution packages are the way to optimize queries and responses based on
-parameters received from the client. This is based on the REST fundamentals but tries
-to add GraphQL principles. Fortunately, Laravel has a powerful ORM and makes
-this implementation easy.
+You can define a single endpoint. For this example we will do it in the routes
+file `api.php`.
+
+```php
+// api.php
+<?php
+
+use Restql\Restql;
+use Illuminate\Http\Request;
+
+// The RestQL endpoint.
+Route::get('restql', function (Request $request) {
+  // This is not a facade.
+  return Restql::resolve($request);
+});
+```
+
+Now, you can re-factor your client's code so that it sends a parameter in the
+request with the data it needs, in this case a collection of author names. They wear
+something like that.
+
+```js
+// This is an example using the request parameters directly.
+axios.get('http://laravel.app/api/restql', {
+  params: {
+    authors: {
+      select: 'name'
+    }
+  }
+}).then(({ data: authors }) => {
+    // Do something...
+    console.log(authors)
+});
+```
+
+The parameters of the query can be a json object that defines the clauses accepted
+by RestQL, or **you can encode this JSON in base64** if you want your URL to
+appear "more secure".
+
+```js
+// This is an example using the base64 encoded request parameters.
+const toBase64 = (string) => new Buffer.from(string).toString('base64');
+axios.get('http://laravel.app/api/restql', {
+  params: {
+    query: toBase64(JSON.stringify({
+      authors: {
+        select: 'name'
+      }
+    }))
+  }
+}).then(({ data: authors }) => {
+  // Do something...
+  console.log(authors)
+});
+```
+
+Instead of having a long JSON response with unnecessary data, you would get
+something like this.
+
+```js
+{
+  "authors": [
+    { "id": 1, "name": "Kasey Yost" },
+    { "id": 2, "name": "Ike Barton" },
+    { "id": 3, "name": "Emie Daniel" },
+    {...}
+  ]
+}
+```
+
+Likewise, this will considerably optimize your queries to the database management
+system. In this case, it will run just a `select id, name from authors` for example.
 
 ## **How it works**
 
@@ -139,79 +216,8 @@ $query->select(['name'])->with([
 ]);
 ```
 
-Let's see how to do it using the RestQL package.
-
-## **Your first automatic consultation**
-
-Starting with the first version of RestQL, you can define a single endpoint.
-For this example we will do it in the routes file `api.php`.
-
-```php
-// api.php
-<?php
-
-use Restql\Restql;
-
-// The RestQL endpoint.
-Route::get('restql', function (Request $request) {
-  // This is not a facade.
-  return Restql::resolve($request);
-});
-```
-
-Now, you can re-factor your client's code so that it sends a parameter in the
-request with the data it needs, in this case a list of author names. They wear
-something like that.
-
-The parameters of the query can be a json object that defines the clauses accepted
-by RestQL, or you can encode this JSON in base64 if you want your URL to
-appear "more secure".
-
-```js
-// This is an example using the request parameters directly.
-axios.get('http://laravel.app/api/restql', {
-  params: {
-    authors: {
-      select: 'name'
-    }
-  }
-}).then(({ data }) => {
-    // Do something...
-    console.log(data)
-});
-
-// This is an example using the base64 encoded request parameters.
-const toBase64 = (string) => new Buffer.from(string).toString('base64');
-axios.get('http://laravel.app/api/restql', {
-  params: {
-    query: toBase64(JSON.stringify({
-      authors: {
-        select: 'name'
-      }
-    }))
-  }
-}).then(({ data }) => {
-  // Do something...
-  console.log(data)
-});
-```
-
-Instead of having a long JSON response with unnecessary data, you would get
-something like this. Likewise, this will considerably optimize your queries to
-the database management system. In this case, it will run just a
-`select id, name from authors` for example.
-
-
-```js
-{
-  "authors": [
-    { "id": 1, "name": "Kasey Yost" },
-    { "id": 2, "name": "Ike Barton" },
-    { "id": 3, "name": "Emie Daniel" },
-    {...}
-  ]
-}
-```
+You can read more about the RestQL Clausules <a href="./docs/Clausules.md"
+                                                title="RestQL Documentation">here</a>.
 
 # **Please support it**
 

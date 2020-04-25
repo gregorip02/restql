@@ -83,7 +83,7 @@ class ClausuleExecutor
         $this->clausules->each(function ($arguments, $clausuleName) {
             $clausuleClassName = $this->getClausuleClassName($clausuleName);
             if (class_exists($clausuleClassName)) {
-                (new $clausuleClassName($this, collect($arguments)))->build();
+                (new $clausuleClassName($this, collect($arguments)))->prepare();
             }
         });
 

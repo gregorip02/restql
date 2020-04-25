@@ -1,10 +1,13 @@
 {
+  "require-dev": {
+    "gregorip02/restql": "@dev"
+  },
   "repositories": [
     {
       "type": "path",
       "url": "/var/www/restql",
       "options": {
-          "symlink": true
+        "symlink": true
       }
     }
   ]
