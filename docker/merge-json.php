@@ -1,6 +1,9 @@
 #!/usr/bin/env php
 <?php
 
+# This script intends to add its own features to the composer.json file of your
+# laravel application.
+
 function ups($message = 'Something weng wrong', $exitCode = 1)
 {
     fwrite(STDERR, $message);

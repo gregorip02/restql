@@ -24,8 +24,8 @@ fi
 
 APP_FILES="${APPS_FILES:-/var/www/apps}/${APP_VERSION}"
 
-# Verificar que el proyecto exista y sea una aplicación
-# de laravel lista para funcionar.
+# Verify that the project exists and is an application
+# of laravel ready to go.
 if test -d "${APP_FILES}" && composer --working-dir="${APP_FILES}" dump; then
   echo "Hay un proyecto de Laravel ${APP_VERSION} creado, omitiendo..."
   php "${APP_FILES}/artisan" optimize:clear
