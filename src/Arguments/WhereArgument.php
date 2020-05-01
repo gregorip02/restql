@@ -2,6 +2,8 @@
 
 namespace Restql\Arguments;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Restql\Argument;
 
 class WhereArgument extends Argument
@@ -18,7 +20,7 @@ class WhereArgument extends Argument
      *
      * @var array
      */
-    public $defaults = ['id', '='];
+    public $defaults = ['id', '=', null];
 
     /**
      * Merge the user argument values with defaults data.

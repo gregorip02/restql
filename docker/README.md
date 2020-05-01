@@ -18,6 +18,22 @@ The directory structure is no different from the typical structure of a Laravel
 project. All files added to these folders will be added to the container at build
 time and their modification will be added at run time.
 
+## `docker-compose.override.example.yml` file
+
+You can rename this file to `docker-compose.override.yml` and add your custom
+environment vars. For example, if you want to **change the Laravel version**, only
+add this value in the `docker-compose.override.yml` file.
+
+```yml
+# docker-compose.override.yml
+version: "3.4"
+
+services:
+  fpm:
+    environment:
+      APP_VERSION: 6
+```
+
 ## `.env` file
 
 It is important not to confuse the .env file in this directory with the Laravel
@@ -33,3 +49,21 @@ folder where these files will be stored and other documented configurations.
 The `composer.json` file in this directory is nothing more than an extension to the
 final `composer.json` file of your Laravel application. The startup script did a
 combination of both before lifting the container.
+
+## Setup
+
+1. Run the docker containers
+
+```bash
+$ cd docker/
+$ docker-compose up -d
+```
+
+2. Wait 20 seconds and run the migrations
+
+```bash
+$ docker exec -it fpm php apps/${APP_VERSION}/artisan migrate:fresh --seed
+```
+
+All done, start to make request to `http://localhost:8080/api/restql`.
+
