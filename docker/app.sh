@@ -46,9 +46,8 @@ else
       "${APP_FILES}/composer.json"
 
   # Install dependencies
-  composer -vvv --working-dir="${APP_FILES}" install
+  composer -vvv --no-autoloader --no-scripts --working-dir="${APP_FILES}" install
   cp "${APP_FILES}/.env.example" "${APP_FILES}/.env"
-  php "${APP_FILES}/artisan" key:generate
 fi
 
 # Allow all permisions to storage and cache
@@ -60,6 +59,10 @@ ln -vfs ${USER_FILES}/app/*.php "${APP_FILES}/app/"
 ln -vfs ${USER_FILES}/routes/*.php "${APP_FILES}/routes/"
 ln -vfs ${USER_FILES}/config/*.php "${APP_FILES}/config/"
 ln -vfs "${USER_FILES}/database" "${APP_FILES}/database"
+
+# Dump for discover new files
+composer --working-dir="${APP_FILES}" dump
+php "${APP_FILES}/artisan" key:generate
 
 # Link the public folder for nginx compatibility.
 if ! test -d "/usr/share/nginx"; then
