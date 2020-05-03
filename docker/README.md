@@ -62,6 +62,7 @@ $ docker-compose up -d
 2. Wait 20 seconds and run the migrations
 
 ```bash
+# Replace ${APP_VERSION} with your version number especifed in .env file
 $ docker exec -it fpm php apps/${APP_VERSION}/artisan migrate:fresh --seed
 ```
 
