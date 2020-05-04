@@ -2,21 +2,27 @@
 
 namespace Restql\Arguments;
 
-use Restql\Argument;
+use Restql\Arguments\ModelArgument;
 
-class SortArgument extends Argument
+class SortArgument extends ModelArgument
 {
     /**
-     * The argument default keys.
+     * Determines if the argument accepts implicit values.
      *
-     * @var array
+     * @var boolean
      */
-    public $keys = ['column', 'direction'];
+    protected $hasImplicitValues = true;
 
     /**
-     * The argument default values.
+     * Get default values.
      *
-     * @var array
+     * @return array
      */
-    public $defaults = ['id', 'asc'];
+    public function getDefaultArgumentValues(): array
+    {
+        return [
+            'column'    => $this->getKeyName(),
+            'direction' => 'asc'
+        ];
+    }
 }

@@ -38,6 +38,6 @@ class SortClausule extends Clausule
      */
     public function getArgumentInstance(): Argument
     {
-        return new SortArgument($this->arguments);
+        return new SortArgument($this->arguments, $this->executor->getModel());
     }
 }
