@@ -2,9 +2,11 @@
 
 namespace Restql;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Restql\Contracts\ArgumentContract;
 
-class Argument
+class Argument implements ArgumentContract
 {
     /**
      * The argument values
@@ -14,18 +16,11 @@ class Argument
     protected $values;
 
     /**
-     * The argument default keys.
+     * Determines if the argument accepts implicit values.
      *
-     * @var array
+     * @var boolean
      */
-    public $keys = [];
-
-    /**
-     * The argument default values.
-     *
-     * @var array
-     */
-    public $defaults = [];
+    protected $hasImplicitValues = false;
 
     /**
      *
@@ -34,8 +29,16 @@ class Argument
     public function __construct(Collection $values)
     {
         $this->values = $values;
+    }
 
-        $this->fillDefaultValues();
+    /**
+     * Get the default argument values.
+     *
+     * @return array
+     */
+    public function getDefaultArgumentValues(): array
+    {
+        return [];
     }
 
     /**
@@ -43,94 +46,29 @@ class Argument
      *
      * @return array
      */
-    public function values(): array
+    public function getValues(): array
     {
         return $this->values->toArray();
     }
 
     /**
-     * Determine if the values are associative array.
+     * Determine if the incoming values are associative array.
      *
      * @return bool
      */
-    protected function isAssociative(): bool
+    public function isAssoc(): bool
     {
-        return ! isset($this->values()[0]);
+        return Arr::isAssoc($this->values->toArray());
     }
 
     /**
-     * Merge default values into argument keys.
+     * Determine if the incoming value is only one and also implicit.
      *
-     * @return array
+     * @return bool
      */
-    protected function combineAssociativeValues(): array
+    public function isImplicitValue(): bool
     {
-        return array_combine($this->keys, $this->defaults);
-    }
-
-    /**
-     * Merge defaults values into incoming indexed values.
-     *
-     * @return array
-     */
-    protected function combineIndexedValues(): array
-    {
-        $values = $this->values();
-
-        $countDefaults = $this->countDefaults();
-
-        $data = array_merge(
-            $values,
-            array_slice($this->defaults, count($values), $countDefaults)
-        );
-
-        return array_slice($data, 0, $countDefaults);
-    }
-
-    /**
-     * Fill the default values list with some value.
-     *
-     * @param  mixed $value
-     *
-     * @return void
-     */
-    protected function fillDefaultValues($value = null): void
-    {
-        $countDefaults = $this->countDefaults();
-
-        $countKeys = $this->countKeys();
-
-        if ($countDefaults < $countKeys) {
-            /// Fill the defaults values with null because the
-            /// parameters should have an equal number of elements for combine.
-            for ($i = $countDefaults; $i < $countKeys; $i++) {
-                $this->defaults[$i] = $value;
-            }
-        } elseif ($countDefaults > $countKeys) {
-            /// Crop the defaults values because the parameters should have an
-            /// equals number of elements.
-            $this->defaults = array_slice($this->defaults, 0, $countKeys);
-        }
-    }
-
-    /**
-     * Count the default argument values.
-     *
-     * @return int
-     */
-    public function countDefaults(): int
-    {
-        return count($this->defaults);
-    }
-
-    /**
-     * Count the default argument keys.
-     *
-     * @return int
-     */
-    public function countKeys(): int
-    {
-        return count($this->keys);
+        return ! $this->isAssoc() && $this->countValues() === 1;
     }
 
     /**
@@ -144,21 +82,44 @@ class Argument
     }
 
     /**
+     * Count the argument default values.
+     *
+     * @return int
+     */
+    public function countDefault(): int
+    {
+        return count($this->getDefaultArgumentValues());
+    }
+
+    /**
      * Merge the user argument values with defaults data.
      *
      * @return array
      */
     public function data(): array
     {
-        if (! $this->isAssociative()) {
-            $this->defaults = $this->combineIndexedValues();
+        $defaults = $this->getDefaultArgumentValues();
 
-            /// The default values are now the user values because
-            /// these are not associative data. Then, we will return
-            /// the default merge of these data.
-            return $this->combineAssociativeValues();
+        if (count($defaults) > 0) {
+            $values = $this->getValues();
+
+            if (! Arr::isAssoc($values) && $this->hasImplicitValues) {
+                /// Some arguments admit values of implicit type, that is, they
+                /// can be interpreted by the clause in different ways.
+
+                /// Prevent exception with "Both parameters should have an equal
+                /// number of elements" slicing the values.
+                $slice = array_slice(array_keys($defaults), 0, count($values));
+
+                return array_combine($slice, $values);
+            }
+
+            /// Combine the default values with the values sent by the client.
+            /// The default values of these attributes are required to be associative.
+            return array_merge($defaults, $values);
         }
 
-        return array_merge($this->combineAssociativeValues(), $this->values());
+        /// Returns the raw data.
+        return $this->getValues();
     }
 }

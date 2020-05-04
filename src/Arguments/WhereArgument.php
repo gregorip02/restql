@@ -2,37 +2,48 @@
 
 namespace Restql\Arguments;
 
-use Restql\Argument;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Restql\Contracts\ArgumentContract;
 
-class WhereArgument extends Argument
+class WhereArgument extends ModelArgument implements ArgumentContract
 {
     /**
-     * The argument default keys.
+     * Determines if the argument accepts implicit values.
      *
-     * @var array
+     * @var boolean
      */
-    public $keys = ['column', 'operator', 'value'];
+    protected $hasImplicitValues = true;
 
     /**
-     * The argument default values.
-     *
-     * @var array
-     */
-    public $defaults = ['id', '='];
-
-    /**
-     * Merge the user argument values with defaults data.
+     * Get the argument values as array.
      *
      * @return array
      */
-    public function data(): array
+    public function getValues(): array
     {
-        if (! $this->isAssociative() && $this->countValues() === 1) {
-            $this->defaults[2] = $this->values->first();
-
-            return $this->combineAssociativeValues();
+        if ($this->isImplicitValue()) {
+            /// When an implicit type value is received, it will be assumed that
+            /// it corresponds to the value of the primary column of the model.
+            return [
+                "value" => $this->values->first()
+            ];
         }
 
-        return parent::data();
+        return $this->values->toArray();
+    }
+
+    /**
+     * Get default values.
+     *
+     * @return array
+     */
+    public function getDefaultArgumentValues(): array
+    {
+        return [
+            'column'   => $this->getKeyName(),
+            'operator' => '=',
+            'value'    => null
+        ];
     }
 }

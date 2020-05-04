@@ -39,6 +39,6 @@ class WhereClausule extends Clausule
      */
     public function getArgumentInstance(): Argument
     {
-        return new WhereArgument($this->arguments);
+        return new WhereArgument($this->arguments, $this->executor->getModel());
     }
 }
