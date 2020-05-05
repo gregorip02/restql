@@ -4,11 +4,11 @@ namespace Restql;
 
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Restql\Builder;
-use Restql\Clausules\WhereClausule;
 use Restql\Clausules\SelectClausule;
 use Restql\Clausules\SortClausule;
+use Restql\Clausules\WhereClausule;
 use Restql\Clausules\WithClausule;
 
 class ClausuleExecutor
@@ -20,9 +20,9 @@ class ClausuleExecutor
      */
     public const ACCEPTED_CLAUSULES = [
         'select' => SelectClausule::class,
-        'sort' => SortClausule::class,
-        'with' => WithClausule::class,
-        'where' => WhereClausule::class
+        'sort'   => SortClausule::class,
+        'with'   => WithClausule::class,
+        'where'  => WhereClausule::class
     ];
 
     /**
@@ -136,5 +136,16 @@ class ClausuleExecutor
     public function executeQuery($callback): void
     {
         $callback($this->query);
+    }
+
+    /**
+     * Filter and get only the accepted clausules.
+     *
+     * @param  array  $incomingClausules
+     * @return array
+     */
+    public static function filterClausules(array $incomingClausules): array
+    {
+        return Arr::only($incomingClausules, array_keys(self::ACCEPTED_CLAUSULES));
     }
 }

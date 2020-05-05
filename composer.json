@@ -8,7 +8,8 @@
   "authors": [
     {
       "name": "Gregori Piñeres",
-      "email": "gregori.pineres02@gmail.com"
+      "email": "gregori.pineres02@gmail.com",
+      "homepage": "https://github.com/gregorip02"
     }
   ],
   "support": {
@@ -32,7 +33,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Test\\": "tests/"
+      "Tests\\": "tests/"
     }
   },
   "extra": {
@@ -41,6 +42,9 @@
         "Restql\\Providers\\RestqlServiceProvider"
       ]
     }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
   },
   "minimum-stability": "dev",
   "prefer-stable": true
