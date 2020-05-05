@@ -1,5 +1,7 @@
 # RestQL
 
+[![Actions Status](https://github.com/gregorip02/restql/workflows/tests/badge.svg)](https://github.com/gregorip02/restql/actions)
+
 RestQL is a Laravel eloquent-based data resolution package. This package tries to
 adopt **GraphQL** principles solving only the data that the client requests.
 RestQL uses your **Laravel** models as an entry point to add queries to then
