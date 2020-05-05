@@ -72,6 +72,8 @@ else
 fi
 
 ln -vfs "${APP_FILES}/public" /usr/share/nginx/html
+# Create current directory for externals commands
+ln -vfs ${APP_FILES} "${APPS_FILES}/current"
 
 # Start the FPM Service
 echo "Starting..."

@@ -61,7 +61,7 @@ class Builder
      */
     protected function dispatch(): Collection
     {
-        $this->query->each(function ($clausules, $modelKeyName) {
+        $this->getAllowedModels()->each(function ($clausules, $modelKeyName) {
             /// Obtain the class name of the eloquent model based on the models
             /// allowed for the automatic resolution of data registered in the
             /// user configuration.
@@ -73,12 +73,10 @@ class Builder
                 if ($model instanceof Model) {
                     /// Execute only the clauses allowed by RestQL.
                     /// TODO: Allow the user to create their own clauses.
-                    $builder = ClausuleExecutor::exec($model, collect($clausules)->only(
-                        array_keys(ClausuleExecutor::ACCEPTED_CLAUSULES)
-                    ));
+                    $executor = $this->runExecutor($model, (array) $clausules);
 
                     /// Build the answer collection.
-                    $this->response[$modelKeyName] = $builder;
+                    $this->response[$modelKeyName] = $executor;
                 }
             }
         });
@@ -87,14 +85,69 @@ class Builder
     }
 
     /**
+     * Dispatch the clausule executor with the filter clausules.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  array  $clausules
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function runExecutor(Model $model, array $clausules): QueryBuilder
+    {
+        return ClausuleExecutor::exec($model, $this->filterClausules($clausules));
+    }
+
+    /**
+     * Filter the incoming clausules.
+     *
+     * @param  array  $incomingClausules
+     * @return \Illuminate\Support\Collection
+     */
+    public function filterClausules(array $incomingClausules): Collection
+    {
+        return collect(ClausuleExecutor::filterClausules($incomingClausules));
+    }
+
+    /**
+     * Get the allowed models by the developer.
+     *
+     * @return array
+     */
+    protected function getModelKeysNames(): array
+    {
+        return $this->config->get('allowed_models', []);
+    }
+
+    /**
+     * Determine if the model key name is allowed.
+     *
+     * @param  string $modelKeyName
+     * @return bool
+     */
+    protected function modelKeyNameExists(string $modelKeyName): bool
+    {
+        return array_key_exists($modelKeyName, $this->getModelKeysNames());
+    }
+
+    /**
      * Get the model classname for the instance.
      *
      * @param  string $modelKeyName
      * @return string
      */
-    protected function getModelClassName($modelKeyName): string
+    protected function getModelClassName(string $modelKeyName): string
     {
-        $config = $this->config->get('allowed_models', [])[$modelKeyName];
-        return $config;
+        return $this->getModelKeysNames()[$modelKeyName];
+    }
+
+    /**
+     * Remove unknow model key names from the incoming query.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAllowedModels(): Collection
+    {
+        return $this->query->filter(function ($null, $modelKeyName) {
+            return $this->modelKeyNameExists($modelKeyName);
+        });
     }
 }
