@@ -2,11 +2,12 @@
 
 namespace Restql\Clausules;
 
-use Restql\Clausule;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Collection;
+use Restql\Clausule;
+use Restql\Support\ReflectionSupport;
 
 class SelectClausule extends Clausule
 {
@@ -14,7 +15,6 @@ class SelectClausule extends Clausule
      * Implement the clausule query builder.
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
-     *
      * @return void
      */
     public function build(QueryBuilder $builder): void
@@ -45,21 +45,22 @@ class SelectClausule extends Clausule
      *
      * @param  \Illuminate\Support\Collection $withParams
      * @param  \Illuminate\Database\Model $model
-     *
      * @return array
      */
     protected function getBelongsToAttributes(Collection $withParams, Model $model): array
     {
         return $withParams->filter(function ($method) use ($model) {
-            /// Determine if the relationship does not exists.
-            if (!method_exists($model, $method)) {
+            if (! method_exists($model, $method)) {
+                /// Exclude methods not found in the model
                 return false;
             }
-            /// Determine if the relationship is of type BelongsTo.
-            return $model->{$method}() instanceof BelongsTo;
+            /// From this change, the developer needs to set the return type in
+            /// its eloquent relationships. This will greatly optimize the
+            /// algorithm speed and consequently server responses.
+            return (new ReflectionSupport($model))->methodIs($method, BelongsTo::class);
         })->map(function ($method) use ($model) {
             /// Get the foreign key of the relationship.
-            return $model->{$method}()->getForeignKeyName();
+            return call_user_func_array([$model, $method], [])->getForeignKeyName();
         })->unique()->toArray();
     }
 
@@ -67,7 +68,6 @@ class SelectClausule extends Clausule
      * Get the select arguments requested by the client.
      *
      * @param \Illuminate\Database\Eloquent\Model $model
-     *
      * @return \Illuminate\Support\Collection
      */
     public function parseArguments(Model $model): Collection
