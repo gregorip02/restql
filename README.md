@@ -77,19 +77,19 @@ attributes.
 
 ## **Get started**
 
-1. Install **RestQL** using composer.
+1. **Install RestQL using composer.**
 
 ```bash
 composer require gregorip02/restql
 ```
 
-2. Publish the package configuration.
+2. **Publish the package configuration.**
 
 ```bash
 php artisan vendor:publish --tag=restql-config
 ```
 
-3. Set your allowed data resolution models.
+3. **Set your allowed data resolution models.**
 
 ```php
 // config/restql.php
@@ -106,7 +106,56 @@ return [
 
 With this configuration, your **Author** model can now be an automatic data resolution model.
 
-4. Configure your endpoint
+4. **Specify the return type of your relationships.**
+
+Since RestQL version 1.4, the developer must specify the return type of the
+relationships defined in the eloquent model. This means that if your model has a
+`hasMany` type relationship like the following it will not work.
+
+```php
+<?php
+
+namespace App;
+
+use App\Article;
+use Illuminate\Database\Eloquent\Model;
+
+class Author extends Model
+{
+  public function articles()
+  {
+    return $this->hasMany(Article::class);
+  }
+}
+```
+
+Instead, you should set the return type of your associative methods (relationships).
+Obtaining a code like the following. See also [Returning values](https://www.php.net/manual/en/functions.returning-values.php).
+
+```php
+<?php
+
+namespace App;
+
+use App\Article;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Author extends Model
+{
+    /**
+     * Get the author articles.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function articles(): HasMany
+    {
+        return $this->hasMany(Article::class);
+    }
+}
+```
+
+5. **Configure your endpoint.**
 
 You can define a single endpoint. For this example we will do it in the routes
 file `api.php`.
