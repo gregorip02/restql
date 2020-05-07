@@ -55,12 +55,11 @@ class WithClausule extends Clausule
             /// From this change, the developer needs to set the return type in
             /// its eloquent relationships. This will greatly optimize the
             /// algorithm speed and consequently server responses.
-            $parentClass = class_parents($methodType);
-            $parentClass = array_values($parentClass)[count($parentClass) - 1];
+            $parentClasses = class_parents($methodType) ?? [];
 
             /// A stupid way to determine if the property typed in the method is
             /// of type "\Illuminate\Database\Eloquent\Relation".
-            return $parentClass === Relation::class;
+            return array_key_exists(Relation::class, $parentClasses);
         })->map(function ($clausules) {
             /// Build the related model query.
             return $this->buildRelationQuery(collect($clausules));
