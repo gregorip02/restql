@@ -47,25 +47,20 @@ class WithClausule extends Clausule
             $reflection = new ReflectionSupport($model);
             $methodType = $reflection->getMethodReturnType($method);
 
-            /// Un pequeño truco para determinar si el metodo definido en el modelo
-            /// Eloquent retorna una instancia de "Relation".
-            ///
-            /// La comprobación que se hace aqui parece algo estupida, ya que
-            /// solor verifica si el tipo de retorno del metodo existe en el namespace
-            /// "Illuminate\Database\Eloquent\Relation\<ReturnType>".
-            ///
-            /// Con esto evitamos que se cuelen "relaciones" que en realidad no
-            /// lo son. Por ejemplo, un desarrollador podria enviar "with" como
-            /// un metodo mas en el conjunto de metodos aceptados por la clausula
-            /// "WithClausule" y este intentaria ejecutarlo pensando que es una
-            /// relación.
-            ///
+            /// Excluding untyped methods in eloquent models.
+            if ($methodType === '') {
+                return false;
+            }
+
             /// From this change, the developer needs to set the return type in
             /// its eloquent relationships. This will greatly optimize the
             /// algorithm speed and consequently server responses.
-            return class_exists(
-                Str::replaceLast('Relation', class_basename($methodType), Relation::class)
-            );
+            $parentClass = class_parents($methodType);
+            $parentClass = array_values($parentClass)[count($parentClass) - 1];
+
+            /// A stupid way to determine if the property typed in the method is
+            /// of type "\Illuminate\Database\Eloquent\Relation".
+            return $parentClass === Relation::class;
         })->map(function ($clausules) {
             /// Build the related model query.
             return $this->buildRelationQuery(collect($clausules));

@@ -60,7 +60,7 @@ class SelectClausule extends Clausule
             return (new ReflectionSupport($model))->methodIs($method, BelongsTo::class);
         })->map(function ($method) use ($model) {
             /// Get the foreign key of the relationship.
-            return call_user_func_array([$model, $method], [])->getForeignKeyName();
+            return call_user_func([$model, $method])->getForeignKeyName();
         })->unique()->toArray();
     }
 
