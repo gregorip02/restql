@@ -1,9 +1,10 @@
 <?php
 
 use App\Author;
-use Restql\Restql;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Restql\Restql;
 
 Route::get('restql', function (Request $request) {
     return Restql::resolve($request);
@@ -14,6 +15,8 @@ Route::get('version', function () {
     return $app::VERSION;
 });
 
-Route::get('authors', function () {
-    return Author::take(15)->get();
+Route::get('traditional', function () {
+    return Author::with(['articles' => static function (Relation $relation) {
+        $relation->with('comments');
+    }])->take(15)->get();
 });

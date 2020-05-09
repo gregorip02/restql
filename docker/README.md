@@ -68,3 +68,6 @@ $ docker exec -it fpm php apps/current/artisan migrate:fresh --seed
 
 All done, start to make request to `http://localhost:8080/api/restql`.
 
+# Test with **Insomnia**
+
+Import the `tests/insomnia.json` then, you are ready to make dark magic.
