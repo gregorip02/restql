@@ -98,25 +98,22 @@ class Argument implements ArgumentContract
      */
     public function data(): array
     {
-        $defaults = $this->getDefaultArgumentValues();
-
-        if (count($defaults) > 0) {
+        if ($defaultValues = $this->getDefaultArgumentValues()) {
             $values = $this->getValues();
 
+            /// Some arguments admit values of implicit type, that is, they
+            /// can be interpreted by the clause in different ways.
             if (! Arr::isAssoc($values) && $this->hasImplicitValues) {
-                /// Some arguments admit values of implicit type, that is, they
-                /// can be interpreted by the clause in different ways.
-
                 /// Prevent exception with "Both parameters should have an equal
                 /// number of elements" slicing the values.
-                $slice = array_slice(array_keys($defaults), 0, count($values));
+                $slice = array_slice(array_keys($defaultValues), 0, count($values));
 
                 return array_combine($slice, $values);
             }
 
             /// Combine the default values with the values sent by the client.
             /// The default values of these attributes are required to be associative.
-            return array_merge($defaults, $values);
+            return array_merge($defaultValues, $values);
         }
 
         /// Returns the raw data.
