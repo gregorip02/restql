@@ -25,7 +25,23 @@ $query->select(["id", "name", "email", "age"]);
 $query->select(["id", "name"]);
 ```
 
-> The select clausule forget the model hidden attributes for the query by default.
+# **Take**
+
+Set the "limit" value of the query.
+
+##### Json Format
+```javascript
+{
+    "take": 10
+}
+```
+
+##### RestQL Implementation
+```php
+$query->take(10);
+```
+
+> **Important** The limit and take query builder methods may not be used when constraining eager loads.
 
 # **Where**
 

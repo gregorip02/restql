@@ -1,10 +1,10 @@
 <?php
 
 use App\Author;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Restql\Restql;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Restql\Restql;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 Route::get('restql', function (Request $request) {
     return Restql::resolve($request);

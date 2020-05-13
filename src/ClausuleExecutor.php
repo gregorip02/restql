@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Restql\Clausules\SelectClausule;
 use Restql\Clausules\SortClausule;
+use Restql\Clausules\TakeClausule;
 use Restql\Clausules\WhereClausule;
 use Restql\Clausules\WithClausule;
 
@@ -22,6 +23,7 @@ class ClausuleExecutor
         'select' => SelectClausule::class,
         'sort'   => SortClausule::class,
         'with'   => WithClausule::class,
+        'take'   => TakeClausule::class,
         'where'  => WhereClausule::class
     ];
 
