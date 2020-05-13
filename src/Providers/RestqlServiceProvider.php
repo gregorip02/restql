@@ -3,6 +3,7 @@
 namespace Restql\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Restql\Services\ConfigService;
 
 class RestqlServiceProvider extends ServiceProvider
 {
@@ -14,6 +15,22 @@ class RestqlServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom($this->configPath(), 'restql');
+
+        if ($this->appIsWorking()) {
+            $this->app->singleton(ConfigService::class, function ($app) {
+                return new ConfigService($app['config']['restql']);
+            });
+        }
+    }
+
+    /**
+     * Determine if the app is running in console and isn't running test.
+     *
+     * @return bool
+     */
+    protected function appIsWorking(): bool
+    {
+        return $this->app->runningInConsole() && !$this->app->runningUnitTests();
     }
 
     /**

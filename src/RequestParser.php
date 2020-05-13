@@ -4,8 +4,8 @@ namespace Restql;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
 use Restql\Exceptions\InvalidEncodingValue;
+use Restql\Services\ConfigService;
 
 class RequestParser
 {
@@ -19,7 +19,7 @@ class RequestParser
     /**
      * The application config.
      *
-     * @var \Illuminate\Support\Collection
+     * @var \Restql\Services\ConfigService
      */
     protected $config;
 
@@ -32,7 +32,7 @@ class RequestParser
     {
         $this->request = $request;
 
-        $this->config = collect(Config::get('restql', []));
+        $this->config = app(ConfigService::class);
     }
 
     /**

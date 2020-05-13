@@ -16,7 +16,7 @@ class TestCase extends OrchestraTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-        // Setup default database to use sqlite :memory:
+        $app['config']->set('restql.query_param', 'query');
         $app['config']->set('restql.allowed_models', [
             'authors' => 'App\Author'
         ]);

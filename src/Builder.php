@@ -2,11 +2,11 @@
 
 namespace Restql;
 
-use Restql\ClausuleExecutor;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Restql\ClausuleExecutor;
+use Restql\Services\ConfigService;
 
 class Builder
 {
@@ -27,7 +27,7 @@ class Builder
     /**
      * The application config.
      *
-     * @var \Illuminate\Support\Collection
+     * @var \Restql\Services\ConfigService
      */
     protected $config;
 
@@ -40,7 +40,7 @@ class Builder
     {
         $this->query = $query;
 
-        $this->config = collect(Config::get('restql', []));
+        $this->config = app(ConfigService::class);
     }
 
     /**
