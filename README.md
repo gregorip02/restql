@@ -7,7 +7,7 @@ adopt **GraphQL** principles solving only the data that the client requests.
 RestQL uses your **Laravel** models as an entry point to add queries to then
 based in the eloquent methods.
 
-<img src="./img/example.png" alt="Laravel RestQL"/>
+<img src="./docs/example.png" alt="Laravel RestQL"/>
 
 ## **The Data Resolution Packages**
 
