@@ -26,9 +26,23 @@ class SelectClausule extends Clausule
         $arguments = $this->parseArguments($model);
 
         /// You have to determine if the client requests BelongsTo
-        /// relationships in the "with" clause. If true, the foreign key
+        /// relationships in the next "with" clause. If true, the foreign key
         /// name must be added to the query so that the eloquent collection
         /// knows where it belongs.
+        $this->pushBelongsToForeignKeyName($arguments, $model);
+
+        $builder->select($arguments->toArray());
+    }
+
+    /**
+     * Push belongsTo foreign key names to the selec clausule.
+     *
+     * @param  \Illuminate\Support\Collection &$arguments
+     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @return void
+     */
+    protected function pushBelongsToForeignKeyName(Collection &$arguments, Model $model): void
+    {
         $withModelNames = $this->executor->getWithModelKeyNames();
         if ($withModelNames->count()) {
             $belongsTo = $this->getBelongsToAttributes($withModelNames, $model);
@@ -36,8 +50,6 @@ class SelectClausule extends Clausule
                 $arguments->push(...$belongsTo);
             }
         }
-
-        $builder->select($arguments->toArray());
     }
 
     /**

@@ -2,15 +2,12 @@
 
 namespace Restql\Clausules;
 
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Restql\Clausule;
-use Restql\ClausuleExecutor;
 use Restql\Support\ReflectionSupport;
 
 class WithClausule extends Clausule
@@ -19,7 +16,6 @@ class WithClausule extends Clausule
      * Implement the clausule query builder.
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
-     *
      * @return void
      */
     public function build(QueryBuilder $builder): void
@@ -33,7 +29,6 @@ class WithClausule extends Clausule
      * Create an array that corresponds to the relation key name => callback.
      *
      * @param  \Illuminate\Database\Eloquent\Model $model
-     *
      * @return array
      */
     protected function parseArguments(Model $model): array
@@ -70,27 +65,26 @@ class WithClausule extends Clausule
      * Build the clousure called in the select clausule.
      *
      * @param  \Illuminate\Support\Collection $clausules
-     *
      * @return Clousure
      */
     protected function buildRelationQuery(Collection $clausules)
     {
         return function (Relation $relation) use ($clausules) {
-            if ($args = $clausules->get('select', false)) {
+            if ($selects = (array) $clausules->get('select', null)) {
                 /// Add the foreign key name in HasMany type relationships
                 if ($relation instanceof HasMany) {
-                    $args = collect($args)->add(
-                        $relation->getForeignKeyName()
-                    )->toArray();
-
-                    $clausules->offsetSet('select', $args);
+                    $foreignKeyName = $relation->getForeignKeyName();
+                    if (! in_array($foreignKeyName, $selects, true)) {
+                        $selects[] = $foreignKeyName;
+                        $clausules->put('select', $selects);
+                    }
                 }
             }
 
             /// Unnecesary include the take or limit clausule.
             $clausules->forget(['take', 'limit']);
 
-            ClausuleExecutor::exec($relation->getRelated(), $clausules, $relation->getQuery());
+            $this->executor->exec($relation->getRelated(), $clausules, $relation->getQuery());
         };
     }
 }

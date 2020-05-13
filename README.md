@@ -174,6 +174,27 @@ Route::get('restql', function (Request $request) {
 });
 ```
 
+Also, you can pass a clousure with the eloquente query builder has argument. This
+allow you to add and resolve the data based on your logic. For example.
+
+```php
+// api.php
+<?php
+
+use Restql\Restql;
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+
+// The RestQL endpoint.
+Route::get('restql', function (Request $request) {
+  // This is not a facade.
+  return Restql::resolve($request)->get(function (QueryBuilder $builder) {
+    // Do something and return a getter method like: get, paginate...
+    return $builder->paginate();
+  });
+});
+```
+
 Now, you can re-factor your client's code so that it sends a parameter in the
 request with the data it needs, in this case a collection of author names. They wear
 something like that.
