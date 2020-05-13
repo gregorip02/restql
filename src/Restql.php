@@ -2,6 +2,7 @@
 
 namespace Restql;
 
+use Closure;
 use Restql\Builder;
 use Restql\RequestParser;
 use Illuminate\Http\Request;
@@ -64,16 +65,16 @@ class Restql implements Responsable
     /**
      * Create a new Eloquent Collection instance by default.
      *
-     * @param  Clousure $callback
+     * @param  Closure $callback
      * @return Collection
      */
-    public function get($callback = null)
+    public function get(Closure $callback = null)
     {
         return $this->response->map(function (QueryBuilder $builder) use ($callback) {
             /// You can pass a clousure with the eloquente query
             /// builder has argument. This allow you to add and
             /// resolve the data based on your logic.
-            if (is_callable($callback)) {
+            if ($callback instanceof Closure) {
                 return $callback($builder);
             }
 
@@ -81,7 +82,7 @@ class Restql implements Responsable
             /// dispatch the get method on the query.
             $limit = $builder->getQuery()->limit ?? 15;
 
-            return $builder->take($limit)->{$limit > 1 ? 'get' : 'first' }();
+            return $builder->take($limit)->get();
         });
     }
 
@@ -93,6 +94,6 @@ class Restql implements Responsable
      */
     public function toResponse($request)
     {
-        return new Response($this->get());
+        return new Response(['data' => $this->get()]);
     }
 }
