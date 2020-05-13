@@ -49,6 +49,17 @@ class Restql implements Responsable
     }
 
     /**
+     * Start data resolution from the eloquent models with array.
+     *
+     * @param  array  $array
+     * @return \Restql\Restql
+     */
+    public static function resolveWithArr(array $array = []): Restql
+    {
+        return self::resolve(new Request($array));
+    }
+
+    /**
      * Dispatch the builder make method and save the response.
      *
      * @return \Restql\Restql
