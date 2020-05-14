@@ -14,15 +14,43 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Data resolution models
+    | Data resolution schema
     |--------------------------------------------------------------------------
     |
-    | An associative array containing the name to access the model as a key and
-    | the eloquent model class as a value.
-    |
-    | @example [ 'authors' => 'App\Author', 'articles' => 'App\Article' ]
+    | Define your schema, include the allowed models.
     */
-    'allowed_models' => [
-        //
+
+    'schema' => [
+        // TODO: Include your schema
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom resolvers definition
+    |--------------------------------------------------------------------------
+    |
+    | Define customizable resolvers,
+    */
+
+    'resolvers' => [
+        // Uncoment this and get the currently authenticated user.
+        // 'whoami' => [
+        //    'class' => 'Restql\Resolvers\WhoamiResolver',
+        // ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed clausules
+    |--------------------------------------------------------------------------
+    |
+    | TODO: Create documentation for this.
+    */
+    'clausules' => [
+        'select' => 'Restql\Clausules\SelectClausule',
+        'where' => 'Restql\Clausules\WhereClausule',
+        'take' => 'Restql\Clausules\TakeClausule',
+        'sort' => 'Restql\Clausules\SortClausule',
+        'with' => 'Restql\Clausules\WithClausule'
     ]
 ];

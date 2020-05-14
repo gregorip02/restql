@@ -21,7 +21,8 @@
     "laravel/framework": "^5.8|^6.0|^7.0"
   },
   "require-dev": {
-    "orchestra/testbench": "^3.8|^4|^5"
+    "phpunit/phpunit": "^7.5|^8",
+    "orchestra/testbench": "^3.7|^4|^5"
   },
   "autoload": {
     "psr-4": {

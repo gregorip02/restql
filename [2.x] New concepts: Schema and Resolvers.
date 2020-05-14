@@ -1,0 +1,66 @@
+[2.x] New concepts: Schema and Resolvers.
+
+This branch reference previus changes to [2.x] and
+the code maybe not compatible with [1.x].
+
+## Schema
+Este concepto hace referencia a los modelos
+eloquent definidos por el desarrollador para su
+consulta automatica. Esto es un reemplazo a lo que
+seria "allowed_models" en la version anterior. El
+cambio mas importante, ademas del nombre, es que
+ahora recibe un arreglo de elementos cuyos valores
+actuales son los siguientes.
+
+`[keyname].[class]` References the model class name.
+
+For example.
+
+```php
+// restql.php
+
+return [
+    'schema' => [
+        'authors' => [
+            'class' => 'App\Author',
+            // Next features like middleware or
+            // guards.
+        ]
+    ]
+];
+```
+
+## Resolvers
+Los resolvers son clases totalmente personalizadas
+por el usuario, estos le ayudaran a "resolver"
+facilmente valores propios de su aplicación. como
+ejemplo RestQL añade un resolver llamado "whoami"
+que simplemente devuelve un arreglo con el usuario
+autenticado en la aplicación. Sientase libre de
+cambiar o eliminar este "resolver" directamente
+en la configuración.
+
+Http request be like,
+```json
+{
+    "whoami": true,
+    "authors": {...}
+}
+```
+
+Response be like,
+
+```json
+{
+    "data": {
+        "whoami": {
+            "name": "Gregori Piñeres",
+            "email": "me@admin.com",
+            "..."
+        },
+        "authors": {
+            "...."
+        }
+    }
+}
+```

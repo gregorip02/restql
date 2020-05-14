@@ -6,26 +6,12 @@ use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Restql\Clausules\SelectClausule;
-use Restql\Clausules\SortClausule;
-use Restql\Clausules\TakeClausule;
-use Restql\Clausules\WhereClausule;
-use Restql\Clausules\WithClausule;
+use Restql\Services\ConfigService;
+use Restql\Traits\HasConfigService;
 
-class ClausuleExecutor
+final class ClausuleExecutor
 {
-    /**
-     * The accepted clausules.
-     *
-     * @var array
-     */
-    public const ACCEPTED_CLAUSULES = [
-        'select' => SelectClausule::class,
-        'sort'   => SortClausule::class,
-        'with'   => WithClausule::class,
-        'take'   => TakeClausule::class,
-        'where'  => WhereClausule::class
-    ];
+    use HasConfigService;
 
     /**
      * The eloquent model.
@@ -35,18 +21,18 @@ class ClausuleExecutor
     protected $model;
 
     /**
-     * The eloquent query.
-     *
-     * @var \Illuminate\Database\Eloquent\Builder
-     */
-    protected $query;
-
-    /**
      * The eloquent clauses.
      *
      * @var \Illuminate\Support\Collection
      */
     protected $clausules;
+
+    /**
+     * The eloquent query.
+     *
+     * @var \Illuminate\Database\Eloquent\Builder
+     */
+    protected $query;
 
     /**
      * The class instance.
@@ -58,8 +44,10 @@ class ClausuleExecutor
     public function __construct(Model $model, Collection $clausules, QueryBuilder $query = null)
     {
         $this->model = $model;
-        $this->query = $query ?? $model->query();
+
         $this->clausules = $clausules;
+
+        $this->query = $query ?? $model->query();
     }
 
     /**
@@ -82,29 +70,19 @@ class ClausuleExecutor
      */
     protected function make(): QueryBuilder
     {
-        $this->clausules->each(function ($arguments, $clausuleName) {
-            $clausuleClassName = $this->getClausuleClassName($clausuleName);
-            if (class_exists($clausuleClassName)) {
-                (new $clausuleClassName($this, collect($arguments)))->prepare();
-            }
+        $configService = $this->getConfigService();
+
+        $this->clausules
+        ->filter(function ($null, $clausuleName) use ($configService) {
+            return $configService->hasClausule($clausuleName);
+        })
+        ->map(function ($arguments, string $clausuleName) use ($configService) {
+            return $configService->createClasuleInstance($this, $clausuleName, (array) $arguments);
+        })->each(function (Clausule $clausule) {
+            $clausule->prepare();
         });
 
         return $this->query;
-    }
-
-    /**
-     * Get the clausule class name based on the clausule key name.
-     *
-     * @param  string $clausuleName
-     * @return string
-     */
-    protected function getClausuleClassName(string $clausuleName): string
-    {
-        if (key_exists($clausuleName, self::ACCEPTED_CLAUSULES)) {
-            return self::ACCEPTED_CLAUSULES[$clausuleName];
-        }
-
-        return '';
     }
 
     /**
@@ -138,16 +116,5 @@ class ClausuleExecutor
     public function executeQuery($callback): void
     {
         $callback($this->query);
-    }
-
-    /**
-     * Filter and get only the accepted clausules.
-     *
-     * @param  array  $incomingClausules
-     * @return array
-     */
-    public static function filterClausules(array $incomingClausules): array
-    {
-        return Arr::only($incomingClausules, array_keys(self::ACCEPTED_CLAUSULES));
     }
 }

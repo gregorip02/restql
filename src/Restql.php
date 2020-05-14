@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
-class Restql implements Responsable
+final class Restql implements Responsable
 {
     /**
      * The collection response.
@@ -79,21 +79,17 @@ class Restql implements Responsable
      * @param  Closure $callback
      * @return Collection
      */
-    public function get(Closure $callback = null)
+    public function get(Closure $callback = null): Collection
     {
-        return $this->response->map(function (QueryBuilder $builder) use ($callback) {
+        return $this->response->map(function (Collection $data) use ($callback) {
             /// You can pass a clousure with the eloquente query
             /// builder has argument. This allow you to add and
             /// resolve the data based on your logic.
             if ($callback instanceof Closure) {
-                return $callback($builder);
+                return $callback($data);
             }
 
-            /// By default Restql get the first 15 results and
-            /// dispatch the get method on the query.
-            $limit = $builder->getQuery()->limit ?? 15;
-
-            return $builder->take($limit)->get();
+            return $data;
         });
     }
 
@@ -105,6 +101,8 @@ class Restql implements Responsable
      */
     public function toResponse($request)
     {
-        return new Response(['data' => $this->get()]);
+        $response = $this->get();
+
+        return new Response(['data' => $response]);
     }
 }

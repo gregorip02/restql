@@ -2,10 +2,10 @@
 
 namespace Restql\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Restql\Services\ConfigService;
+use Illuminate\Support\ServiceProvider;
 
-class RestqlServiceProvider extends ServiceProvider
+final class RestqlServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
