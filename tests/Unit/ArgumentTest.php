@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Unit;
+namespace Testing\Unit;
 
 use Illuminate\Support\Collection;
 use Restql\Argument;
-use Tests\TestCase;
+use Testing\TestCase;
 
 class ArgumentTest extends TestCase
 {

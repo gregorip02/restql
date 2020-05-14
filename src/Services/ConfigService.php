@@ -2,10 +2,11 @@
 
 namespace Restql\Services;
 
-use Restql\Clausule;
-use Restql\ClausuleExecutor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Restql\Clausule;
+use Restql\ClausuleExecutor;
+use Restql\Exceptions\InvalidSchemaDefinitionException;
 
 final class ConfigService
 {
@@ -129,7 +130,10 @@ final class ConfigService
     public function getSchemaDefinitionOrFail(string $keyName): array
     {
         if (! $this->inSchema($keyName)) {
-            /// TODO: Implement schema definition not found exception here.
+            throw new InvalidSchemaDefinitionException(
+                $keyName,
+                sprintf('The key name [%s] is not defined.', $keyName)
+            );
         }
 
         return $this->getSchemaDefinition($keyName);

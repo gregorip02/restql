@@ -71,8 +71,9 @@ final class SchemaDefinition
     }
 
     /**
-     * [getArguments description]
-     * @return [type] [description]
+     * Get the schema definition arguments.
+     *
+     * @return array
      */
     public function getArguments(): array
     {
@@ -86,7 +87,11 @@ final class SchemaDefinition
      */
     public function getType(): string
     {
-        $parentClass = Arr::last(class_parents($this->getClass()));
+        $classname = $this->getClass();
+
+        $classname = class_exists($classname) ? class_parents($classname) : [$classname];
+
+        $parentClass = Arr::last($classname);
 
         return Str::lower(class_basename($parentClass));
     }
