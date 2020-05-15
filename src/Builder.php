@@ -53,15 +53,10 @@ final class Builder
      */
     protected function dispatch(): Collection
     {
-        $this->schema()->filter(function (SchemaDefinition $schema) {
-            /// Checks if the schema class exists and be a
-            /// 'Illuminate\Database\Eloquent\Model' or 'Restql\Resolver' children.
-            return $schema->imValid();
-        })->each(function (SchemaDefinition $schema) {
-            /// TODO: Document this in english.
-            $keyName = $schema->getKeyName();
-
-            $this->response[$keyName] = $schema->handle();
+        $this->schema()->each(function (SchemaDefinition $schema) {
+            /// Executing the "handle" method in the schema definition, this will
+            /// return a collection with data resolved independently.
+            $this->response[$schema->getKeyName()] = $schema->handle();
         });
 
         return Collection::make($this->response);
@@ -74,12 +69,13 @@ final class Builder
      */
     public function schema(): Collection
     {
-        return $this->query->filter(function ($null, $keyName) {
-            /// Determine if the key exists in full schema definition.
-            return $this->getConfigService()->inSchema($keyName);
-        })->map(function ($arguments, $keyName) {
+        return $this->query->map(function ($arguments, $schemaKeyName) {
             /// Create an SchemaDefinition instance.
-            return new SchemaDefinition($keyName, (array) $arguments);
+            return new SchemaDefinition($schemaKeyName, (array) $arguments);
+        })->filter(function (SchemaDefinition $schema) {
+            /// Checks if the schema class exists and be a
+            /// 'Illuminate\Database\Eloquent\Model' or 'Restql\Resolver' children.
+            return $schema->imValid();
         });
     }
 }
