@@ -2,6 +2,7 @@
 
 namespace Testing\Unit;
 
+use Restql\Exceptions\InvalidSchemaDefinitionException;
 use Restql\SchemaDefinition;
 use Testing\TestCase;
 
@@ -62,5 +63,15 @@ class SchemaDefinitionTest extends TestCase
 
         // it's not valid because the App\Author class doesn't exists.
         $this->assertFalse($schema->imValid());
+    }
+
+    /**
+     * @test Invalid schema definition exception.
+     */
+    public function schemaDefinitionThrowsInvalidSchemaDefinition(): void
+    {
+        $this->expectException(InvalidSchemaDefinitionException::class);
+
+        $this->assertInstanceOf(InvalidSchemaDefinitionException::class, new SchemaDefinition('bad-key-name', []));
     }
 }
