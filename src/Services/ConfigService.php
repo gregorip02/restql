@@ -93,10 +93,6 @@ final class ConfigService
     {
         $classname = $this->getClausules()[$keyName];
 
-        if (! class_exists($classname)) {
-            // Exception here.
-        }
-
         return new $classname($executor, Collection::make($arguments));
     }
 

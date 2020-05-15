@@ -94,11 +94,12 @@ abstract class Clausule
 
     /**
      * Get the clausule validated data.
+     *
+     * @return array
      */
     public function getValidatedData(): array
     {
-        $values = count($this->rules) ?
-            $this->validated : $this->getValidatorData();
+        $values = count($this->rules) ? $this->validated : $this->getValidatorData();
 
         return array_values($values);
     }
@@ -117,7 +118,6 @@ abstract class Clausule
      * Implement the clausule query builder.
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
-     *
      * @return void
      */
     abstract public function build(QueryBuilder $builder): void;
