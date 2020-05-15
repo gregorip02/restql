@@ -15,6 +15,7 @@ class TestCase extends OrchestraTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
+        $app['config']->set('restql.query_param', 'query');
         $app['config']->set('restql.schema', [
             'authors' => [
                 'class' => 'App\Author'

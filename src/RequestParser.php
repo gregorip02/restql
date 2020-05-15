@@ -105,7 +105,7 @@ final class RequestParser
      */
     protected function decodeParam(): Collection
     {
-        $query = json_decode(base64_decode($this->getQueryParamValue()));
+        $query = (array) json_decode(base64_decode($this->getQueryParamValue()));
 
         return $this->getAllowedResources($query);
     }
