@@ -7,7 +7,7 @@ adopt **GraphQL** principles solving only the data that the client requests.
 RestQL uses your **Laravel** models as an entry point to add queries to then
 based in the eloquent methods.
 
-<img src="./img/example.png" alt="Laravel RestQL"/>
+<img src="./docs/example.png" alt="Laravel RestQL"/>
 
 ## **The Data Resolution Packages**
 
@@ -89,28 +89,71 @@ composer require gregorip02/restql
 php artisan vendor:publish --tag=restql-config
 ```
 
-3. **Set your allowed data resolution models.**
+3. **Set your schema definition.**
+
+Since version 2.x of this package the configuration has been updated to increase
+flexibility and internal behavior modification.
+
+You must define your entire schema in the config file, RestQL will then interpret
+it and execute the queries based on this file. With this there is a possibility
+that you can remove internal functions, modify them or even create your own
+implementations.
+
+<!--
+See more about this in the <a href="./docs/Configuration.md">configuration reference.</a>
+-->
 
 ```php
 // config/restql.php
 <?php
 
 return [
-  /* more config */
-  'allowed_models' => [
-    'authors' => 'App\Author',
-    /* more allowed models */
-  ]
+    /*
+    |--------------------------------------------------------------------------
+    | Data resolution schema
+    |--------------------------------------------------------------------------
+    |
+    | Define a list of models allowed for automatic manipulation, set the
+    | permissions and the actions that your users can take on it.
+    */
+
+    'schema' => [
+        'authors' => [
+           'class'  => 'App\Author'
+        ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom resolvers definition
+    |--------------------------------------------------------------------------
+    |
+    | Define customizable resolvers,
+    */
+
+    'resolvers' => [
+        /*...*/
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed clausules
+    |--------------------------------------------------------------------------
+    |
+    | Define a list of clauses that are available. Modify or delete the clauses
+    | that do not interest you.
+    */
+    'clausules' => [
+        /*...*/
+    ]
 ];
 ```
 
-With this configuration, your **Author** model can now be an automatic data resolution model.
-
 4. **Specify the return type of your relationships.**
 
-Since RestQL version 1.4, the developer must specify the return type of the
-relationships defined in the eloquent model. This means that if your model has a
-`hasMany` type relationship like the following it will not work.
+The developer must specify the return type of the relationships defined in the
+eloquent model. This means that if your model has a `hasMany` type relationship
+like the following it will not work.
 
 ```php
 <?php
@@ -171,27 +214,6 @@ use Illuminate\Http\Request;
 Route::get('restql', function (Request $request) {
   // This is not a facade.
   return Restql::resolve($request);
-});
-```
-
-Also, you can pass a clousure with the eloquente query builder has argument. This
-allow you to add and resolve the data based on your logic. For example.
-
-```php
-// api.php
-<?php
-
-use Restql\Restql;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-
-// The RestQL endpoint.
-Route::get('restql', function (Request $request) {
-  // This is not a facade.
-  return Restql::resolve($request)->get(function (QueryBuilder $builder) {
-    // Do something and return a getter method like: get, paginate...
-    return $builder->paginate();
-  });
 });
 ```
 

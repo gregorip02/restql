@@ -17,11 +17,14 @@ return [
     | Data resolution schema
     |--------------------------------------------------------------------------
     |
-    | Define your schema, include the allowed models.
+    | Define a list of models allowed for automatic manipulation, set the
+    | permissions and the actions that your users can take on it.
     */
 
     'schema' => [
-        // TODO: Include your schema
+        // 'authors' => [
+        //    'class'  => 'App\Author'
+        // ]
     ],
 
     /*
@@ -44,7 +47,8 @@ return [
     | Allowed clausules
     |--------------------------------------------------------------------------
     |
-    | TODO: Create documentation for this.
+    | Define a list of clauses that are available. Modify or delete the clauses
+    | that do not interest you.
     */
     'clausules' => [
         'select' => 'Restql\Clausules\SelectClausule',
