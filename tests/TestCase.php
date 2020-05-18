@@ -18,7 +18,9 @@ class TestCase extends OrchestraTestCase
         $app['config']->set('restql.query_param', 'query');
         $app['config']->set('restql.schema', [
             'authors' => [
-                'class' => 'App\Author'
+                'class' => 'App\Author',
+                'authorizer' => 'App\Restql\Authorizers\AuthorAuthorizer',
+                'middlewares' => []
             ]
         ]);
     }

@@ -2,7 +2,7 @@
 
 namespace Restql;
 
-use App\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
