@@ -66,9 +66,9 @@ final class Restql implements Responsable
      */
     protected function build(): Restql
     {
-        $this->response = Builder::make(RequestParser::filter(
-            $this->request
-        ));
+        $filter = RequestParser::filter($this->request);
+
+        $this->response = Builder::make($filter);
 
         return $this;
     }

@@ -5,15 +5,11 @@ namespace App;
 use App\Article;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Restql\Traits\RestqlAttributes;
 
 class Author extends Model
 {
-    /**
-    * The accessors to append to the model's array form.
-    *
-    * @var array
-    */
-    protected $appends = ['count_articles'];
+    use RestqlAttributes;
 
     /**
      * Get the author articles.
@@ -26,12 +22,11 @@ class Author extends Model
     }
 
     /**
-     * Count the articles published by an author.
-     *
-     * @return int
+     * [getCreatingAttributes description]
+     * @return [type] [description]
      */
-    public function getCountArticlesAttribute(): int
+    public function onCreateFillables(): array
     {
-        return $this->articles()->count();
+        return ['name', 'email', 'phone', 'address'];
     }
 }

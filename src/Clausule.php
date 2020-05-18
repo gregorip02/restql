@@ -114,6 +114,11 @@ abstract class Clausule
         return new Argument($this->arguments);
     }
 
+    public function getAttribute(string $keyname, $default = null)
+    {
+        return $this->arguments[$keyname] ?? $default;
+    }
+
     /**
      * Implement the clausule query builder.
      *

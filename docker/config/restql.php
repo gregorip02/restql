@@ -22,13 +22,19 @@ return [
 
     'schema' => [
         'authors' => [
-            'class' => 'App\Author'
+            'class' => 'App\Author',
+            'authorizer' => 'App\Restql\Authorizers\AuthorAuthorizer',
+            'middlewares' => []
         ],
         'articles' => [
-            'class' => 'App\Article'
+            'class' => 'App\Article',
+            'authorizer' => 'App\Restql\Authorizers\ArticleAuthorizer',
+            'middlewares' => []
         ],
         'comments' => [
-            'class' => 'App\Comment'
+            'class' => 'App\Comment',
+            'authorizer' => 'App\Restql\Authorizers\CommentAuthorizer',
+            'middlewares' => []
         ]
     ],
 
@@ -44,6 +50,8 @@ return [
         // Uncoment this and get the currently authenticated user.
         'whoami' => [
            'class' => 'Restql\Resolvers\WhoamiResolver',
+           'authorizer' => 'Restql\Authorizers\WhoamiAuthorizer',
+           'middlewares' => []
         ]
     ],
 
@@ -59,6 +67,8 @@ return [
         'where' => 'Restql\Clausules\WhereClausule',
         'take' => 'Restql\Clausules\TakeClausule',
         'sort' => 'Restql\Clausules\SortClausule',
-        'with' => 'Restql\Clausules\WithClausule'
+        'with' => 'Restql\Clausules\WithClausule',
+        /// Mutations clausules
+        'create' => 'Restql\Clausules\CreateClausule',
     ]
 ];

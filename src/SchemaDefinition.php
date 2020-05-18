@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Restql\Authorizer;
 use Restql\Exceptions\InvalidSchemaDefinitionException;
 use Restql\Resolver;
 use Restql\Resolvers\QueryBuilderResolver;
@@ -81,6 +82,38 @@ final class SchemaDefinition
     }
 
     /**
+     * Return the schema definition middlewares.
+     *
+     * @return array
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->schema['middlewares'] ?? [];
+    }
+
+    /**
+     * Get the authorizer class name.
+     *
+     * @return string
+     */
+    public function getAuthorizer(): string
+    {
+        return $this->getAttribute('authorizer', Authorizer::class);
+    }
+
+    /**
+     * Get the authorizer instance.
+     *
+     * @return \Restql\Authorizer
+     */
+    public function getAuthorizerInstance(): Authorizer
+    {
+        $authorizer = $this->getAuthorizer();
+
+        return new $authorizer();
+    }
+
+    /**
      * Get schema definition type.
      *
      * @return string
@@ -137,6 +170,19 @@ final class SchemaDefinition
     }
 
     /**
+     * Get the schema attribute.
+     *
+     * @param  string $attribute
+     * @param  string $default
+     *
+     * @return string
+     */
+    protected function getAttribute(string $attribute, string $default = ''): string
+    {
+        return $this->schema[$attribute] ?? $default;
+    }
+
+    /**
      * Get schema attribute definition or fail.
      *
      * @param  string $attribute
@@ -144,7 +190,7 @@ final class SchemaDefinition
      */
     protected function getAttributeOrFail(string $attribute): string
     {
-        return $this->schema[$attribute] ?? new InvalidSchemaDefinitionException(
+        return $this->getAttribute($attribute) ?? new InvalidSchemaDefinitionException(
             $this->keyName,
             sprintf('The attribute [%s] is not defined.', $attribute)
         );

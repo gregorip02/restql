@@ -54,10 +54,11 @@ fi
 chmod -vR 777 "${APP_FILES}/storage" "${APP_FILES}/bootstrap/cache"
 
 echo "Creando enlaces simbolicos de los archivos de desarrollo"
-rm -vrf "${APP_FILES}/database"
+rm -vrf "${APP_FILES}/database" "${APP_FILES}/app/Restql"
 ln -vfs ${USER_FILES}/app/*.php "${APP_FILES}/app/"
 ln -vfs ${USER_FILES}/routes/*.php "${APP_FILES}/routes/"
 ln -vfs ${USER_FILES}/config/*.php "${APP_FILES}/config/"
+ln -vfs "${USER_FILES}/app/Restql" "${APP_FILES}/app/Restql"
 ln -vfs "${USER_FILES}/database" "${APP_FILES}/database"
 
 # Dump for discover new files
