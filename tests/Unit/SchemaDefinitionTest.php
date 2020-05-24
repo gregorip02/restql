@@ -2,6 +2,7 @@
 
 namespace Testing\Unit;
 
+use Restql\Authorizer;
 use Restql\Exceptions\InvalidSchemaDefinitionException;
 use Restql\SchemaDefinition;
 use Testing\TestCase;
@@ -15,9 +16,7 @@ class SchemaDefinitionTest extends TestCase
      */
     protected static function genericDefinition(): SchemaDefinition
     {
-        return new SchemaDefinition('authors', [
-            'class' => 'App\Author'
-        ]);
+        return new SchemaDefinition('authors', []);
     }
 
     /**
@@ -41,15 +40,23 @@ class SchemaDefinitionTest extends TestCase
     }
 
     /**
+     * @test Get the authorizer.
+     */
+    public function shemaReturnsTheCorrectAuthorizer(): void
+    {
+        $schema = self::genericDefinition();
+
+        $this->assertEquals($schema->getAuthorizer(), 'App\Restql\Authorizers\AuthorAuthorizer');
+    }
+
+    /**
      * @test Get the arguments.
      */
     public function schemaReturnsTheCorrectArguments(): void
     {
         $schema = self::genericDefinition();
 
-        $this->assertEquals($schema->getArguments(), [
-            'class' => 'App\Author'
-        ]);
+        $this->assertEquals($schema->getArguments(), []);
     }
 
     /**

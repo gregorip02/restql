@@ -2,19 +2,19 @@
 
 namespace Restql;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Restql\Authorizer;
 use Restql\Exceptions\InvalidSchemaDefinitionException;
 use Restql\Resolver;
 use Restql\Resolvers\QueryBuilderResolver;
-use Restql\Services\ConfigService;
+use Restql\Traits\HasConfigService;
 
 final class SchemaDefinition
 {
+    use HasConfigService;
+
     /**
      * Definition key name.
      *
@@ -48,7 +48,7 @@ final class SchemaDefinition
 
         $this->arguments = $arguments;
 
-        $this->schema = app(ConfigService::class)->getSchemaDefinitionOrFail($keyName);
+        $this->schema = $this->getConfigService()->getSchemaDefinitionOrFail($keyName);
     }
 
     /**
@@ -158,7 +158,7 @@ final class SchemaDefinition
      *
      * @return Restql\Resolver
      */
-    public function createInstance(): Resolver
+    protected function createResolverInstance(): Resolver
     {
         if ($this->getType() === 'model') {
             /// TODO: Document this.
@@ -178,7 +178,7 @@ final class SchemaDefinition
      */
     public function handle(): Collection
     {
-        return ($this->createInstance())->handle($this);
+        return ($this->createResolverInstance())->handle($this);
     }
 
     /**
