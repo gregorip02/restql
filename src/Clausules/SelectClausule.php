@@ -48,11 +48,12 @@ class SelectClausule extends Clausule
     protected function pushBelongsToForeignKeyName(array &$arguments): void
     {
         $withModelNames = $this->executor->getWithModelKeyNames();
+
         if ($withModelNames->count()) {
-            $belongsTo = $this->getBelongsToAttributes($withModelNames, $model);
+            $belongsTo = $this->getBelongsToAttributes($withModelNames);
             if (count($belongsTo)) {
                 foreach ($belongsTo as $belongsToAttribute) {
-                    $argument[] = $belongsToAttribute;
+                    $arguments[] = $belongsToAttribute;
                 }
             }
         }
@@ -62,16 +63,17 @@ class SelectClausule extends Clausule
      * Gets the names of the foreign keys for relationships of type BelongsTo.
      *
      * @param  \Illuminate\Support\Collection $withParams
-     * @param  \Illuminate\Database\Model $model
      * @return array
      */
-    protected function getBelongsToAttributes(Collection $withParams, Model $model): array
+    protected function getBelongsToAttributes(Collection $withParams): array
     {
+        $model = $this->executor->getModel();
         return $withParams->filter(function ($method) use ($model) {
             if (! method_exists($model, $method)) {
                 /// Exclude methods not found in the model
                 return false;
             }
+
             /// From this change, the developer needs to set the return type in
             /// its eloquent relationships. This will greatly optimize the
             /// algorithm speed and consequently server responses.

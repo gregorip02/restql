@@ -41,7 +41,6 @@ class SortClausule extends Clausule
         return new SortArgument($this->executor->getModel(), $values);
     }
 
-
     /**
      * Throw a exception if can't build this clausule.
      *

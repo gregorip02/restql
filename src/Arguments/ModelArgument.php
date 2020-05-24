@@ -29,6 +29,16 @@ abstract class ModelArgument extends Argument
     }
 
     /**
+     * Get argument model.
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getModel(): Model
+    {
+        return $this->model;
+    }
+
+    /**
      * Get the primary key for the model.
      *
      * @return string

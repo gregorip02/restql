@@ -66,9 +66,9 @@ final class Builder
     {
         $schema = $this->schema();
 
-        // $this->checkMiddlewares($schema);
+        $this->checkMiddlewares($schema);
 
-        // $this->checkAuthorizers($schema);
+        $this->checkAuthorizers($schema);
 
         $schema->each(function (SchemaDefinition $schema) {
             /// Executing the "handle" method in the schema definition, this will
@@ -108,7 +108,22 @@ final class Builder
      */
     protected function checkMiddlewares(Collection $schema): void
     {
-        $middlewares = $schema->reduce(
+        $middlewares = $this->getMiddlewareClasses($schema);
+
+        $request = app('request');
+
+        app(Pipeline::class)->send($request)->through($middlewares)->thenReturn();
+    }
+
+    /**
+     * Create an array of middlewares classess.
+     *
+     * @param  \Illuminate\Support\Collection $schema
+     * @return array
+     */
+    protected function getMiddlewareClasses(Collection $schema): array
+    {
+        return $schema->reduce(
             function (array $reducer, SchemaDefinition $schemaDefinition) {
                 foreach ($schemaDefinition->getMiddlewares() as $key => $value) {
                     $middlewareClass = $this->routeMiddleware[$value] ?? false;
@@ -121,10 +136,6 @@ final class Builder
             },
             []
         );
-
-        $request = app('request');
-
-        app(Pipeline::class)->send($request)->through($middlewares)->thenReturn();
     }
 
     /**
