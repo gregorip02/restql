@@ -86,14 +86,14 @@ final class ConfigService
      * Create a instance of Clausule based on the key name.
      *
      * @param  string $keyOrClassName
-     * @param  array  $arguments
+     * @param  array  $values
      * @return \Restql\Clausule
      */
-    public function createClasuleInstance(ClausuleExecutor $executor, string $keyName, array $arguments): Clausule
+    public function createClasuleInstance(ClausuleExecutor $executor, string $keyName, array $values = []): Clausule
     {
         $classname = $this->getClausules()[$keyName];
 
-        return new $classname($executor, Collection::make($arguments));
+        return new $classname($executor, $values);
     }
 
     /**

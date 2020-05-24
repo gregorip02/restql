@@ -33,7 +33,7 @@ class WithClausule extends Clausule
      */
     protected function parseArguments(Model $model): array
     {
-        return $this->arguments->filter(function ($null, $method) use ($model) {
+        return $this->getArgument()->getCollectionValues()->filter(function ($null, $method) use ($model) {
             if (! method_exists($model, $method)) {
                 /// Exclude methods not found in the model
                 return false;

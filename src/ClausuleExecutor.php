@@ -2,12 +2,11 @@
 
 namespace Restql;
 
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Restql\Services\ConfigService;
+use Closure;
 use Restql\Traits\HasConfigService;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 final class ClausuleExecutor
 {
@@ -72,13 +71,14 @@ final class ClausuleExecutor
     {
         $configService = $this->getConfigService();
 
-        $this->clausules
-        ->filter(function ($null, $clausuleName) use ($configService) {
-            return $configService->hasClausule($clausuleName);
-        })
-        ->map(function ($arguments, string $clausuleName) use ($configService) {
-            return $configService->createClasuleInstance($this, $clausuleName, (array) $arguments);
+        $this->clausules->filter(function ($null, $clausuleKeyName) use ($configService) {
+            /// Determine if a key or className is registered in the config.
+            return $configService->hasClausule($clausuleKeyName);
+        })->map(function ($arguments, string $clausuleKeyName) use ($configService) {
+            /// Create a instance of Clausule based on the key name.
+            return $configService->createClasuleInstance($this, $clausuleKeyName, (array) $arguments);
         })->each(function (Clausule $clausule) {
+            /// Prepare and run the clausule builder method.
             $clausule->prepare();
         });
 
@@ -102,18 +102,18 @@ final class ClausuleExecutor
      */
     public function getWithModelKeyNames(): Collection
     {
-        return collect(
-            array_keys($this->clausules->get('with', []))
-        );
+        $withKeys = array_keys($this->clausules->get('with', []));
+
+        return Collection::make($withKeys);
     }
 
     /**
      * Execute and mutate the model query.
      *
-     * @param  Clousure $callback
+     * @param  Closure $callback
      * @return void
      */
-    public function executeQuery($callback): void
+    public function executeQuery(Closure $callback): void
     {
         $callback($this->query);
     }

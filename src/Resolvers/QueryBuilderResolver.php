@@ -2,7 +2,6 @@
 
 namespace Restql\Resolvers;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Restql\ClausuleExecutor;
 use Restql\Contracts\SchemaHandlerContract;
@@ -22,10 +21,7 @@ final class QueryBuilderResolver extends Resolver implements SchemaHandlerContra
      */
     public function handle(SchemaDefinition $schema): Collection
     {
-        $builder = ClausuleExecutor::exec(
-            $this->getModel($schema),
-            Collection::make($schema->getArguments())
-        );
+        $builder = ClausuleExecutor::exec($this->getModel($schema), $schema->getCollectionArguments());
 
         $limit = $builder->getQuery()->limit ?? 15;
 

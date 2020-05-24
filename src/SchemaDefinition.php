@@ -82,6 +82,18 @@ final class SchemaDefinition
     }
 
     /**
+     * Return a collection of schema definition arguments.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getCollectionArguments(): Collection
+    {
+        $arguments = $this->arguments;
+
+        return Collection::make($arguments);
+    }
+
+    /**
      * Return the schema definition middlewares.
      *
      * @return array

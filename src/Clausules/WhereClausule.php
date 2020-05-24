@@ -2,23 +2,20 @@
 
 namespace Restql\Clausules;
 
-use Restql\Clausule;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Restql\Argument;
 use Restql\Arguments\WhereArgument;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Restql\Clausule;
+use Restql\Exceptions\MissingArgumentException;
 
 class WhereClausule extends Clausule
 {
     /**
-     * The arguments rules.
+     * The allowed verbs for a determinated clausule.
      *
      * @var array
      */
-    public $rules = [
-        'column'   => ['required'],
-        'operator' => ['sometimes', 'nullable'],
-        'value'    => ['sometimes', 'nullable']
-    ];
+    protected $allowedVerbs = ['get'];
 
     /**
      * Implement the clausule query builder.
@@ -29,16 +26,43 @@ class WhereClausule extends Clausule
      */
     public function build(QueryBuilder $builder): void
     {
-        $builder->where(...$this->getValidatedData());
+        $args = array_values($this->arguments->data());
+
+        $builder->where(...$args);
     }
 
     /**
-     * Get the clausule arguments.
+     * Get a new instance of the clausule argument.
      *
+     * @param  array  $values
      * @return \Restql\Arguments\WhereArgument
      */
-    public function getArgumentInstance(): Argument
+    protected function createArgumentsInstance(array $values = []): Argument
     {
-        return new WhereArgument($this->arguments, $this->executor->getModel());
+        return new WhereArgument($this->executor->getModel(), $values);
+    }
+
+    /**
+     * Has argument missing hook.
+     *
+     * @param  string $class
+     * @throws Exception
+     */
+    protected function throwIfArgumentIsMissing(string $class): void
+    {
+        if ($this->arguments->isAssoc() && !$this->arguments->getAttribute('value', false)) {
+            throw new MissingArgumentException('value', $class);
+        }
+    }
+
+    /**
+     * Throw a exception if can't build this clausule.
+     *
+     * @return void
+     */
+    protected function canBuild(): void
+    {
+        parent::throwIfMethodIsNotAllowed('where');
+        $this->throwIfArgumentIsMissing('where');
     }
 }

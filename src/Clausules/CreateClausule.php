@@ -11,6 +11,13 @@ use Closure;
 class CreateClausule extends MutationClausule
 {
     /**
+     * The allowed verbs for a determinated clausule.
+     *
+     * @var array
+     */
+    protected $allowedVerbs = ['post'];
+
+    /**
      * Implement the clausule query builder.
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
@@ -42,5 +49,16 @@ class CreateClausule extends MutationClausule
         }
 
         return $model->getFillable();
+    }
+
+    /**
+     * [include description]
+     * @return [type] [description]
+     */
+    public function include(): bool
+    {
+        $method = Str::lower(request()->method());
+
+        return in_array($method, ['post']);
     }
 }

@@ -2,13 +2,11 @@
 
 namespace Restql;
 
-use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Restql\SchemaDefinition;
 use Restql\SchemaExecutor;
-use Restql\Services\ConfigService;
 use Restql\Traits\HasConfigService;
 
 final class Builder
@@ -30,8 +28,9 @@ final class Builder
     protected $response = [];
 
     /**
-     * [$routeMiddleware description]
-     * @var [type]
+     * The application defined middleware short-hand names.
+     *
+     * @var array
      */
     protected $routeMiddleware = [];
 
@@ -44,7 +43,7 @@ final class Builder
     {
         $this->query = $query;
 
-        $this->routeMiddleware = app(HttpKernel::class)->getRouteMiddleware();
+        $this->routeMiddleware = app('router')->getMiddleware();
     }
 
     /**
@@ -67,9 +66,9 @@ final class Builder
     {
         $schema = $this->schema();
 
-        $this->checkMiddlewares($schema);
+        // $this->checkMiddlewares($schema);
 
-        $this->checkAuthorizers($schema);
+        // $this->checkAuthorizers($schema);
 
         $schema->each(function (SchemaDefinition $schema) {
             /// Executing the "handle" method in the schema definition, this will
