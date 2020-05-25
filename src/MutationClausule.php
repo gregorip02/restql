@@ -1,6 +1,6 @@
 <?php
 
-namespace Restql\Clausules;
+namespace Restql;
 
 use Closure;
 use Restql\Clausule;

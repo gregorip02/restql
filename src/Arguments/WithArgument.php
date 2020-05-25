@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Restql\ClausuleExecutor;
 use Restql\Contracts\ArgumentContract;
+use Restql\ModelArgument;
 use Restql\Support\ReflectionSupport;
 
 class WithArgument extends ModelArgument implements ArgumentContract

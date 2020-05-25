@@ -26,6 +26,6 @@ final class AuthorAuthorizer extends Authorizer
      */
     public static function post(Request $request): bool
     {
-        return false;
+        return true;
     }
 }

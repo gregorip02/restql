@@ -2,7 +2,7 @@
 
 namespace Restql\Arguments;
 
-use Restql\Arguments\ModelArgument;
+use Restql\ModelArgument;
 
 class SortArgument extends ModelArgument
 {

@@ -95,7 +95,10 @@ final class Builder
             $authorizer = $schemaDefinition->getAuthorizerInstance();
 
             if (! call_user_func([$authorizer, $method], $request)) {
-                throw new AccessDeniedHttpException($schemaDefinition, $method);
+                throw new AccessDeniedHttpException(
+                    $schemaDefinition->getKeyName(),
+                    $method
+                );
             }
         });
     }

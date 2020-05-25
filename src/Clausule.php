@@ -4,7 +4,7 @@ namespace Restql;
 
 use Restql\Argument;
 use Restql\ClausuleExecutor;
-use Restql\Exceptions\ClausuleUnallowedMethodException;
+use Restql\Exceptions\AccessDeniedHttpException;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
@@ -105,12 +105,12 @@ abstract class Clausule
      * Has method not allowed hook.
      *
      * @param  string $name
-     * @throws \Restql\Exceptions\ClausuleUnallowedMethodException
+     * @throws \Restql\Exceptions\AccessDeniedHttpException
      */
     protected function throwIfMethodIsNotAllowed(string $name): void
     {
         if (! $this->isAllowedMethod()) {
-            throw new ClausuleUnallowedMethodException($name, $this->accessMethod());
+            throw new AccessDeniedHttpException($name, $this->accessMethod());
         }
     }
 
@@ -132,8 +132,8 @@ abstract class Clausule
      */
     protected function canBuild(): void
     {
-        $this->throwIfMethodIsNotAllowed(self::class);
-        // $this->throwIfArgumentIsMissing(self::class);
+        $this->throwIfMethodIsNotAllowed(class_basename(self::class));
+        // $this->throwIfArgumentIsMissing(class_basename(self::class));
     }
 
     /**

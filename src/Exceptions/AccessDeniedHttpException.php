@@ -2,16 +2,15 @@
 
 namespace Restql\Exceptions;
 
-use Restql\SchemaDefinition;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException as E;
 
 final class AccessDeniedHttpException extends E
 {
-    public function __construct(SchemaDefinition $schema, string $method)
+    public function __construct(string $name, string $method)
     {
         $message = 'You can\'t access to %s via %s method.';
 
-        $message = sprintf($message, $schema->getKeyName(), $method);
+        $message = sprintf($message, $name, $method);
 
         parent::__construct($message);
     }

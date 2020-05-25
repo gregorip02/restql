@@ -22,8 +22,9 @@ class Author extends Model
     }
 
     /**
-     * [getCreatingAttributes description]
-     * @return [type] [description]
+     * Get the fillable attributes for creations.
+     *
+     * @return array
      */
     public function onCreateFillables(): array
     {

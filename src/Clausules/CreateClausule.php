@@ -2,11 +2,12 @@
 
 namespace Restql\Clausules;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Closure;
+use Restql\MutationClausule;
 
 class CreateClausule extends MutationClausule
 {
@@ -27,7 +28,7 @@ class CreateClausule extends MutationClausule
     {
         $model = $builder->getModel();
 
-        $models = $this->fill($model, $this->arguments->toArray());
+        $models = $this->fill($model, $this->arguments->values());
 
         $ids = $this->transaction($models, function (Model $model) {
             $model->save();
@@ -49,5 +50,16 @@ class CreateClausule extends MutationClausule
         }
 
         return $model->getFillable();
+    }
+
+    /**
+     * Throw a exception if can't build this clausule.
+     *
+     * @return void
+     */
+    protected function canBuild(): void
+    {
+        $this->throwIfMethodIsNotAllowed('create clausule');
+        // $this->throwIfArgumentIsMissing(class_basename(self::class));
     }
 }

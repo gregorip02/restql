@@ -1,6 +1,6 @@
 <?php
 
-namespace Restql\Arguments;
+namespace Restql;
 
 use Illuminate\Database\Eloquent\Model;
 use Restql\Argument;

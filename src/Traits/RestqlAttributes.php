@@ -5,7 +5,7 @@ namespace Restql\Traits;
 trait RestqlAttributes
 {
     /**
-     * Get the fillable attributes for the model.
+     * Get the fillable attributes for creations.
      *
      * @return array
      */
@@ -15,7 +15,7 @@ trait RestqlAttributes
     }
 
     /**
-     * Get the fillable attributes for the model.
+     * Get the fillable attributes for updates.
      *
      * @return array
      */
