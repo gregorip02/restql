@@ -1,1 +1,1 @@
-# Resolvers Reference
+# RestQL Resolvers

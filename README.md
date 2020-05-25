@@ -77,19 +77,19 @@ attributes.
 
 ## **Get started**
 
-1. **Install RestQL using composer.**
+Install RestQL using composer.
 
 ```bash
 composer require gregorip02/restql
 ```
 
-2. **Publish the package configuration.**
+Publish the package configuration.
 
 ```bash
 php artisan vendor:publish --tag=restql-config
 ```
 
-3. **Set your schema definition.**
+Set your schema definition.
 
 Since version 2.x of this package the configuration has been updated to increase
 flexibility and internal behavior modification.
@@ -119,7 +119,9 @@ return [
 
     'schema' => [
         'authors' => [
-           'class'  => 'App\Author'
+           'class'  => 'App\Author',
+           'authorizer' => 'App\Restql\Authorizers\AuthorAuthorizer',
+           'middlewares' => []
         ]
     ],
 

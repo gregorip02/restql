@@ -1,4 +1,8 @@
-# **Select**
+# RestQL Clausules
+
+<!-- TODO: Document this.. -->
+
+## **Select**
 
 Filter the data by the client needs only.
 
@@ -25,7 +29,7 @@ $query->select(["id", "name", "email", "age"]);
 $query->select(["id", "name"]);
 ```
 
-# **Take**
+## **Take**
 
 Set the "limit" value of the query.
 
@@ -43,7 +47,7 @@ $query->take(10);
 
 > **Important** The limit and take query builder methods may not be used when constraining eager loads.
 
-# **Where**
+## **Where**
 
 Add a basic where clause to the query.
 
@@ -77,7 +81,7 @@ $query->where("id", 100);
 $query->where($model->getKeyName(), 100);
 ```
 
-# **Sort**
+## **Sort**
 
 Sort the data by the column name.
 
@@ -110,7 +114,7 @@ $query->orderBy("name", "desc");
 $query->orderBy("name");
 ```
 
-# **With**
+## **With**
 
 The with clausule allow you to include model relationships. For example, if an model
 called `Book` has a relationship called `Author`, you will can get these data in
