@@ -38,9 +38,9 @@ class CreateClausule extends MutationClausule
     }
 
     /**
-     * [getFillableAttributes description]
-     * @param  Model  $model [description]
-     * @return [type]        [description]
+     * Get the fillable attributes for the model.
+     *
+     * @return array
      */
     protected function getFillableAttributes(Model $model): array
     {
@@ -49,16 +49,5 @@ class CreateClausule extends MutationClausule
         }
 
         return $model->getFillable();
-    }
-
-    /**
-     * [include description]
-     * @return [type] [description]
-     */
-    public function include(): bool
-    {
-        $method = Str::lower(request()->method());
-
-        return in_array($method, ['post']);
     }
 }

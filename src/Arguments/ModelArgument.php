@@ -3,8 +3,6 @@
 namespace Restql\Arguments;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Restql\Argument;
 
 abstract class ModelArgument extends Argument

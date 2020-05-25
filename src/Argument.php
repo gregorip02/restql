@@ -127,26 +127,6 @@ class Argument implements ArgumentContract
     }
 
     /**
-     * Count the argument default values.
-     *
-     * @return int
-     */
-    public function countDefault(): int
-    {
-        return count($this->getDefaultArgumentValues());
-    }
-
-    /**
-     * Checks if argument values are empty.
-     *
-     * @return boolean
-     */
-    public function isEmpty(): bool
-    {
-        return $this->values;
-    }
-
-    /**
      * Merge the user argument values with defaults data.
      *
      * @return array

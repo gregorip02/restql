@@ -101,8 +101,8 @@ final class Restql implements Responsable
      */
     public function toResponse($request)
     {
-        $response = $this->get();
+        $data = $this->get();
 
-        return new Response(['data' => $response]);
+        return new Response(compact('data'));
     }
 }

@@ -2,9 +2,6 @@
 
 namespace Restql\Arguments;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Restql\Contracts\ArgumentContract;
 
 class WhereArgument extends ModelArgument implements ArgumentContract

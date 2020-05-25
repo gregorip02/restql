@@ -2,7 +2,6 @@
 
 namespace Restql;
 
-use Closure;
 use Illuminate\Http\Request;
 use Restql\Contracts\AuthorizerContract;
 

@@ -71,7 +71,7 @@ final class ClausuleExecutor
     {
         $configService = $this->getConfigService();
 
-        $this->clausules->filter(function ($null, $clausuleKeyName) use ($configService) {
+        $this->clausules->filter(function ($_, $clausuleKeyName) use ($configService) {
             /// Determine if a key or className is registered in the config.
             return $configService->hasClausule($clausuleKeyName);
         })->map(function ($arguments, string $clausuleKeyName) use ($configService) {

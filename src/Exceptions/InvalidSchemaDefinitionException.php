@@ -8,8 +8,8 @@ final class InvalidSchemaDefinitionException extends Exception
 {
     public function __construct(string $keyName, string $message = '')
     {
-        $message = sprintf('Invalid schema definition for %s key. %s', $keyName, $message);
+        $slug = 'Invalid schema definition for %s key. %s';
 
-        parent::__construct($message, 1);
+        parent::__construct(sprintf($slug, $keyName, $message), 1);
     }
 }

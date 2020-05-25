@@ -5,8 +5,8 @@ namespace Restql;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Restql\Exceptions\AccessDeniedHttpException;
 use Restql\SchemaDefinition;
-use Restql\SchemaExecutor;
 use Restql\Traits\HasConfigService;
 
 final class Builder
@@ -94,9 +94,9 @@ final class Builder
 
             $authorizer = $schemaDefinition->getAuthorizerInstance();
 
-            $authorized = call_user_func([$authorizer, $method], $request);
-
-            abort_if(!$authorized, 403, sprintf('Can\'t access to the resource via [%s]', $method));
+            if (! call_user_func([$authorizer, $method], $request)) {
+                throw new AccessDeniedHttpException($schemaDefinition, $method);
+            }
         });
     }
 
