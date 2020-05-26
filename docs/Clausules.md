@@ -22,6 +22,7 @@ Filter the data by the client needs only.
 
 ##### RestQL Implementation
 ```php
+<?php
 // List of attributes
 $query->select(["id", "name", "email", "age"]);
 
@@ -42,6 +43,7 @@ Set the "limit" value of the query.
 
 ##### RestQL Implementation
 ```php
+<?php
 $query->take(10);
 ```
 
@@ -71,6 +73,7 @@ Add a basic where clause to the query.
 
 ##### RestQL Implementation
 ```php
+<?php
 // Using explicit attributes
 $query->where("id", "=", 100);
 
@@ -104,6 +107,7 @@ Sort the data by the column name.
 
 ##### RestQL Implementation
 ```php
+<?php
 // Using explicit attributes
 $query->orderBy("name", "desc");
 
@@ -144,6 +148,7 @@ one request.
 
 ##### RestQL Implementation
 ```php
+<?php
 $query->select(['title'])->with([
     'author' => static function (Relation $relation) {
         $relation->select(['name']);

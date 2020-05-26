@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 final class CommentAuthorizer extends Authorizer
 {
     /**
-     * Can get one or more author resources.
+     * Can get one or more comment resources.
      *
      * @param  \Illuminate\Http\Request $request
      * @return bool
