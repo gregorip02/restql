@@ -10,7 +10,7 @@ return [
     | is sent in the body of the request.
     */
 
-    'query_param' => env('RESTQL_PARAM_NAME', ''),
+    'query_param' => env('RESTQL_PARAM_NAME', 'query'),
 
     /*
     |--------------------------------------------------------------------------

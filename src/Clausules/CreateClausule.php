@@ -2,12 +2,9 @@
 
 namespace Restql\Clausules;
 
-use Closure;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Restql\MutationClausule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class CreateClausule extends MutationClausule
 {

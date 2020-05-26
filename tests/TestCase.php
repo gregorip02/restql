@@ -15,14 +15,9 @@ class TestCase extends OrchestraTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-        $app['config']->set('restql.query_param', 'query');
-        $app['config']->set('restql.schema', [
-            'authors' => [
-                'class' => 'App\Author',
-                'authorizer' => 'App\Restql\Authorizers\AuthorAuthorizer',
-                'middlewares' => []
-            ]
-        ]);
+        $config = require(__DIR__ . '/../docker/config/restql.php');
+
+        $app['config']->set('restql', $config);
     }
 
     /**
