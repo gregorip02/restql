@@ -2,8 +2,10 @@
 
 namespace Restql\Providers;
 
-use Restql\Services\ConfigService;
 use Illuminate\Support\ServiceProvider;
+use Restql\Console\AuthorizerMakeCommand;
+use Restql\Console\ResolverMakeCommand;
+use Restql\Services\ConfigService;
 
 final class RestqlServiceProvider extends ServiceProvider
 {
@@ -54,6 +56,12 @@ final class RestqlServiceProvider extends ServiceProvider
             $this->publishes([
                 $this->configPath() => config_path('restql.php')
             ], 'restql-config');
+
+            /// Register the RestQL commands.
+            $this->commands([
+                ResolverMakeCommand::class,
+                AuthorizerMakeCommand::class,
+            ]);
         }
     }
 }

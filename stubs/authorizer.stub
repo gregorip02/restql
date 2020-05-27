@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ namespace }};
+
+use Restql\Authorizer;
+
+final class {{ class }} extends Authorizer
+{
+    //
+}
