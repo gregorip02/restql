@@ -30,23 +30,23 @@ final class SchemaDefinition
     protected $schema;
 
     /**
-     * Schema incoming body arguments.
+     * Schema incoming body clausules.
      *
      * @var array
      */
-    protected $arguments;
+    protected $clausules;
 
     /**
      * Class instance.
      *
      * @param string $keyName
-     * @param array  $arguments
+     * @param array  $clausules
      */
-    public function __construct(string $keyName, array $arguments = [])
+    public function __construct(string $keyName, array $clausules = [])
     {
         $this->keyName = $keyName;
 
-        $this->arguments = $arguments;
+        $this->clausules = $clausules;
 
         $this->schema = $this->getConfigService()->getSchemaDefinitionOrFail($keyName);
     }
@@ -72,25 +72,25 @@ final class SchemaDefinition
     }
 
     /**
-     * Get the schema definition arguments.
+     * Get the schema definition clausules send by the client.
      *
      * @return array
      */
-    public function getArguments(): array
+    public function getClausules(): array
     {
-        return $this->arguments;
+        return $this->clausules;
     }
 
     /**
-     * Return a collection of schema definition arguments.
+     * Create a collection of clausules.
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Support\Colection
      */
-    public function getCollectionArguments(): Collection
+    public function collect(): Collection
     {
-        $arguments = $this->arguments;
+        $clausules = $this->clausules;
 
-        return Collection::make($arguments);
+        return Collection::make($clausules);
     }
 
     /**

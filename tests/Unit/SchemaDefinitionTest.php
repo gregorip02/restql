@@ -52,11 +52,11 @@ class SchemaDefinitionTest extends TestCase
     /**
      * @test Get the arguments.
      */
-    public function schemaReturnsTheCorrectArguments(): void
+    public function schemaReturnsTheCorrectClausules(): void
     {
         $schema = self::genericDefinition();
 
-        $this->assertEquals($schema->getArguments(), []);
+        $this->assertEquals($schema->getClausules(), []);
     }
 
     /**

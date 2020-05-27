@@ -90,7 +90,11 @@ final class Builder
         $method = Str::lower(request()->method());
 
         $schema->each(function (SchemaDefinition $schema) use ($method) {
-            if (! call_user_func([$schema->getAuthorizerInstance(), $method])) {
+            $instance = $schema->getAuthorizerInstance();
+
+            $clausules = $schema->getClausules();
+
+            if (! call_user_func([$instance, $method], $clausules)) {
                 throw new AccessDeniedHttpException(
                     $schema->getKeyName(),
                     $method

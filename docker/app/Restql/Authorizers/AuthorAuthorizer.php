@@ -9,9 +9,10 @@ final class AuthorAuthorizer extends Authorizer
     /**
      * Can get one or more author resources.
      *
+     * @param  array $clausules
      * @return bool
      */
-    public static function get(): bool
+    public static function get(array $clausules = []): bool
     {
         return true;
     }
@@ -19,9 +20,10 @@ final class AuthorAuthorizer extends Authorizer
     /**
      * Can create one or more author resources.
      *
+     * @param  array $clausules
      * @return bool
      */
-    public static function post(): bool
+    public static function post(array $clausules = []): bool
     {
         return true;
     }

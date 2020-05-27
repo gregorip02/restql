@@ -9,9 +9,10 @@ class Authorizer implements AuthorizerContract
     /**
      * Can get one or more resources.
      *
+     * @param  array $clausules
      * @return bool
      */
-    public static function get(): bool
+    public static function get(array $clausules = []): bool
     {
         return false;
     }
@@ -19,9 +20,10 @@ class Authorizer implements AuthorizerContract
     /**
      * Can create one or more resources.
      *
+     * @param  array $clausules
      * @return bool
      */
-    public static function post(): bool
+    public static function post(array $clausules = []): bool
     {
         return false;
     }
@@ -29,9 +31,10 @@ class Authorizer implements AuthorizerContract
     /**
      * Can update one or more resources.
      *
+     * @param  array $clausules
      * @return bool
      */
-    public static function put(): bool
+    public static function put(array $clausules = []): bool
     {
         return false;
     }
@@ -39,19 +42,21 @@ class Authorizer implements AuthorizerContract
     /**
      * Can update one or more resources.
      *
+     * @param  array $clausules
      * @return bool
      */
-    public static function patch(): bool
+    public static function patch(array $clausules = []): bool
     {
-        return self::put();
+        return self::put($clausules);
     }
 
     /**
      * Can delete one or more resources.
      *
+     * @param  array $clausules
      * @return bool
      */
-    public static function delete(): bool
+    public static function delete(array $clausules = []): bool
     {
         return false;
     }

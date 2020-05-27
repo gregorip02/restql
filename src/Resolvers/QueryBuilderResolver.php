@@ -21,7 +21,7 @@ final class QueryBuilderResolver extends Resolver implements SchemaHandlerContra
      */
     public function handle(SchemaDefinition $schema): Collection
     {
-        $builder = ClausuleExecutor::exec($this->getModel($schema), $schema->getCollectionArguments());
+        $builder = ClausuleExecutor::exec($this->getModel($schema), $schema->collect());
 
         $limit = $builder->getQuery()->limit ?? 15;
 
