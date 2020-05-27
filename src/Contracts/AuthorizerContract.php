@@ -2,47 +2,40 @@
 
 namespace Restql\Contracts;
 
-use Illuminate\Http\Request;
-
 interface AuthorizerContract
 {
         /**
      * Can get one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function get(Request $request): bool;
+    public static function get(): bool;
 
     /**
      * Can create one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function post(Request $request): bool;
+    public static function post(): bool;
 
     /**
      * Can update one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function put(Request $request): bool;
+    public static function put(): bool;
 
     /**
      * Can update one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function patch(Request $request): bool;
+    public static function patch(): bool;
 
     /**
      * Can delete one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function delete(Request $request): bool;
+    public static function delete(): bool;
 }

@@ -2,7 +2,6 @@
 
 namespace Restql;
 
-use Illuminate\Http\Request;
 use Restql\Contracts\AuthorizerContract;
 
 class Authorizer implements AuthorizerContract
@@ -10,10 +9,9 @@ class Authorizer implements AuthorizerContract
     /**
      * Can get one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function get(Request $request): bool
+    public static function get(): bool
     {
         return false;
     }
@@ -21,10 +19,9 @@ class Authorizer implements AuthorizerContract
     /**
      * Can create one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function post(Request $request): bool
+    public static function post(): bool
     {
         return false;
     }
@@ -32,10 +29,9 @@ class Authorizer implements AuthorizerContract
     /**
      * Can update one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function put(Request $request): bool
+    public static function put(): bool
     {
         return false;
     }
@@ -43,21 +39,19 @@ class Authorizer implements AuthorizerContract
     /**
      * Can update one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function patch(Request $request): bool
+    public static function patch(): bool
     {
-        return self::put($request);
+        return self::put();
     }
 
     /**
      * Can delete one or more resources.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return bool
      */
-    public static function delete(Request $request): bool
+    public static function delete(): bool
     {
         return false;
     }

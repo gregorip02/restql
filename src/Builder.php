@@ -87,16 +87,12 @@ final class Builder
      */
     protected function checkAuthorizers(Collection $schema): void
     {
-        $request = app('request');
+        $method = Str::lower(request()->method());
 
-        $schema->each(function (SchemaDefinition $schemaDefinition) use ($request) {
-            $method = Str::lower($request->method());
-
-            $authorizer = $schemaDefinition->getAuthorizerInstance();
-
-            if (! call_user_func([$authorizer, $method], $request)) {
+        $schema->each(function (SchemaDefinition $schema) use ($method) {
+            if (! call_user_func([$schema->getAuthorizerInstance(), $method])) {
                 throw new AccessDeniedHttpException(
-                    $schemaDefinition->getKeyName(),
+                    $schema->getKeyName(),
                     $method
                 );
             }
