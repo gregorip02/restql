@@ -1,56 +1,49 @@
 <?php
 
-namespace Tests\Unit;
+namespace Testing\Unit;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Restql\Builder;
-use Tests\TestCase;
+use Restql\Exceptions\InvalidSchemaDefinitionException;
+use Restql\RequestParser;
+use Testing\TestCase;
 
 class BuilderTest extends TestCase
 {
     /**
-     * Fake incoming query values.
+     * Generate fake request.
      *
-     * @var array
+     * @return \Illuminate\Http\Request
      */
-    private $query = [
-        'authors' => ['select' => 'name', 'sort' => true, 'fake' => 'fake', 'another_fake' => []],
-        'unknows' => ['select' => 'unknow_field']
-    ];
-
-    /**
-     * @test Check if the "fake" clausule is removed from the builder.
-     */
-    public function theBuilderExcludeUnknowClausules()
+    protected static function generateFakeRequest(): Request
     {
-        $builder = new Builder(collect($this->query));
-
-        $filter = $builder->filterClausules($this->query['authors']);
-
-        $this->assertTrue($filter->has('select'));
-
-        $this->assertTrue($filter->has('sort'));
-
-        $this->assertFalse($filter->has('fake'));
-
-        $this->assertEquals($filter, collect($this->query['authors'])->forget([
-            'fake', 'another_fake'
-        ]));
+        return new Request(['fake' => true, 'author' => false]);
     }
 
     /**
-     * @test Check if the "unknows" key name is removed from the
+     * @test Test the schema filter method.
      */
-    public function theBuilderExcludeUnknowModelKeyNames()
+    public function theBuilderMakeAValidSchema(): void
     {
-        $builder = new Builder(collect($this->query));
+        $request = self::generateFakeRequest();
 
-        $filter = $builder->getAllowedModels();
+        $query = RequestParser::filter($request);
 
-        $this->assertTrue($filter->has('authors'));
+        $schema = (new Builder($query))->schema();
 
-        $this->assertFalse($filter->has('unknows'));
+        $this->assertEquals($schema, $query);
+    }
 
-        $this->assertEquals($filter, collect($this->query)->forget('unknows'));
+    /**
+     * @test Fails when send unparsed query.
+     */
+    public function theBuidlerThrowsInvalidSchemaDefinitionWithUnparsedQuery(): void
+    {
+        $this->expectException(InvalidSchemaDefinitionException::class);
+
+        $request = self::generateFakeRequest()->all();
+
+        $schema = (new Builder(Collection::make($request)))->schema();
     }
 }

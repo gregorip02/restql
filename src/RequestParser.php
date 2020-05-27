@@ -4,24 +4,20 @@ namespace Restql;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
 use Restql\Exceptions\InvalidEncodingValue;
+use Restql\Services\ConfigService;
+use Restql\Traits\HasConfigService;
 
-class RequestParser
+final class RequestParser
 {
+    use HasConfigService;
+
     /**
      * The HTTP incoming request.
      *
      * @var \Illuminate\Http\Request
      */
     protected $request;
-
-    /**
-     * The application config.
-     *
-     * @var \Illuminate\Support\Collection
-     */
-    protected $config;
 
     /**
      * Class instance.
@@ -31,8 +27,6 @@ class RequestParser
     public function __construct(Request $request)
     {
         $this->request = $request;
-
-        $this->config = collect(Config::get('restql', []));
     }
 
     /**
@@ -67,9 +61,7 @@ class RequestParser
 
         /// By default, restql accepts queries that come in the body
         /// of the HTTP request and are not base64 encoded.
-        return collect(
-            $this->request->only($this->allowedModels())
-        );
+        return $this->getAllowedResources($this->request->all());
     }
 
     /**
@@ -79,9 +71,9 @@ class RequestParser
      */
     protected function hasParam(): bool
     {
-        return $this->request->has(
-            $this->getQueryParamName()
-        );
+        $paramName = $this->getQueryParamName();
+
+        return $this->request->has($paramName);
     }
 
     /**
@@ -91,9 +83,9 @@ class RequestParser
      */
     protected function getQueryParamValue(): string
     {
-        return (string) $this->request->get(
-            $this->getQueryParamName()
-        );
+        $paramName = $this->getQueryParamName();
+
+        return $this->request->get($paramName);
     }
 
     /**
@@ -103,7 +95,7 @@ class RequestParser
      */
     protected function getQueryParamName(): string
     {
-        return $this->config->get('query_param', '');
+        return $this->getConfigService()->get('query_param', '');
     }
 
     /**
@@ -113,27 +105,20 @@ class RequestParser
      */
     protected function decodeParam(): Collection
     {
-        /// Get the client query value.
-        $queryValue = $this->getQueryParamValue();
+        $query = (array) json_decode(base64_decode($this->getQueryParamValue()));
 
-        /// When the client sends values in the parameters
-        /// of the request, must be base64 encoded.
-        if (!preg_match('%^[a-zA-Z0-9/+]*={0,2}$%', $queryValue)) {
-            throw new InvalidEncodingValue($this->getQueryParamName());
-        }
-
-        return collect(json_decode(base64_decode($queryValue)))->only(
-            $this->allowedModels()
-        );
+        return $this->getAllowedResources($query);
     }
 
     /**
-     * The accepted clauses names.
+     * The accepted resources key names (models/resolvers).
      *
      * @return array
      */
-    protected function allowedModels(): array
+    public function getAllowedResources(array $array): Collection
     {
-        return array_keys($this->config->get('allowed_models', []));
+        $keyNames = $this->getConfigService()->getFullSchemaKeyNames();
+
+        return collect($array)->only($keyNames);
     }
 }

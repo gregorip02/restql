@@ -2,30 +2,15 @@
 
 namespace Restql;
 
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
+use Closure;
+use Restql\Traits\HasConfigService;
 use Illuminate\Support\Collection;
-use Restql\Clausules\SelectClausule;
-use Restql\Clausules\SortClausule;
-use Restql\Clausules\TakeClausule;
-use Restql\Clausules\WhereClausule;
-use Restql\Clausules\WithClausule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
-class ClausuleExecutor
+final class ClausuleExecutor
 {
-    /**
-     * The accepted clausules.
-     *
-     * @var array
-     */
-    public const ACCEPTED_CLAUSULES = [
-        'select' => SelectClausule::class,
-        'sort'   => SortClausule::class,
-        'with'   => WithClausule::class,
-        'take'   => TakeClausule::class,
-        'where'  => WhereClausule::class
-    ];
+    use HasConfigService;
 
     /**
      * The eloquent model.
@@ -35,18 +20,18 @@ class ClausuleExecutor
     protected $model;
 
     /**
-     * The eloquent query.
-     *
-     * @var \Illuminate\Database\Eloquent\Builder
-     */
-    protected $query;
-
-    /**
      * The eloquent clauses.
      *
      * @var \Illuminate\Support\Collection
      */
     protected $clausules;
+
+    /**
+     * The eloquent query.
+     *
+     * @var \Illuminate\Database\Eloquent\Builder
+     */
+    protected $query;
 
     /**
      * The class instance.
@@ -58,8 +43,10 @@ class ClausuleExecutor
     public function __construct(Model $model, Collection $clausules, QueryBuilder $query = null)
     {
         $this->model = $model;
-        $this->query = $query ?? $model->query();
+
         $this->clausules = $clausules;
+
+        $this->query = $query ?? $model->query();
     }
 
     /**
@@ -82,29 +69,20 @@ class ClausuleExecutor
      */
     protected function make(): QueryBuilder
     {
-        $this->clausules->each(function ($arguments, $clausuleName) {
-            $clausuleClassName = $this->getClausuleClassName($clausuleName);
-            if (class_exists($clausuleClassName)) {
-                (new $clausuleClassName($this, collect($arguments)))->prepare();
-            }
+        $configService = $this->getConfigService();
+
+        $this->clausules->filter(function ($_, $clausuleKeyName) use ($configService) {
+            /// Determine if a key or className is registered in the config.
+            return $configService->hasClausule($clausuleKeyName);
+        })->map(function ($arguments, string $clausuleKeyName) use ($configService) {
+            /// Create a instance of Clausule based on the key name.
+            return $configService->createClasuleInstance($this, $clausuleKeyName, (array) $arguments);
+        })->each(function (Clausule $clausule) {
+            /// Prepare and run the clausule builder method.
+            $clausule->prepare();
         });
 
         return $this->query;
-    }
-
-    /**
-     * Get the clausule class name based on the clausule key name.
-     *
-     * @param  string $clausuleName
-     * @return string
-     */
-    protected function getClausuleClassName(string $clausuleName): string
-    {
-        if (key_exists($clausuleName, self::ACCEPTED_CLAUSULES)) {
-            return self::ACCEPTED_CLAUSULES[$clausuleName];
-        }
-
-        return '';
     }
 
     /**
@@ -124,30 +102,19 @@ class ClausuleExecutor
      */
     public function getWithModelKeyNames(): Collection
     {
-        return collect(
-            array_keys($this->clausules->get('with', []))
-        );
+        $withKeys = array_keys($this->clausules->get('with', []));
+
+        return Collection::make($withKeys);
     }
 
     /**
      * Execute and mutate the model query.
      *
-     * @param  Clousure $callback
+     * @param  Closure $callback
      * @return void
      */
-    public function executeQuery($callback): void
+    public function executeQuery(Closure $callback): void
     {
         $callback($this->query);
-    }
-
-    /**
-     * Filter and get only the accepted clausules.
-     *
-     * @param  array  $incomingClausules
-     * @return array
-     */
-    public static function filterClausules(array $incomingClausules): array
-    {
-        return Arr::only($incomingClausules, array_keys(self::ACCEPTED_CLAUSULES));
     }
 }

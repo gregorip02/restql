@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
-Route::get('restql', function (Request $request) {
+Route::any('restql', function (Request $request) {
     return Restql::resolve($request);
 });
 
@@ -16,7 +16,9 @@ Route::get('version', function () {
 });
 
 Route::get('traditional', function () {
-    return Author::with(['articles' => static function (Relation $relation) {
+    $authors = Author::with(['articles' => static function (Relation $relation) {
         $relation->with('comments');
     }])->take(15)->get();
+
+    return ['data' => compact('authors')];
 });

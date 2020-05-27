@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Unit;
+namespace Testing\Unit;
 
 use Illuminate\Support\Collection;
 use Restql\Argument;
-use Tests\TestCase;
+use Testing\TestCase;
 
 class ArgumentTest extends TestCase
 {
@@ -30,9 +30,7 @@ class ArgumentTest extends TestCase
      */
     public function theArgumentValuesAreAssoc()
     {
-        $values = collect($this->explicitValues);
-
-        $argument = new Argument($values);
+        $argument = new Argument($this->explicitValues);
 
         $this->assertTrue($argument->isAssoc());
     }
@@ -42,13 +40,7 @@ class ArgumentTest extends TestCase
      */
     public function theArgumentValuesAreNotNotAssoc()
     {
-        $values = collect($this->implicitValues);
-
-        $argument = new Argument($values);
-
-        $this->assertFalse($argument->isAssoc());
-
-        $argument = new Argument(collect([]));
+        $argument = new Argument($this->implicitValues);
 
         $this->assertFalse($argument->isAssoc());
     }
@@ -58,9 +50,7 @@ class ArgumentTest extends TestCase
      */
     public function theArgumentValueAreSimpleAndImplicit()
     {
-        $values = collect('id');
-
-        $argument = new Argument($values);
+        $argument = new Argument(['id']);
 
         $this->assertTrue($argument->isImplicitValue());
 
@@ -72,11 +62,9 @@ class ArgumentTest extends TestCase
      */
     public function theArgumentReturnsUnchangedValuesWithExplicitValues()
     {
-        $values = collect($this->explicitValues);
+        $data = (new Argument($this->explicitValues))->data();
 
-        $data = (new Argument($values))->data();
-
-        $this->assertEquals($values->toArray(), $data);
+        $this->assertEquals($this->explicitValues, $data);
     }
 
     /**
@@ -84,10 +72,8 @@ class ArgumentTest extends TestCase
      */
     public function theArgumentReturnsUnchangedValuesWithImplicitValues()
     {
-        $values = collect($this->implicitValues);
+        $data = (new Argument($this->implicitValues))->data();
 
-        $data = (new Argument($values))->data();
-
-        $this->assertEquals($values->toArray(), $data);
+        $this->assertEquals($this->implicitValues, $data);
     }
 }

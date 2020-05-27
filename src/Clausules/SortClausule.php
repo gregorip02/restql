@@ -10,14 +10,11 @@ use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 class SortClausule extends Clausule
 {
     /**
-     * The argument validation rules.
+     * The allowed verbs for a determinated clausule.
      *
      * @var array
      */
-    public $rules = [
-        'column'    => ['required', 'string'],
-        'direction' => ['sometimes', 'in:desc,asc']
-    ];
+    protected $allowedVerbs = ['all'];
 
     /**
      * Implement the clausule query builder.
@@ -28,16 +25,29 @@ class SortClausule extends Clausule
      */
     public function build(QueryBuilder $builder): void
     {
-        $builder->orderBy(...$this->getValidatedData());
+        $arguments = array_values($this->arguments->data());
+
+        $builder->orderBy(...$arguments);
     }
 
     /**
-     * Get the clausule arguments.
+     * Get a new instance of the clausule argument.
      *
+     * @param  array  $values
      * @return \Restql\Arguments\WhereArgument
      */
-    public function getArgumentInstance(): Argument
+    protected function createArgumentsInstance(array $values = []): Argument
     {
-        return new SortArgument($this->arguments, $this->executor->getModel());
+        return new SortArgument($this->executor->getModel(), $values);
+    }
+
+    /**
+     * Throw a exception if can't build this clausule.
+     *
+     * @return void
+     */
+    protected function canBuild(): void
+    {
+        parent::throwIfMethodIsNotAllowed('sort');
     }
 }

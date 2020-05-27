@@ -6,11 +6,20 @@ use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
+use Restql\Argument;
+use Restql\Arguments\SelectArgument;
 use Restql\Clausule;
 use Restql\Support\ReflectionSupport;
 
 class SelectClausule extends Clausule
 {
+    /**
+     * The allowed verbs for a determinated clausule.
+     *
+     * @var array
+     */
+    protected $allowedVerbs = ['all'];
+
     /**
      * Implement the clausule query builder.
      *
@@ -19,35 +28,33 @@ class SelectClausule extends Clausule
      */
     public function build(QueryBuilder $builder): void
     {
-        /// Get the model associated with the eloquent query constructor
-        $model = $this->executor->getModel();
-
-        /// Get the arguments requested by the client
-        $arguments = $this->parseArguments($model);
+        $arguments = $this->arguments->data();
 
         /// You have to determine if the client requests BelongsTo
         /// relationships in the next "with" clause. If true, the foreign key
         /// name must be added to the query so that the eloquent collection
         /// knows where it belongs.
-        $this->pushBelongsToForeignKeyName($arguments, $model);
+        $this->pushBelongsToForeignKeyName($arguments);
 
-        $builder->select($arguments->toArray());
+        $builder->select($arguments);
     }
 
     /**
      * Push belongsTo foreign key names to the selec clausule.
      *
-     * @param  \Illuminate\Support\Collection &$arguments
-     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @param  array &$arguments
      * @return void
      */
-    protected function pushBelongsToForeignKeyName(Collection &$arguments, Model $model): void
+    protected function pushBelongsToForeignKeyName(array &$arguments): void
     {
         $withModelNames = $this->executor->getWithModelKeyNames();
+
         if ($withModelNames->count()) {
-            $belongsTo = $this->getBelongsToAttributes($withModelNames, $model);
+            $belongsTo = $this->getBelongsToAttributes($withModelNames);
             if (count($belongsTo)) {
-                $arguments->push(...$belongsTo);
+                foreach ($belongsTo as $belongsToAttribute) {
+                    $arguments[] = $belongsToAttribute;
+                }
             }
         }
     }
@@ -56,16 +63,17 @@ class SelectClausule extends Clausule
      * Gets the names of the foreign keys for relationships of type BelongsTo.
      *
      * @param  \Illuminate\Support\Collection $withParams
-     * @param  \Illuminate\Database\Model $model
      * @return array
      */
-    protected function getBelongsToAttributes(Collection $withParams, Model $model): array
+    protected function getBelongsToAttributes(Collection $withParams): array
     {
+        $model = $this->executor->getModel();
         return $withParams->filter(function ($method) use ($model) {
             if (! method_exists($model, $method)) {
                 /// Exclude methods not found in the model
                 return false;
             }
+
             /// From this change, the developer needs to set the return type in
             /// its eloquent relationships. This will greatly optimize the
             /// algorithm speed and consequently server responses.
@@ -77,18 +85,23 @@ class SelectClausule extends Clausule
     }
 
     /**
-     * Get the select arguments requested by the client.
+     * Get a new instance of the clausule argument.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @return \Illuminate\Support\Collection
+     * @param  array  $values
+     * @return \Restql\Argument
      */
-    public function parseArguments(Model $model): Collection
+    protected function createArgumentsInstance(array $values = []): Argument
     {
-        $hidden = $model->getHidden();
+        return new SelectArgument($this->executor->getModel(), $values);
+    }
 
-        /// NEVER include the hidden attributes.
-        return $this->arguments->forget($hidden)->add(
-            $model->getKeyName()
-        )->unique();
+    /**
+     * Throw a exception if can't build this clausule.
+     *
+     * @return void
+     */
+    protected function canBuild(): void
+    {
+        parent::throwIfMethodIsNotAllowed('select');
     }
 }

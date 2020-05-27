@@ -2,12 +2,11 @@
 
 namespace Restql;
 
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
 use Restql\Argument;
 use Restql\ClausuleExecutor;
-use Restql\Exceptions\InvalidClausuleArgumentException;
+use Restql\Exceptions\AccessDeniedHttpException;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 abstract class Clausule
 {
@@ -19,39 +18,30 @@ abstract class Clausule
     protected $executor;
 
     /**
-     * The clausule arguments.
+     * The clausule argument.
      *
-     * @var \Illuminate\Support\Collection
+     * @var \Restql\Argument
      */
     protected $arguments;
 
     /**
-     * The argument validation rules.
+     * The allowed verbs for a determinated clausule.
      *
      * @var array
      */
-    public $rules = [];
-
-    /**
-     * The validated data.
-     *
-     * @var array
-     */
-    public $validated = [];
+    protected $allowedVerbs = [];
 
     /**
      * The class instance.
      *
      * @param \Restql\ClausuleExecutor $executor
-     * @param \Illuminate\Support\Collection $arguments
+     * @param array $arguments
      */
-    public function __construct(ClausuleExecutor $executor, Collection $arguments)
+    public function __construct(ClausuleExecutor $executor, array $arguments = [])
     {
-        $this->executor = $executor;
-        $this->arguments = $arguments;
-
-        /// Validate the incoming arguments
-        $this->validate();
+        $this->executor  = $executor;
+        $this->arguments = $this->createArgumentsInstance($arguments);
+        $this->canBuild();
     }
 
     /**
@@ -67,57 +57,89 @@ abstract class Clausule
     }
 
     /**
-     * Validate your incoming arguments.
-     *
-     * @return void
-     */
-    protected function validate(): void
-    {
-        $validator = Validator::make($this->getValidatorData(), $this->rules);
-
-        if ($validator->fails()) {
-            throw new InvalidClausuleArgumentException('Validation failed');
-        }
-
-        $this->validated = $validator->validated();
-    }
-
-    /**
-     * Get the validation data.
-     *
-     * @return array
-     */
-    public function getValidatorData(): array
-    {
-        return $this->getArgumentInstance()->data();
-    }
-
-    /**
-     * Get the clausule validated data.
-     */
-    public function getValidatedData(): array
-    {
-        $values = count($this->rules) ?
-            $this->validated : $this->getValidatorData();
-
-        return array_values($values);
-    }
-
-    /**
-     * Get the clausule arguments.
+     * Get the clausule arguments instance.
      *
      * @return \Restql\Argument
      */
-    public function getArgumentInstance(): Argument
+    public function arguments(): Argument
     {
-        return new Argument($this->arguments);
+        return $this->arguments;
+    }
+
+    /**
+     * Get a new instance of the clausule argument.
+     *
+     * @param  array  $values
+     * @return \Restql\Argument
+     */
+    protected function createArgumentsInstance(array $values = []): Argument
+    {
+        return new Argument($values);
+    }
+
+    /**
+     * Returns the request access method for a determinated clausule.
+     *
+     * @return string
+     */
+    protected function accessMethod(): string
+    {
+        $method = request()->method();
+
+        return Str::lower($method);
+    }
+
+    /**
+     * Determine if the incoming request method is allowed for a determinated clausule.
+     *
+     * @return boolean
+     */
+    protected function isAllowedMethod(): bool
+    {
+        $method = $this->accessMethod();
+
+        return in_array($method, $this->allowedVerbs) || in_array('all', $this->allowedVerbs);
+    }
+
+    /**
+     * Has method not allowed hook.
+     *
+     * @param  string $name
+     * @throws \Restql\Exceptions\AccessDeniedHttpException
+     */
+    protected function throwIfMethodIsNotAllowed(string $name): void
+    {
+        if (! $this->isAllowedMethod()) {
+            throw new AccessDeniedHttpException($name, $this->accessMethod());
+        }
+    }
+
+    /**
+     * Has argument missing hook.
+     *
+     * @param  string $class
+     * @throws Exception
+     */
+    protected function throwIfArgumentIsMissing(string $class): void
+    {
+        //
+    }
+
+    /**
+     * Throw a exception if can't build this clausule.
+     *
+     * @return void
+     */
+    protected function canBuild(): void
+    {
+        $this->throwIfMethodIsNotAllowed(class_basename(self::class));
+        // $this->throwIfArgumentIsMissing(class_basename(self::class));
     }
 
     /**
      * Implement the clausule query builder.
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
-     *
      * @return void
      */
     abstract public function build(QueryBuilder $builder): void;

@@ -3,28 +3,82 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Name of the parameter intercepted in the request
+    | Parameter name sending in the request.
     |--------------------------------------------------------------------------
     |
     | If the value of this parameter is empty, RestQL will assume that the data
     | is sent in the body of the request.
     */
 
-    'query_param' => env('RESTQL_PARAM_NAME', ''),
+    'query_param' => env('RESTQL_PARAM_NAME', 'query'),
 
     /*
     |--------------------------------------------------------------------------
-    | Data resolution models
+    | Data resolution schema
     |--------------------------------------------------------------------------
     |
-    | An associative array containing the name to access the model as a key and
-    | the eloquent model class as a value.
+    | Define a list of the models that RestQL can manipulate, create
+    | authorizers and middlewares to protect your schema definition
+    | resources.
     |
-    | @example [ 'authors' => 'App\Author', 'articles' => 'App\Article' ]
+    | See https://github.com/gregorip02/restql/tree/stable/docs/Schema.md
     */
-    'allowed_models' => [
-        'authors' => 'App\Author',
-        'articles' => 'App\Article',
-        'comments' => 'App\Comment'
+
+    'schema' => [
+        'authors' => [
+            'class' => 'App\Author',
+            'authorizer' => 'App\Restql\Authorizers\AuthorAuthorizer',
+            'middlewares' => []
+        ],
+        'articles' => [
+            'class' => 'App\Article',
+            'authorizer' => 'App\Restql\Authorizers\ArticleAuthorizer',
+            'middlewares' => []
+        ],
+        'comments' => [
+            'class' => 'App\Comment',
+            'authorizer' => 'App\Restql\Authorizers\CommentAuthorizer',
+            'middlewares' => []
+        ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom resolvers definition
+    |--------------------------------------------------------------------------
+    |
+    | Define custom data resolvers, you can also define permissions
+    | and middlewares for clients to access it.
+    |
+    | See https://github.com/gregorip02/restql/tree/stable/docs/Resolvers.md
+    */
+
+    'resolvers' => [
+        'whoami' => [
+           'class' => 'Restql\Resolvers\WhoamiResolver',
+           'authorizer' => 'Restql\Authorizers\WhoamiAuthorizer',
+           'middlewares' => ['auth']
+        ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed clausules
+    |--------------------------------------------------------------------------
+    |
+    | Define a list of clauses that are available. Modify or delete the clauses
+    | that do not interest you.
+    |
+    | See https://github.com/gregorip02/restql/tree/stable/docs/Clausules.md
+    */
+
+    'clausules' => [
+        'select' => 'Restql\Clausules\SelectClausule',
+        'where' => 'Restql\Clausules\WhereClausule',
+        'take' => 'Restql\Clausules\TakeClausule',
+        'sort' => 'Restql\Clausules\SortClausule',
+        'with' => 'Restql\Clausules\WithClausule',
+        /// Mutations clausules
+        'create' => 'Restql\Clausules\CreateClausule',
     ]
 ];

@@ -6,9 +6,12 @@ use App\Article;
 use App\Author;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Restql\Traits\RestqlAttributes;
 
 class Comment extends Model
 {
+    use RestqlAttributes;
+
     /**
      * Get the comment author.
      *

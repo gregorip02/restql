@@ -7,7 +7,7 @@ adopt **GraphQL** principles solving only the data that the client requests.
 RestQL uses your **Laravel** models as an entry point to add queries to then
 based in the eloquent methods.
 
-<img src="./img/example.png" alt="Laravel RestQL"/>
+<img src="./docs/example.png" alt="Laravel RestQL"/>
 
 ## **The Data Resolution Packages**
 
@@ -25,7 +25,7 @@ Somewhere in your code, you need a list of the **author's names only**.
 They wear something like that.
 
 ```js
-axios.get('http://laravel.app/api/authors').then(({ data: authors }) => {
+axios.get('http://api.laravel.app/api/authors').then(({ data: authors }) => {
   // Do something...
   console.log(authors)
 });
@@ -34,41 +34,47 @@ axios.get('http://laravel.app/api/authors').then(({ data: authors }) => {
 So, you have a route like this.
 
 ```php
-// api.php
 <?php
+// api.php
 
 use App\Author;
 use Illuminate\Http\Request;
 
 Route::get('authors', function (Request $request) {
   // Do something...
-  return Author::take(25)->get();
+  $authors = Author::take(25)->get();
+
+  return ['data' => compact('authors')];
 });
 ```
 
 Most likely you will use a controller, then use the author model and query the data.
 Finally you would have a response similar to this.
 
-```js
-[
-  {
-    "id": 1,
-    "name": "Lazaro Kohler",
-    "email": "greenfelder.jenifer@example.org",
-    "email_verified_at": "2020-03-19T18:11:36.000000Z",
-    "created_at": "2020-03-19T18:11:36.000000Z",
-    "updated_at": "2020-03-19T18:11:36.000000Z"
-  },
-  {
-    "id": 2,
-    "name": "Miss Anastasia Klocko DVM",
-    "email": "lemke.trinity@example.org",
-    "email_verified_at": "2020-03-19T18:11:36.000000Z",
-    "created_at": "2020-03-19T18:11:36.000000Z",
-    "updated_at": "2020-03-19T18:11:36.000000Z"
-  },
-  { /* 23 more authors */}
-]
+```json
+{
+    "data": {
+        "authors": [
+            {
+                "id": 1,
+                "name": "Lazaro Kohler",
+                "email": "greenfelder.jenifer@example.org",
+                "email_verified_at": "2020-03-19T18:11:36.000000Z",
+                "created_at": "2020-03-19T18:11:36.000000Z",
+                "updated_at": "2020-03-19T18:11:36.000000Z"
+              },
+              {
+                "id": 2,
+                "name": "Miss Anastasia Klocko DVM",
+                "email": "lemke.trinity@example.org",
+                "email_verified_at": "2020-03-19T18:11:36.000000Z",
+                "created_at": "2020-03-19T18:11:36.000000Z",
+                "updated_at": "2020-03-19T18:11:36.000000Z"
+              },
+              { /* 23 more authors */ }
+        ]
+    }
+}
 ```
 
 But what if you only need a **author's names** collection for example? Imagine
@@ -77,40 +83,78 @@ attributes.
 
 ## **Get started**
 
-1. **Install RestQL using composer.**
+Install RestQL using composer.
 
 ```bash
 composer require gregorip02/restql
 ```
 
-2. **Publish the package configuration.**
+Publish the package configuration.
 
 ```bash
 php artisan vendor:publish --tag=restql-config
 ```
 
-3. **Set your allowed data resolution models.**
+Add the `RestqlAttributes` trait to your eloquent models.
 
 ```php
-// config/restql.php
 <?php
 
+// ...
+use Restql\Traits\RestqlAttributes;
+
+class Article extends Model
+{
+    use RestqlAttributes;
+
+    // ...
+}
+```
+
+Set your schema definition.
+
+> Since version 2.x of this package the configuration has been updated to increase
+flexibility and internal behavior modification.
+
+You must define your entire schema in the config file, RestQL will then interpret
+it and execute the queries based on this file. With this there is a possibility
+that you can remove internal functions, modify them or even create your own
+implementations.
+
+```php
+<?php
+// config/restql.php
+
 return [
-  /* more config */
-  'allowed_models' => [
-    'authors' => 'App\Author',
-    /* more allowed models */
-  ]
+    /*
+    |--------------------------------------------------------------------------
+    | Data resolution schema
+    |--------------------------------------------------------------------------
+    |
+    | Define a list of the models that RestQL can manipulate, create
+    | authorizers and middlewares to protect your schema definition
+    | resources.
+    |
+    | See https://github.com/gregorip02/restql/tree/stable/docs/Schema.md
+    */
+
+    'schema' => [
+        'authors' => [
+           'class'  => 'App\Author',
+           'authorizer' => 'App\Restql\Authorizers\AuthorAuthorizer',
+           'middlewares' => []
+        ]
+    ]
 ];
 ```
 
-With this configuration, your **Author** model can now be an automatic data resolution model.
+> TODO: Document about the authorizer schema definition key.
 
-4. **Specify the return type of your relationships.**
+Specify the return type of your relationships.
 
-Since RestQL version 1.4, the developer must specify the return type of the
-relationships defined in the eloquent model. This means that if your model has a
-`hasMany` type relationship like the following it will not work.
+The developer must specify the return type of the relationships defined in the
+eloquent model. This means that if your model has a `hasMany` type relationship
+like the following it will not work.
 
 ```php
 <?php
@@ -124,7 +168,7 @@ class Author extends Model
 {
   public function articles()
   {
-    return $this->hasMany(Article::class);
+    return $this->hasMany(Article::class); // This doesn't work
   }
 }
 ```
@@ -155,14 +199,14 @@ class Author extends Model
 }
 ```
 
-5. **Configure your endpoint.**
+Configure your endpoint.
 
 You can define a single endpoint. For this example we will do it in the routes
 file `api.php`.
 
 ```php
-// api.php
 <?php
+// api.php
 
 use Restql\Restql;
 use Illuminate\Http\Request;
@@ -174,26 +218,7 @@ Route::get('restql', function (Request $request) {
 });
 ```
 
-Also, you can pass a clousure with the eloquente query builder has argument. This
-allow you to add and resolve the data based on your logic. For example.
-
-```php
-// api.php
-<?php
-
-use Restql\Restql;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-
-// The RestQL endpoint.
-Route::get('restql', function (Request $request) {
-  // This is not a facade.
-  return Restql::resolve($request)->get(function (QueryBuilder $builder) {
-    // Do something and return a getter method like: get, paginate...
-    return $builder->paginate();
-  });
-});
-```
+## **Refactor time**
 
 Now, you can re-factor your client's code so that it sends a parameter in the
 request with the data it needs, in this case a collection of author names. They wear
@@ -201,10 +226,11 @@ something like that.
 
 ```js
 // This is an example using the request parameters directly.
-axios.get('http://laravel.app/api/restql', {
+axios.get('http://api.laravel.app/api/restql', {
   params: {
     authors: {
-      select: 'name'
+        take: 25,
+        select: 'name'
     }
   }
 }).then(({ data: authors }) => {
@@ -220,10 +246,12 @@ appear "more secure".
 ```js
 // This is an example using the base64 encoded request parameters.
 const toBase64 = (string) => new Buffer.from(string).toString('base64');
-axios.get('http://laravel.app/api/restql', {
+
+axios.get('http://api.laravel.app/api/restql', {
   params: {
     query: toBase64(JSON.stringify({
       authors: {
+        take: 25,
         select: 'name'
       }
     }))
@@ -237,14 +265,16 @@ axios.get('http://laravel.app/api/restql', {
 Instead of having a long JSON response with unnecessary data, you would get
 something like this.
 
-```js
+```json
 {
-  "authors": [
-    { "id": 1, "name": "Kasey Yost" },
-    { "id": 2, "name": "Ike Barton" },
-    { "id": 3, "name": "Emie Daniel" },
-    {...}
-  ]
+  "data": {
+    "authors": [
+        { "id": 1, "name": "Kasey Yost" },
+        { "id": 2, "name": "Ike Barton" },
+        { "id": 3, "name": "Emie Daniel" },
+        { /* 22 more author's names */ }
+      ]
+  }
 }
 ```
 
@@ -278,6 +308,8 @@ For example, if a params like the following is sent in the request.
 RestQL will interpret this as the following.
 
 ```php
+<?php
+
 // Assuming that the parent model we want to obtain is the author's data.
 // The variable $query represents the query constructor of the parent model,
 // in this example, the Author model.

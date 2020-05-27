@@ -2,14 +2,17 @@
 
 namespace Restql;
 
-use Restql\ClausuleExecutor;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Str;
+use Restql\Exceptions\AccessDeniedHttpException;
+use Restql\SchemaDefinition;
+use Restql\Traits\HasConfigService;
 
-class Builder
+final class Builder
 {
+    use HasConfigService;
+
     /**
      * A query collection of models.
      *
@@ -25,11 +28,11 @@ class Builder
     protected $response = [];
 
     /**
-     * The application config.
+     * The application defined middleware short-hand names.
      *
-     * @var \Illuminate\Support\Collection
+     * @var array
      */
-    protected $config;
+    protected $routeMiddleware = [];
 
     /**
      * Builder instance.
@@ -40,7 +43,7 @@ class Builder
     {
         $this->query = $query;
 
-        $this->config = collect(Config::get('restql', []));
+        $this->routeMiddleware = app('router')->getMiddleware();
     }
 
     /**
@@ -61,93 +64,97 @@ class Builder
      */
     protected function dispatch(): Collection
     {
-        $this->getAllowedModels()->each(function ($clausules, $modelKeyName) {
-            /// Obtain the class name of the eloquent model based on the models
-            /// allowed for the automatic resolution of data registered in the
-            /// user configuration.
-            $modelClassName = $this->getModelClassName($modelKeyName);
+        $schema = $this->schema();
 
-            if (class_exists($modelClassName)) {
-                /// Determine if the class exists and is an instance of Model.
-                $model = app($modelClassName);
-                if ($model instanceof Model) {
-                    /// Execute only the clauses allowed by RestQL.
-                    /// TODO: Allow the user to create their own clauses.
-                    $executor = $this->runExecutor($model, (array) $clausules);
+        $this->checkMiddlewares($schema);
 
-                    /// Build the answer collection.
-                    $this->response[$modelKeyName] = $executor;
-                }
-            }
+        $this->checkAuthorizers($schema);
+
+        $schema->each(function (SchemaDefinition $schema) {
+            /// Executing the "handle" method in the schema definition, this will
+            /// return a collection with data resolved independently.
+            $this->response[$schema->getKeyName()] = $schema->handle();
         });
 
-        return collect($this->response);
+        return Collection::make($this->response);
     }
 
     /**
-     * Dispatch the clausule executor with the filter clausules.
+     * Checks middlewares for incoming request.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  array  $clausules
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  \Illuminate\Support\Collection $schema
+     * @return void
      */
-    protected function runExecutor(Model $model, array $clausules): QueryBuilder
+    protected function checkAuthorizers(Collection $schema): void
     {
-        return ClausuleExecutor::exec($model, $this->filterClausules($clausules));
+        $method = Str::lower(request()->method());
+
+        $schema->each(function (SchemaDefinition $schema) use ($method) {
+            $instance = $schema->getAuthorizerInstance();
+
+            $clausules = $schema->getClausules();
+
+            if (! call_user_func([$instance, $method], $clausules)) {
+                throw new AccessDeniedHttpException(
+                    $schema->getKeyName(),
+                    $method
+                );
+            }
+        });
     }
 
     /**
-     * Filter the incoming clausules.
+     * Checks middlewares for incoming request.
      *
-     * @param  array  $incomingClausules
-     * @return \Illuminate\Support\Collection
+     * @param  \Illuminate\Support\Collection $schema
+     * @return void
      */
-    public function filterClausules(array $incomingClausules): Collection
+    protected function checkMiddlewares(Collection $schema): void
     {
-        return collect(ClausuleExecutor::filterClausules($incomingClausules));
+        $middlewares = $this->getMiddlewareClasses($schema);
+
+        $request = app('request');
+
+        app(Pipeline::class)->send($request)->through($middlewares)->thenReturn();
     }
 
     /**
-     * Get the allowed models by the developer.
+     * Create an array of middlewares classess.
      *
+     * @param  \Illuminate\Support\Collection $schema
      * @return array
      */
-    protected function getModelKeysNames(): array
+    protected function getMiddlewareClasses(Collection $schema): array
     {
-        return $this->config->get('allowed_models', []);
+        return $schema->reduce(
+            function (array $reducer, SchemaDefinition $schemaDefinition) {
+                foreach ($schemaDefinition->getMiddlewares() as $key => $value) {
+                    $middlewareClass = $this->routeMiddleware[$value] ?? false;
+                    if ($middlewareClass && !in_array($middlewareClass, $reducer)) {
+                        $reducer[] = $middlewareClass;
+                    }
+                }
+
+                return $reducer;
+            },
+            []
+        );
     }
 
     /**
-     * Determine if the model key name is allowed.
-     *
-     * @param  string $modelKeyName
-     * @return bool
-     */
-    protected function modelKeyNameExists(string $modelKeyName): bool
-    {
-        return array_key_exists($modelKeyName, $this->getModelKeysNames());
-    }
-
-    /**
-     * Get the model classname for the instance.
-     *
-     * @param  string $modelKeyName
-     * @return string
-     */
-    protected function getModelClassName(string $modelKeyName): string
-    {
-        return $this->getModelKeysNames()[$modelKeyName];
-    }
-
-    /**
-     * Remove unknow model key names from the incoming query.
+     * Remove unknow model key and resolvers names from the incoming query.
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getAllowedModels(): Collection
+    public function schema(): Collection
     {
-        return $this->query->filter(function ($null, $modelKeyName) {
-            return $this->modelKeyNameExists($modelKeyName);
+        return $this->query->map(function ($arguments, $schemaKeyName) {
+            /// Create an SchemaDefinition instance.
+            return new SchemaDefinition($schemaKeyName, (array) $arguments);
+        })->filter(function (SchemaDefinition $schema) {
+            /// Checks if the schema class exists and be a
+            /// 'Illuminate\Database\Eloquent\Model' or 'Restql\Resolver' children.
+            return $schema->imValid();
         });
     }
 }
