@@ -1,0 +1,22 @@
+<?php
+
+namespace {{ namespace }};
+
+use Restql\Resolver;
+use Restql\SchemaDefinition;
+use Restql\Contracts\SchemaHandlerContract;
+use Illuminate\Support\Collection;
+
+final class {{ class }} extends Resolver implements SchemaHandlerContract
+{
+    /**
+     * Implement the resolver handler.
+     *
+     * @param  \Restql\SchemaDefinition $schema
+     * @return \Illuminate\Support\Collection
+     */
+    public function handle(SchemaDefinition $schema): Collection
+    {
+        return Collection::make([]);
+    }
+}

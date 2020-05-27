@@ -38,7 +38,10 @@ services:
       - ../src:${PCKG_FILES}/src
       - ../tests:${PCKG_FILES}/tests
       - ../config:${PCKG_FILES}/config
+      - ../stubs:${PCKG_FILES}/stubs
       - ../composer.json:${PCKG_FILES}/composer.json
+      # The application namespace
+      - ./app/Restql:${APPS_FILES}/current/app/Restql
     expose:
       - "9000"
     networks:
