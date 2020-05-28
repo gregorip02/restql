@@ -321,7 +321,7 @@ You can read more about the RestQL Clausules <a href="./docs/Clausules.md"
 
 # **What's next?**
 
-Are you interesed on contrib to this project? see the <a href="./NEXT.md"
+Are you interested on contrib to this project? see the <a href="./NEXT.md"
                                                          title="Next features">NEXT.md</a> file.
 
 # **Please support it**
