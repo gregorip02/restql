@@ -51,7 +51,7 @@ Route::get('authors', function (Request $request) {
 Most likely you will use a controller, then use the author model and query the data.
 Finally you would have a response similar to this.
 
-```json
+```javascript
 {
     "data": {
         "authors": [
@@ -100,7 +100,7 @@ Add the `RestqlAttributes` trait to your eloquent models.
 ```php
 <?php
 
-// ...
+use Illuminate\Database\Eloquent\Model;
 use Restql\Traits\RestqlAttributes;
 
 class Article extends Model
@@ -148,9 +148,7 @@ return [
 ];
 ```
 
-> TODO: Document about the authorizer schema definition key.
-
-Specify the return type of your relationships.
+> **Specify the return type of your relationships.**
 
 The developer must specify the return type of the relationships defined in the
 eloquent model. This means that if your model has a `hasMany` type relationship
@@ -166,10 +164,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Author extends Model
 {
-  public function articles()
-  {
-    return $this->hasMany(Article::class); // This doesn't work
-  }
+    /**
+     * Get the author articles.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function articles()
+    {
+        return $this->hasMany(Article::class); // This doesn't work
+    }
 }
 ```
 
@@ -201,9 +204,6 @@ class Author extends Model
 
 Configure your endpoint.
 
-You can define a single endpoint. For this example we will do it in the routes
-file `api.php`.
-
 ```php
 <?php
 // api.php
@@ -211,9 +211,7 @@ file `api.php`.
 use Restql\Restql;
 use Illuminate\Http\Request;
 
-// The RestQL endpoint.
-Route::get('restql', function (Request $request) {
-  // This is not a facade.
+Route::any('restql', function (Request $request) {
   return Restql::resolve($request);
 });
 ```
@@ -265,7 +263,7 @@ axios.get('http://api.laravel.app/api/restql', {
 Instead of having a long JSON response with unnecessary data, you would get
 something like this.
 
-```json
+```javascript
 {
   "data": {
     "authors": [
@@ -285,14 +283,12 @@ system. In this case, it will run just a `select id, name from authors` for exam
 
 Basically, RestQL filters the keys of the models received in the HTTP request and
 compares them with the keys of the user configuration. These keys represent a
-specific eloquent model.
-
-The values of these keys are eloquent clauses (methods) accepted by RestQL and
-the arguments of these clauses are sent as values.
+specific eloquent model. The values of these keys are eloquent clauses (methods)
+accepted by RestQL and the arguments of these clauses are sent as values.
 
 For example, if a params like the following is sent in the request.
 
-```json
+```javascript
 {
   "authors": {
     "select": "name",
@@ -322,6 +318,11 @@ $query->select(['name'])->with([
 
 You can read more about the RestQL Clausules <a href="./docs/Clausules.md"
                                                 title="RestQL Documentation">here</a>.
+
+# **What's next?**
+
+Are you interesed on contrib to this project? see the <a href="./NEXT.md"
+                                                         title="Next features">NEXT.md</a> file.
 
 # **Please support it**
 
