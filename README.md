@@ -111,7 +111,54 @@ class Article extends Model
 }
 ```
 
-Set your schema definition.
+Generate an `authorizer` for your `App\Author` model.
+
+```bash
+php artisan restql:authorizer AuthorAuthorizer
+```
+
+This creates a new class in the namespace `App\Restql\Authorizers\AuthorAuthorizer`
+like the following.
+
+```php
+<?php
+
+namespace App\Restql\Authorizers;
+
+use Restql\Authorizer;
+
+final class AuthorAuthorizer extends Authorizer
+{
+    // ...
+}
+```
+
+Then add the available HTTP methods to your authorizer as follows.
+
+```php
+<?php
+
+namespace App\Restql\Authorizers;
+
+use Restql\Authorizer;
+
+final class AuthorAuthorizer extends Authorizer
+{
+    /**
+     * Can get one or more author resources.
+     *
+     * @param  array $clausules
+     * @return bool
+     */
+    public static function get(array $clausules = []): bool
+    {
+        // You could replace this with permission checks or validations.
+        return true;
+    }
+}
+```
+
+Then, set your schema definition.
 
 > Since version 2.x of this package the configuration has been updated to increase
 flexibility and internal behavior modification.
@@ -126,17 +173,7 @@ implementations.
 // config/restql.php
 
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Data resolution schema
-    |--------------------------------------------------------------------------
-    |
-    | Define a list of the models that RestQL can manipulate, create
-    | authorizers and middlewares to protect your schema definition
-    | resources.
-    |
-    | See https://github.com/gregorip02/restql/tree/stable/docs/Schema.md
-    */
+    // ...
 
     'schema' => [
         'authors' => [
@@ -144,7 +181,9 @@ return [
            'authorizer' => 'App\Restql\Authorizers\AuthorAuthorizer',
            'middlewares' => []
         ]
-    ]
+    ],
+
+    // ...
 ];
 ```
 
