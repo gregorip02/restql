@@ -20,6 +20,8 @@ return [
     | Define a list of the models that RestQL can manipulate, create
     | authorizers and middlewares to protect your schema definition
     | resources.
+    |
+    | see https://github.com/gregorip02/restql/wiki/Install#schema-definition
     */
 
     'schema' => [],
@@ -31,6 +33,8 @@ return [
     |
     | Define custom data resolvers, you can also define permissions
     | and middlewares for clients to access it.
+    |
+    | see https://github.com/gregorip02/restql/wiki/Resolvers
     */
 
     'resolvers' => [
@@ -49,6 +53,8 @@ return [
     |
     | Define a list of clauses that are available. Modify or delete the clauses
     | that do not interest you.
+    |
+    | see https://github.com/gregorip02/restql/wiki/Clausules
     */
 
     'clausules' => [

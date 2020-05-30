@@ -7,13 +7,15 @@ adopt **GraphQL** principles solving only the data that the client requests.
 RestQL uses your **Laravel** models as an entry point to add queries to then
 based in the eloquent methods.
 
-<img src="./docs/example.png" alt="Laravel RestQL"/>
+<img src="./example.png" alt="Laravel RestQL"/>
 
 ## **The Data Resolution Packages**
 
 Data resolution packages are the way to optimize queries and responses based on
 parameters received from the client. This is based on the REST fundamentals but tries
 to add GraphQL principles.
+
+See more in the <a href="https://github.com/gregorip02/restql/wiki">docs</a>
 
 ## **Why?**
 
@@ -167,6 +169,8 @@ You must define your entire schema in the config file, RestQL will then interpre
 it and execute the queries based on this file. With this there is a possibility
 that you can remove internal functions, modify them or even create your own
 implementations.
+
+See <a href="https://github.com/gregorip02/restql/wiki/Install#schema-definition">Schema definition.</a>
 
 ```php
 <?php
@@ -355,7 +359,7 @@ $query->select(['name'])->with([
 ]);
 ```
 
-You can read more about the RestQL Clausules <a href="./docs/Clausules.md"
+You can read more about the RestQL Clausules <a href="https://github.com/gregorip02/restql/wiki/Clausules"
                                                 title="RestQL Documentation">here</a>.
 
 # **What's next?**

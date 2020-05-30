@@ -1,1 +1,0 @@
-# RestQL Schema Definition
