@@ -92,7 +92,7 @@ composer require gregorip02/restql
 Publish the package configuration.
 
 ```bash
-php artisan vendor:publish --tag=restql-config
+php artisan restql:schema
 ```
 
 Add the `RestqlAttributes` trait to your eloquent models.

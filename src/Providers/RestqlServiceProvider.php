@@ -5,6 +5,7 @@ namespace Restql\Providers;
 use Illuminate\Support\ServiceProvider;
 use Restql\Console\AuthorizerMakeCommand;
 use Restql\Console\ResolverMakeCommand;
+use Restql\Console\SchemaRestqlCommand;
 use Restql\Services\ConfigService;
 
 final class RestqlServiceProvider extends ServiceProvider
@@ -61,6 +62,7 @@ final class RestqlServiceProvider extends ServiceProvider
             $this->commands([
                 ResolverMakeCommand::class,
                 AuthorizerMakeCommand::class,
+                SchemaRestqlCommand::class
             ]);
         }
     }

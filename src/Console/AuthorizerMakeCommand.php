@@ -11,7 +11,7 @@ final class AuthorizerMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:restql-authorizer';
+    protected $name = 'restql:authorizer';
 
     /**
      * The console command description.

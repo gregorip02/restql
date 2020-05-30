@@ -11,7 +11,7 @@ final class ResolverMakeCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'make:restql-resolver';
+    protected $name = 'restql:resolver';
 
     /**
      * The console command description.
