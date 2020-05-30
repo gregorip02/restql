@@ -1,5 +1,8 @@
 # RestQL
 
+[![License](https://poser.pugx.org/gregorip02/restql/license)](//packagist.org/packages/gregorip02/restql)
+[![Latest Stable Version](https://poser.pugx.org/gregorip02/restql/v)](//packagist.org/packages/gregorip02/restql)
+[![Total Downloads](https://poser.pugx.org/gregorip02/restql/downloads)](//packagist.org/packages/gregorip02/restql)
 [![Actions Status](https://github.com/gregorip02/restql/workflows/tests/badge.svg)](https://github.com/gregorip02/restql/actions)
 
 RestQL is a Laravel eloquent-based data resolution package. This package tries to
