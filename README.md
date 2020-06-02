@@ -370,6 +370,11 @@ You can read more about the RestQL Clausules <a href="https://github.com/gregori
 Are you interested on contrib to this project? see the <a href="./NEXT.md"
                                                          title="Next features">NEXT.md</a> file.
 
+# **Contributing**
+
+Thanks for consider contrib to this project, please see the development docs at this
+<a href="https://github.com/gregorip02/restql/wiki/Development">page</a>.
+
 # **Please support it**
 
 This is a personal project that can be very useful, if you believe it, help me

@@ -72,7 +72,6 @@ return [
         'take' => 'Restql\Clausules\TakeClausule',
         'sort' => 'Restql\Clausules\SortClausule',
         'with' => 'Restql\Clausules\WithClausule',
-        /// Mutations clausules
-        'create' => 'Restql\Clausules\CreateClausule',
+        'create' => 'Restql\Clausules\CreateClausule'
     ]
 ];
