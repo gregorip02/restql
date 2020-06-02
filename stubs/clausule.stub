@@ -1,0 +1,38 @@
+<?php
+
+namespace {{ namespace }};
+
+use Restql\Clausule;
+use Restql\MutationClausule;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+
+final class {{ class }} extends Clausule
+{
+    /**
+     * The allowed verbs for a determinated clausule.
+     *
+     * @var array
+     */
+    protected $allowedVerbs = ['get'];
+
+    /**
+     * Implement the clausule query builder.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @return void
+     */
+    public function build(QueryBuilder $builder): void
+    {
+        // Do something...
+    }
+
+    /**
+     * Throw a exception if can't build this clausule.
+     *
+     * @return void
+     */
+    protected function canBuild(): void
+    {
+        // parent::throwIfMethodIsNotAllowed(self::class);
+    }
+}
