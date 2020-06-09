@@ -102,6 +102,8 @@ php artisan restql:schema
 
 Add the `RestqlAttributes` trait to your eloquent models.
 
+> This is mandatory only if your endpoint will accept create or update clausules.
+
 ```php
 <?php
 
