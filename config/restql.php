@@ -41,7 +41,7 @@ return [
         // Uncoment this and get the currently authenticated user.
         // 'whoami' => [
         //   'class' => 'Restql\Resolvers\WhoamiResolver',
-        //   'authorizer' => 'Restql\Authorizers\WhoamiAuthorizer',
+        //   'authorizer'  => 'Restql\Authorizers\WhoamiAuthorizer',
         //   'middlewares' => ['auth']
         // ]
     ],
@@ -58,11 +58,12 @@ return [
     */
 
     'clausules' => [
-        'select' => 'Restql\Clausules\SelectClausule',
-        'where' => 'Restql\Clausules\WhereClausule',
-        'take' => 'Restql\Clausules\TakeClausule',
-        'sort' => 'Restql\Clausules\SortClausule',
-        'with' => 'Restql\Clausules\WithClausule',
-        'create' => 'Restql\Clausules\CreateClausule',
+        'select'  => 'Restql\Clausules\SelectClausule',
+        'where'   => 'Restql\Clausules\WhereClausule',
+        'whereIn' => 'Restql\Clausules\WhereInClausule',
+        'take'    => 'Restql\Clausules\TakeClausule',
+        'sort'    => 'Restql\Clausules\SortClausule',
+        'with'    => 'Restql\Clausules\WithClausule',
+        'create'  => 'Restql\Clausules\CreateClausule',
     ]
 ];

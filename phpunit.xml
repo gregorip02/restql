@@ -15,8 +15,8 @@
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
 
-        <testsuite name="Orchestra">
-            <directory suffix="Test.php">./tests/Orchestra</directory>
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
     </testsuites>
 </phpunit>

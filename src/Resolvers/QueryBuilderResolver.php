@@ -8,6 +8,7 @@ use Restql\Contracts\SchemaHandlerContract;
 use Restql\Resolver;
 use Restql\SchemaDefinition;
 use Restql\Traits\ModelResolver;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 final class QueryBuilderResolver extends Resolver implements SchemaHandlerContract
 {
@@ -23,8 +24,11 @@ final class QueryBuilderResolver extends Resolver implements SchemaHandlerContra
     {
         $builder = ClausuleExecutor::exec($this->getModel($schema), $schema->collect());
 
-        $limit = $builder->getQuery()->limit ?? 15;
+        if (! $builder->getQuery()->limit) {
+            // Set the "limit" value of the query by default.
+            $builder->limit(15);
+        }
 
-        return $builder->take($limit)->get();
+        return $builder->get();
     }
 }
