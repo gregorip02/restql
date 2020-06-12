@@ -4,7 +4,7 @@ namespace Restql\Arguments;
 
 use Restql\Arguments\WhereArgument;
 
-class WhereInArgument extends WhereArgument
+class WhereInOrNotInArgument extends WhereArgument
 {
     /**
      * Get default argument values.

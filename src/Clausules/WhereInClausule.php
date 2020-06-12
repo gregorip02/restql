@@ -4,7 +4,7 @@ namespace Restql\Clausules;
 
 use Restql\Argument;
 use Restql\Clausules\WhereClausule;
-use Restql\Arguments\WhereInArgument;
+use Restql\Arguments\WhereInOrNotInArgument;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class WhereInClausule extends WhereClausule
@@ -31,7 +31,7 @@ class WhereInClausule extends WhereClausule
      */
     protected function createArgumentsInstance(array $values = []): Argument
     {
-        return new WhereInArgument($this->executor->getModel(), $values);
+        return new WhereInOrNotInArgument($this->executor->getModel(), $values);
     }
 
     /**

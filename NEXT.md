@@ -6,6 +6,7 @@
 - [ ] Create **orWhere** clausule.
 - [ ] Create **whereBetween** clausule.
 - [x] Create **whereIn** clausule.
+- [x] Create **whereNotIn** clausule.
 - [ ] Create **paginate** clausule.
 - [x] Update the wiki and write documentation about the **RestQL.**
 - [ ] Implement `orchestra/testbench` testing for "real world" situations.
