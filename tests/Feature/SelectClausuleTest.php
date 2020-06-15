@@ -53,4 +53,36 @@ final class SelectClausuleTest extends TestCase
       'data' => ['authors' => [['name', 'id']]]
     ]);
   }
+
+  /**
+   * @test Get specific attributes from diferents models.
+   */
+  public function getSpecificAttributesFromDiferentsModels(): void
+  {
+    $response = $this->json('get', 'restql', [
+      'authors' => [
+        'select' => ['name', 'email']
+      ],
+      'articles' => [
+        'select' => 'title',
+        'take' => 20
+      ],
+      'comments' => [
+        'select' => ['content']
+      ]
+    ]);
+
+    $response->assertJsonCount(3, 'data');
+    $response->assertJsonCount(15, 'data.authors');
+    $response->assertJsonCount(20, 'data.articles');
+    $response->assertJsonCount(15, 'data.comments');
+
+    $response->assertJsonStructure([
+      'data' => [
+        'authors' => [['id', 'name', 'email']],
+        'articles' => [['id', 'title']],
+        'comments' => [['id', 'content']]
+      ]
+    ]);
+  }
 }

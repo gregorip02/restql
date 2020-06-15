@@ -28,7 +28,7 @@ final class RestqlServiceProvider extends ServiceProvider
 
         if ($this->runningTests()) {
             // Load package routes for testing.
-            $this->loadRoutesFrom(__DIR__ . '/../../docker/routes/api.php');
+            $this->loadRoutesFrom(__DIR__ . '/../../tests/App/routes.php');
         }
     }
 

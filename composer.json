@@ -33,8 +33,12 @@
   "autoload-dev": {
     "psr-4": {
       "Testing\\": "tests/",
-      "App\\": "docker/app/"
-    }
+      "Testing\\App\\": "tests/App/app/"
+    },
+    "classmap": [
+      "tests/App/database/seeds",
+      "tests/App/database/factories"
+    ]
   },
   "extra": {
     "laravel": {

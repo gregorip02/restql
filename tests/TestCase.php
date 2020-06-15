@@ -16,14 +16,14 @@ class TestCase extends OrchestraTestCase
     protected function getEnvironmentSetUp($app)
     {
         // Add RestQL config from docker evironment.
-        $config = require(__DIR__ . '/../docker/config/restql.php');
+        $config = require($this->appNamespace('config/restql.php'));
         $app['config']->set('restql', $config);
 
         // Setup database connection
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
             'driver' => 'sqlite',
-            'database' => __DIR__ . '/../docker/database/testing.sqlite'
+            'database' => $this->appNamespace('database/testing.sqlite')
         ]);
     }
 
@@ -38,5 +38,16 @@ class TestCase extends OrchestraTestCase
         return [
             'Restql\Providers\RestqlServiceProvider'
         ];
+    }
+
+    /**
+     * Get the application testing namespace.
+     *
+     * @param  string $path
+     * @return string
+     */
+    protected function appNamespace(string $path = ''): string
+    {
+        return realpath(__DIR__ . '/App/' . $path);
     }
 }
