@@ -10,16 +10,16 @@ volumes:
   composer-cache:
     driver: local
   # Guardar la información de la base de datos.
-  mysql-data:
-    driver: local
+  # mysql-data:
+  #   driver: local
 
 networks:
   # Para comunicarse con el servidor web.
   nginx-network:
     driver: bridge
   # Para comunicarse con el servidor de base de datos.
-  mysql-network:
-    driver: bridge
+  # mysql-network:
+  #   driver: bridge
 
 services:
   fpm:
@@ -46,29 +46,29 @@ services:
       - "9000"
     networks:
       - "nginx-network"
-      - "mysql-network"
+      # - "mysql-network"
     # This isn't the laravel .env file, is the server .env file.
     env_file:
       - .env
     command: ["${USER_FILES}/app.sh"]
-    depends_on:
-      - "mysql"
+    # depends_on:
+    #   - "mysql"
   # If you want use MySQL instead.
   # Remember to change the DB_HOST with the service name.
-  mysql:
-    image: mysql:5.7
-    container_name: mysql
-    restart: on-failure
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - "mysql-network"
-    env_file:
-      - .env
-    environment:
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+  # mysql:
+  #   image: mysql:5.7
+  #   container_name: mysql
+  #   restart: on-failure
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+  #   networks:
+  #     - "mysql-network"
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     MYSQL_USER: ${DB_USERNAME}
+  #     MYSQL_DATABASE: ${DB_DATABASE}
+  #     MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
 
   www:
     image: nginx:1.17-alpine

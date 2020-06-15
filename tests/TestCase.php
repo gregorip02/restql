@@ -15,9 +15,16 @@ class TestCase extends OrchestraTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
+        // Add RestQL config from docker evironment.
         $config = require(__DIR__ . '/../docker/config/restql.php');
-
         $app['config']->set('restql', $config);
+
+        // Setup database connection
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => __DIR__ . '/../docker/database/testing.sqlite'
+        ]);
     }
 
     /**
