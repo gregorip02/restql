@@ -1,6 +1,6 @@
 <?php
 
-namespace Testing\Feature;
+namespace Testing\Feature\Clausules;
 
 use Testing\TestCase;
 

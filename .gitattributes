@@ -1,8 +1,12 @@
 # Ignore all test and documentation with "export-ignore".
 /.gitattributes     export-ignore
+/.editorconfig      export-ignore
+/composer.lock      export-ignore
+/.gitmodules        export-ignore
+/example.png        export-ignore
+/phpunit.xml        export-ignore
 /.gitignore         export-ignore
 /.github            export-ignore
+/NEXT.md            export-ignore
 /tests              export-ignore
-/img                export-ignore
-/docker             export-ignore
 /docs               export-ignore
