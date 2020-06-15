@@ -7,6 +7,8 @@
 - [ ] Create **whereBetween** clausule.
 - [x] Create **whereIn** clausule.
 - [x] Create **whereNotIn** clausule.
-- [ ] Create **paginate** clausule.
+- [ ] Add **pagination** support.
+- [ ] Add **pagination** documentation.
+- [x] Move all testing for SQLite.
 - [x] Update the wiki and write documentation about the **RestQL.**
-- [ ] Implement `orchestra/testbench` testing for "real world" situations.
+- [x] Implement `orchestra/testbench` testing for "real world" situations.
