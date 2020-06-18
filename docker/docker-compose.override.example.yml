@@ -1,5 +1,0 @@
-# Rename this file to docker-compose.override.yml and add your specs without
-# touching the original docker-compose.yml file.
-
-# See more https://docs.docker.com/compose/extends/
-version: "3.4"
