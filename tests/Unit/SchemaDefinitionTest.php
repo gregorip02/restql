@@ -36,7 +36,7 @@ class SchemaDefinitionTest extends TestCase
     {
         $schema = self::genericDefinition();
 
-        $this->assertEquals($schema->getClass(), 'App\Author');
+        $this->assertEquals($schema->getClass(), 'Testing\App\Author');
     }
 
     /**
@@ -46,7 +46,7 @@ class SchemaDefinitionTest extends TestCase
     {
         $schema = self::genericDefinition();
 
-        $this->assertEquals($schema->getAuthorizer(), 'App\Restql\Authorizers\AuthorAuthorizer');
+        $this->assertEquals($schema->getAuthorizer(), 'Testing\App\Restql\Authorizers\AuthorAuthorizer');
     }
 
     /**
@@ -62,14 +62,13 @@ class SchemaDefinitionTest extends TestCase
     /**
      * @test It's not valid.
      */
-    public function schemaDefinitionItsNotValid(): void
+    public function schemaDefinitionIsValid(): void
     {
         $schema = self::genericDefinition();
 
-        $this->assertEquals('author', $schema->getType());
+        $this->assertEquals('model', $schema->getType());
 
-        // it's not valid because the App\Author class doesn't exists.
-        $this->assertFalse($schema->imValid());
+        $this->assertTrue($schema->imValid());
     }
 
     /**

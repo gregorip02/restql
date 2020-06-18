@@ -20,10 +20,15 @@ final class RestqlServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom($this->configPath(), 'restql');
 
-        if ($this->appIsWorking()) {
+        if ($this->runningInConsole()) {
             $this->app->singleton(ConfigService::class, function ($app) {
                 return new ConfigService($app['config']['restql']);
             });
+        }
+
+        if ($this->runningTests()) {
+            // Load package routes for testing.
+            $this->loadRoutesFrom(__DIR__ . '/../../tests/App/routes.php');
         }
     }
 
@@ -32,9 +37,19 @@ final class RestqlServiceProvider extends ServiceProvider
      *
      * @return bool
      */
-    protected function appIsWorking(): bool
+    protected function runningInConsole(): bool
     {
         return $this->app->runningInConsole() && !$this->app->runningUnitTests();
+    }
+
+    /**
+     * Determine if the app is running test.
+     *
+     * @return bool
+     */
+    protected function runningTests(): bool
+    {
+        return $this->app->runningInConsole() && $this->app->runningUnitTests();
     }
 
     /**
@@ -53,7 +68,7 @@ final class RestqlServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
+        if ($this->runningInConsole()) {
             /// Register the RestQL config.
             $this->publishes([
                 $this->configPath() => config_path('restql.php')
