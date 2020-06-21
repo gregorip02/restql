@@ -102,7 +102,7 @@ php artisan restql:schema
 
 Add the `RestqlAttributes` trait to your eloquent models.
 
-> This is mandatory only if your endpoint will accept create or update clausules.
+> **2.2** This is recomended because you can determine the selectable attributes with `onSelectFillable`.
 
 ```php
 <?php

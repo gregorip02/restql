@@ -13,6 +13,13 @@ class Comment extends Model
     use RestqlAttributes;
 
     /**
+     * Fillable attributes for the model.
+     *
+     * @var array
+     */
+    protected $fillable = ['content'];
+
+    /**
      * Get the comment author.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
