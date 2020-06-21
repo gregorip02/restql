@@ -2,8 +2,9 @@
 
 namespace Restql;
 
-use Illuminate\Database\Eloquent\Model;
 use Restql\Argument;
+use Restql\Traits\RestqlAttributes;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class ModelArgument extends Argument
 {
@@ -54,6 +55,16 @@ abstract class ModelArgument extends Argument
     public function getHidden(): array
     {
         return $this->model->getHidden();
+    }
+
+    /**
+     * Determine if current model is using Restql\Traits\RestqlAttributes.
+     *
+     * @return bool
+     */
+    public function unsingRestqlTrait(): bool
+    {
+        return in_array(RestqlAttributes::class, class_uses($this->model));
     }
 
     /**

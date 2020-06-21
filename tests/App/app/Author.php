@@ -12,6 +12,13 @@ class Author extends Model
     use RestqlAttributes;
 
     /**
+     * Fillable attributes for the model.
+     *
+     * @var array
+     */
+    protected $fillable = ['name', 'email'];
+
+    /**
      * Get the author articles.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
