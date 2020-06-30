@@ -2,11 +2,11 @@
 
 namespace Restql\Clausules;
 
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Restql\Argument;
-use Restql\Arguments\WhereArgument;
 use Restql\Clausule;
+use Restql\Arguments\WhereArgument;
 use Restql\Exceptions\MissingArgumentException;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class WhereClausule extends Clausule
 {

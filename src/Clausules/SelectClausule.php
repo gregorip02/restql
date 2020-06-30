@@ -2,14 +2,13 @@
 
 namespace Restql\Clausules;
 
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Collection;
 use Restql\Argument;
-use Restql\Arguments\SelectArgument;
 use Restql\Clausule;
+use Restql\Arguments\SelectArgument;
 use Restql\Support\ReflectionSupport;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class SelectClausule extends Clausule
 {

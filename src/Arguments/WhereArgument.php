@@ -2,8 +2,8 @@
 
 namespace Restql\Arguments;
 
-use Restql\Contracts\ArgumentContract;
 use Restql\ModelArgument;
+use Restql\Contracts\ArgumentContract;
 
 class WhereArgument extends ModelArgument implements ArgumentContract
 {

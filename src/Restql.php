@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 final class Restql implements Responsable
 {
