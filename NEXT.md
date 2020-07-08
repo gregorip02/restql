@@ -7,6 +7,8 @@
 - [ ] Create **whereBetween** clausule.
 - [x] Create **whereIn** clausule.
 - [x] Create **whereNotIn** clausule.
+- [ ] Create **orWhere** clausule.
+- [ ] Allow to select attributes from resolvers.
 - [ ] Add **pagination** support.
 - [ ] Add **pagination** documentation.
 - [x] Move all testing for SQLite.
