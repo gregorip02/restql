@@ -4,12 +4,12 @@ namespace Restql\Authorizers;
 
 use Restql\Authorizer;
 
-final class WhoamiAuthorizer extends Authorizer
+final class PermissiveAuthorizer extends Authorizer
 {
     /**
-     * Can access via get method.
+     * Can get one or more resources.
      *
-     * @param array $clausules
+     * @param  array $clausules
      * @return bool
      */
     public static function get($clausules = []): bool
