@@ -2,7 +2,7 @@
   "name": "gregorip02/restql",
   "description": "A data resolution package for Laravel",
   "type": "library",
-  "keywords": ["restql", "eloquent", "laravel", "graphql", "drp"],
+  "keywords": ["restql", "eloquent", "laravel", "graphql"],
   "url": "https://github.com/gregorip02/restql",
   "license": "LGPL-3.0",
   "authors": [
