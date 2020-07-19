@@ -41,7 +41,7 @@ return [
         // Uncoment this and get the currently authenticated user.
         // 'whoami' => [
         //   'class' => 'Restql\Resolvers\WhoamiResolver',
-        //   'authorizer'  => 'Restql\Authorizers\WhoamiAuthorizer',
+        //   'authorizer'  => 'Restql\Authorizers\PermissiveAuthorizer',
         //   'middlewares' => ['auth']
         // ]
     ],

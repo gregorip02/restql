@@ -2,8 +2,8 @@
 
 namespace Restql\Arguments;
 
-use Restql\Contracts\ArgumentContract;
 use Restql\ModelArgument;
+use Restql\Contracts\ArgumentContract;
 
 class WhereArgument extends ModelArgument implements ArgumentContract
 {
@@ -22,11 +22,11 @@ class WhereArgument extends ModelArgument implements ArgumentContract
     public function values(): array
     {
         if ($this->isImplicitValue()) {
-            $value = $this->first();
-
             /// When an implicit type value is received, it will be assumed that
             /// it corresponds to the value of the primary column of the model.
-            return compact('value');
+            return [
+                'value' => $this->first()
+            ];
         }
 
         return parent::values();
@@ -42,7 +42,8 @@ class WhereArgument extends ModelArgument implements ArgumentContract
         return [
             'column'   => $this->getKeyName(),
             'operator' => '=',
-            'value'    => null
+            'value'    => null,
+            'boolean'  => 'and'
         ];
     }
 }

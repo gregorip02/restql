@@ -20,9 +20,6 @@ final class WhoamiResolver extends Resolver implements SchemaHandlerContract
     {
         $user = Auth::user();
 
-        /// Uncoment this for testing...
-        /// $user = factory('App\Author', 1)->make();
-
         return Collection::make($user);
     }
 }

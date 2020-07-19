@@ -8,7 +8,6 @@ use Restql\Contracts\SchemaHandlerContract;
 use Restql\Resolver;
 use Restql\SchemaDefinition;
 use Restql\Traits\ModelResolver;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 final class QueryBuilderResolver extends Resolver implements SchemaHandlerContract
 {
