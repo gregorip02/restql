@@ -52,7 +52,7 @@ return [
     'resolvers' => [
         'whoami' => [
            'class' => 'Restql\Resolvers\WhoamiResolver',
-           'authorizer'  => 'Restql\Authorizers\WhoamiAuthorizer',
+           'authorizer'  => 'Restql\Authorizers\PermissiveAuthorizer',
            'middlewares' => ['auth']
         ]
     ],
