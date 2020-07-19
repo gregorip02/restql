@@ -18,6 +18,17 @@ class WhereNotInClausule extends WhereInClausule
     {
         $args = array_values($this->arguments->data());
 
-        $builder->whereNotIn($args[0], (array) $args[1]);
+        $builder->whereNotIn(...$args);
+    }
+
+    /**
+     * Throw a exception if can't build this clausule.
+     *
+     * @return void
+     */
+    protected function canBuild(): void
+    {
+        parent::throwIfMethodIsNotAllowed('whereNotIn');
+        $this->throwIfArgumentIsMissing('whereNotIn');
     }
 }

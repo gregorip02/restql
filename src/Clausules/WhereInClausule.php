@@ -20,7 +20,7 @@ class WhereInClausule extends WhereClausule
     {
         $args = array_values($this->arguments->data());
 
-        $builder->whereIn($args[0], (array) $args[1]);
+        $builder->whereIn(...$args);
     }
 
     /**
