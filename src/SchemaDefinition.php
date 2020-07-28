@@ -134,7 +134,9 @@ final class SchemaDefinition
     {
         $classname = $this->getClass();
 
-        $classname = class_exists($classname) ? class_parents($classname) : [$classname];
+        $classname = class_exists($classname)
+            ? class_parents($classname)
+            : [$classname];
 
         $parentClass = Arr::last($classname);
 
