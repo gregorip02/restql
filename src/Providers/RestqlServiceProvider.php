@@ -25,11 +25,6 @@ final class RestqlServiceProvider extends ServiceProvider
                 return new ConfigService($app['config']['restql']);
             });
         }
-
-        if ($this->runningTests()) {
-            // Load package routes for testing.
-            $this->loadRoutesFrom(__DIR__ . '/../../tests/App/routes.php');
-        }
     }
 
     /**
