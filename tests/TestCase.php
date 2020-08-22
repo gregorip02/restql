@@ -36,7 +36,8 @@ class TestCase extends OrchestraTestCase
     protected function getPackageProviders($app)
     {
         return [
-            'Restql\Providers\RestqlServiceProvider'
+            'Restql\Providers\RestqlServiceProvider',
+            'Testing\Provider',
         ];
     }
 
