@@ -1,8 +1,9 @@
 # **RestQL** Next Features
 
+- [ ] Unsupport **mutations** clausules.
 - [x] Add commands for make **authorizers** and **resolvers.**
-- [ ] Add mutation **clausule** for update resources.
-- [ ] Add mutation **clausule** for delete resources.
+- [x] Add mutation **clausule** for update resources.
+- [x] Add mutation **clausule** for delete resources.
 - [ ] Allow to add multiple where clausules and document it.
 - [ ] Create **orWhere** clausule.
 - [ ] Create **whereBetween** clausule.
