@@ -64,6 +64,7 @@ return [
         'whereNotIn' => 'Restql\Clausules\WhereNotInClausule',
         'take'       => 'Restql\Clausules\TakeClausule',
         'sort'       => 'Restql\Clausules\SortClausule',
-        'with'       => 'Restql\Clausules\WithClausule'
+        'with'       => 'Restql\Clausules\WithClausule',
+        // Add your custom clausules here
     ]
 ];
