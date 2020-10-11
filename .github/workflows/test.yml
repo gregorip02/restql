@@ -2,7 +2,9 @@ name: tests
 
 on:
   push:
+    paths: ['.github/**', 'config/**', 'src/**', 'stubs/**', 'tests/**']
   pull_request:
+    paths: ['.github/**', 'config/**', 'src/**', 'stubs/**', 'tests/**']
 
 jobs:
   tests:
