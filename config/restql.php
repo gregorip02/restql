@@ -65,6 +65,6 @@ return [
         'take'       => 'Restql\Clausules\TakeClausule',
         'sort'       => 'Restql\Clausules\SortClausule',
         'with'       => 'Restql\Clausules\WithClausule',
-        'create'     => 'Restql\Clausules\CreateClausule'
+        // Add your custom clausules here
     ]
 ];
