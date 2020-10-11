@@ -3,8 +3,6 @@ name: tests
 on:
   push:
   pull_request:
-  schedule:
-    - cron: '0 0 * * *'
 
 jobs:
   tests:
@@ -12,31 +10,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [7.4, 7.3, 7.2, 7.1]
+        php: [7.1, 7.2, 7.3, 7.4]
         os: [ubuntu-latest]
 
     name: PHP${{ matrix.php }} on ${{ matrix.os }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
-
-      - name: Cache dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.composer/cache/files
-          key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+        uses: actions/checkout@v2
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v1
+        uses: shivammathur/setup-php@2.6.0
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysqli, pdo_mysql, bcmath, intl, gd, exif, iconv, imagick
-          coverage: none
+          tools: composer:v2
+
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: |
-          composer update --prefer-stable --prefer-dist --no-interaction --no-suggest
+        run: composer install --prefer-dist
 
       - name: Execute tests
         run: composer test
