@@ -2,7 +2,6 @@
 
 namespace Testing;
 
-use Illuminate\Http\Request;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase

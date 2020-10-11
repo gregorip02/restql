@@ -22,15 +22,10 @@ final class WhereClausuleTest extends TestCase
             ]
         ]);
 
-        $response->assertJsonStructure([
-            'data' => ['authors' => [['id']]]
-        ]);
-
-        $response->assertJsonCount(1, 'data.authors');
-
-        $author = $response->decodeResponseJson('data.authors.0');
-
-        $this->assertEquals(12, $author['id']);
+        $ids = $response->json('data.authors.*.id');
+        foreach ($ids as $id) {
+            $this->assertSame(12, $id);
+        }
     }
 
     /**
@@ -47,15 +42,10 @@ final class WhereClausuleTest extends TestCase
             ]
         ]);
 
-        $response->assertJsonStructure([
-            'data' => ['articles' => [['id']]]
-        ]);
-
-        $response->assertJsonCount(1, 'data.articles');
-
-        $article = $response->decodeResponseJson('data.articles.0');
-
-        $this->assertEquals(10, $article['id']);
+        $ids = $response->json('data.articles.*.id');
+        foreach ($ids as $id) {
+            $this->assertSame(10, $id);
+        }
     }
 
     /**
@@ -73,15 +63,11 @@ final class WhereClausuleTest extends TestCase
             ]
         ]);
 
-        $response->assertJsonStructure([
-            'data' => ['comments' => [['id']]]
-        ]);
-
         $response->assertJsonCount(1, 'data.comments');
 
-        $comment = $response->decodeResponseJson('data.comments.0');
+        $id = $response->json('data.comments.0.id');
 
-        $this->assertEquals(1, $comment['id']);
+        $this->assertEquals(1, $id);
     }
 
     /**
@@ -111,15 +97,11 @@ final class WhereClausuleTest extends TestCase
             ]
         ]);
 
-        $response->assertJsonStructure([
-            'data' => ['articles' => [['id']]]
-        ]);
-
         $response->assertJsonCount(1, 'data.articles');
 
-        $article = $response->decodeResponseJson('data.articles.0');
+        $id = $response->json('data.articles.0.id');
 
-        $this->assertEquals(10, $article['id']);
+        $this->assertEquals(10, $id);
     }
 
     /**
@@ -133,15 +115,11 @@ final class WhereClausuleTest extends TestCase
             ]
         ]);
 
-        $response->assertJsonStructure([
-            'data' => ['articles' => [['id']]]
-        ]);
-
         $response->assertJsonCount(1, 'data.articles');
 
-        $article = $response->decodeResponseJson('data.articles.0');
+        $id = $response->json('data.articles.0.id');
 
-        $this->assertEquals(20, $article['id']);
+        $this->assertEquals(20, $id);
     }
 
     /**

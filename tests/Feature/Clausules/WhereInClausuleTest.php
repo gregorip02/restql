@@ -35,7 +35,7 @@ final class WhereInClausuleTest extends TestCase
             ]
         ]);
 
-        $articles = $response->decodeResponseJson('data.articles.*.id');
+        $articles = $response->json('data.articles.*.id');
 
         $this->assertEquals($this->articles, $articles);
     }

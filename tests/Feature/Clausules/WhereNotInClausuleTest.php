@@ -29,7 +29,7 @@ final class WhereNotInClausuleTest extends TestCase
         /// and this is rejected with others articles.
         $response->assertJsonCount(15, 'data.articles');
 
-        $articles = $response->decodeResponseJson('data.articles.*.id');
+        $articles = $response->json('data.articles.*.id');
 
         /// Don't see any article id defined in $this->articles in
         /// $articles responsed by RestQL.
