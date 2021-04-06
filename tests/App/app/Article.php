@@ -2,7 +2,6 @@
 
 namespace Testing\App;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Testing\App\Author;
 use Testing\App\Comment;
 use Restql\Traits\RestqlAttributes;
@@ -14,7 +13,7 @@ use Testing\Database\Factories\ArticleFactory;
 class Article extends Model
 {
     use RestqlAttributes;
-    use HasFactory;
+    use CreateFactory;
 
     /**
      * Perform any actions required after the model boots.
@@ -62,10 +61,14 @@ class Article extends Model
     /**
      * Create a new factory instance for the model.
      *
+     * @param  int|null $count
+     * @param  array $state
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    protected static function newFactory(int $count = 1)
+    public static function factory(?int $count = null, array $state = [])
     {
-        return new ArticleFactory($count);
+        $factory = new ArticleFactory();
+
+        return static::createFactory($factory, $count, $state);
     }
 }

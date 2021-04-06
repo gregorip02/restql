@@ -2,7 +2,6 @@
 
 namespace Testing\App;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Testing\App\Article;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +11,7 @@ use Testing\Database\Factories\AuthorFactory;
 class Author extends Model
 {
     use RestqlAttributes;
-    use HasFactory;
+    use CreateFactory;
 
     /**
      * Fillable attributes for the model.
@@ -44,10 +43,14 @@ class Author extends Model
     /**
      * Create a new factory instance for the model.
      *
+     * @param  int|null $count
+     * @param  array $state
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    protected static function newFactory(int $count = 1)
+    public static function factory(?int $count = null, array $state = [])
     {
-        return new AuthorFactory($count);
+        $factory = new AuthorFactory();
+
+        return static::createFactory($factory, $count, $state);
     }
 }

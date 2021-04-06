@@ -2,7 +2,6 @@
 
 namespace Testing\App;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Testing\App\Article;
 use Testing\App\Author;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +12,7 @@ use Testing\Database\Factories\CommentFactory;
 class Comment extends Model
 {
     use RestqlAttributes;
-    use HasFactory;
+    use CreateFactory;
 
     /**
      * Fillable attributes for the model.
@@ -45,10 +44,14 @@ class Comment extends Model
     /**
      * Create a new factory instance for the model.
      *
+     * @param  int|null $count
+     * @param  array $state
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    protected static function newFactory(int $count = 1)
+    public static function factory(?int $count = null, array $state = [])
     {
-        return new CommentFactory($count);
+        $factory = new CommentFactory();
+
+        return static::createFactory($factory, $count, $state);
     }
 }
