@@ -1,14 +1,31 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Testing\Database\Factories;
 
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Testing\App\Author;
 
-$factory->define('App\Author', function (Faker $faker) {
-    return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->email,
-        'phone' => $faker->phoneNumber,
-        'address' => $faker->address
-    ];
-});
+class AuthorFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Author::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->email,
+            'phone' => $this->faker->phoneNumber,
+            'address' => $this->faker->address
+        ];
+    }
+}

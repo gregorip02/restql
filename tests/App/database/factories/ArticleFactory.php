@@ -1,14 +1,52 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Testing\Database\Factories;
 
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Testing\App\Article;
+use Testing\App\Author;
 
-$factory->define('App\Article', function (Faker $faker) {
-    return [
-        'title' => $faker->unique()->text(25),
-        'content' => $faker->text(rand(500, 1000)),
-        'public' => rand(0, 1),
-        'author_id' => rand(1, 100)
-    ];
-});
+class ArticleFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Article::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'title' => $this->faker->text,
+            'content' => $this->faker->text(rand(500, 1000)),
+            'public' => true,
+            'author_id' => Author::factory()
+        ];
+    }
+
+    /**
+     * Set article as private.
+     *
+     * @return self
+     */
+    public function isPrivate()
+    {
+        return $this->state(['public' => false]);
+    }
+
+    /**
+     * Set article as public.
+     *
+     * @return self
+     */
+    public function isPublic()
+    {
+        return $this->state(['public' => true]);
+    }
+}

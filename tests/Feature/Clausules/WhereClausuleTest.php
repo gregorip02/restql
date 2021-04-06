@@ -2,22 +2,30 @@
 
 namespace Testing\Feature\Clausules;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Restql\Exceptions\MissingArgumentException;
+use Testing\App\Comment;
+use Testing\App\Author;
+use Testing\App\Article;
 use Testing\TestCase;
 
 final class WhereClausuleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * @test Test where clausule using explicit method.
      */
     public function getAuthorByIdUsingExplicitMethod(): void
     {
+        Author::factory()->create(['id' => $id = rand(100, 200)]);
+
         $response = $this->json('get', 'restql', [
             'authors' => [
                 'where' => [
                     'column' => 'id',
                     'operator' => '=',
-                    'value' => 12
+                    'value' => $id
                 ]
             ]
         ]);
@@ -27,10 +35,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.authors');
-
-        $author = $response->decodeResponseJson('data.authors.0');
-
-        $this->assertEquals(12, $author['id']);
+        $response->assertJsonPath('data.authors.0.id', $id);
     }
 
     /**
@@ -38,11 +43,13 @@ final class WhereClausuleTest extends TestCase
      */
     public function getArticleByIdUsingExplicitMethodWithoutOperatorKey(): void
     {
+        Article::factory()->create(['id' => $id = rand(100, 200)]);
+
         $response = $this->json('get', 'restql', [
             'articles' => [
                 'where' => [
                     'column' => 'id',
-                    'value' => 10
+                    'value' => $id
                 ]
             ]
         ]);
@@ -52,10 +59,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.articles');
-
-        $article = $response->decodeResponseJson('data.articles.0');
-
-        $this->assertEquals(10, $article['id']);
+        $response->assertJsonPath('data.articles.0.id', $id);
     }
 
     /**
@@ -63,12 +67,14 @@ final class WhereClausuleTest extends TestCase
      */
     public function getCommentByIdUsingExplicitMethodWithoutValueAndOperatorKey(): void
     {
+        Comment::factory()->create(['id' => $id = rand(100, 200)]);
+
         $response = $this->json('get', 'restql', [
             'comments' => [
                 'where' => [
                     // The clausule will inject the model primary key name
                     // as column, this key is "id" see CreateCommentsTable on migrations.
-                    'value' => 1
+                    'value' => $id
                 ]
             ]
         ]);
@@ -78,10 +84,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.comments');
-
-        $comment = $response->decodeResponseJson('data.comments.0');
-
-        $this->assertEquals(1, $comment['id']);
+        $response->assertJsonPath('data.comments.0.id', $id);
     }
 
     /**
@@ -105,9 +108,11 @@ final class WhereClausuleTest extends TestCase
      */
     public function getArticleByIdUsingSuperImplicitMehtod(): void
     {
+        Article::factory()->create(['id' => $id = random_int(100, 200)]);
+
         $response = $this->json('get', 'restql', [
             'articles' => [
-                'where' => 10
+                'where' => $id
             ]
         ]);
 
@@ -116,10 +121,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.articles');
-
-        $article = $response->decodeResponseJson('data.articles.0');
-
-        $this->assertEquals(10, $article['id']);
+        $response->assertJsonPath('data.articles.0.id', $id);
     }
 
     /**
@@ -127,6 +129,8 @@ final class WhereClausuleTest extends TestCase
      */
     public function getArticleByIdUsingImplicitMehtod(): void
     {
+        Article::factory()->create(['id' => 20]);
+
         $response = $this->json('get', 'restql', [
             'articles' => [
                 'where' => ['id', 20]
@@ -138,10 +142,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.articles');
-
-        $article = $response->decodeResponseJson('data.articles.0');
-
-        $this->assertEquals(20, $article['id']);
+        $response->assertJsonPath('data.articles.0.id', 20);
     }
 
     /**
@@ -149,16 +150,15 @@ final class WhereClausuleTest extends TestCase
      */
     public function getAuthorByIdDifferentTo(): void
     {
+        Author::factory(10)->create();
+
         $response = $this->json('get', 'restql', [
             'authors' => [
                 'where' => ['id', '!=', 10]
             ]
         ]);
-
-        $response->assertJsonCount(15, 'data.authors');
-
+        $response->assertJsonCount(9, 'data.authors');
         $response->assertDontSee("\"id\":10", false);
-
         $response->assertJsonMissing([
             'id' => 10
         ]);
@@ -169,24 +169,22 @@ final class WhereClausuleTest extends TestCase
      */
     public function getArticleByIdMoreThan(): void
     {
+        Author::factory($count = rand(10, 20))->create();
+
         $response = $this->json('get', 'restql', [
             'authors' => [
                 'where' => ['id', '>', 10]
             ]
         ]);
 
-        $response->assertJsonCount(15, 'data.authors');
-
+        $response->assertJsonCount($count - 10, 'data.authors');
         $response->assertDontSee("\"id\":10", false);
-
         $response->assertJsonMissing([
             'id' => 10
         ]);
-
-        $response->assertDontSee("\"id\":26", false);
-
+        $response->assertDontSee("\"id\":21", false);
         $response->assertJsonMissing([
-            'id' => 26
+            'id' => 21
         ]);
     }
 }

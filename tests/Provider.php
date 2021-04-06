@@ -15,5 +15,6 @@ final class Provider extends ServiceProvider
     {
         // Load application routes for testing.
         $this->loadRoutesFrom(__DIR__ . '/App/routes.php');
+        $this->loadMigrationsFrom(__DIR__.'/App/database/migrations');
     }
 }

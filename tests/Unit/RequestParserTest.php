@@ -3,10 +3,10 @@
 namespace Testing\Unit;
 
 use Illuminate\Http\Request;
+use PHPUnit\Framework\TestCase as FrameworkTestCase;
 use Restql\RequestParser;
-use Testing\TestCase;
 
-class RequestParserTest extends TestCase
+class RequestParserTest extends FrameworkTestCase
 {
     /**
      * Fake request body.

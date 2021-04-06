@@ -2,11 +2,14 @@
 
 namespace Testing\Feature\Clausules;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use Testing\TestCase;
 
 final class SortClausuleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * @test Sort resources by id desc.
      */

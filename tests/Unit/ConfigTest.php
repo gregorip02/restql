@@ -2,9 +2,9 @@
 
 namespace Testing\Unit;
 
-use Testing\TestCase;
+use PHPUnit\Framework\TestCase as FrameworkTestCase;
 
-final class ConfigTest extends TestCase
+final class ConfigTest extends FrameworkTestCase
 {
     /**
      * @test Testing clausules are published correctly.

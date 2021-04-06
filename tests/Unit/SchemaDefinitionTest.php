@@ -2,12 +2,11 @@
 
 namespace Testing\Unit;
 
-use Restql\Authorizer;
+use PHPUnit\Framework\TestCase as FrameworkTestCase;
 use Restql\Exceptions\InvalidSchemaDefinitionException;
 use Restql\SchemaDefinition;
-use Testing\TestCase;
 
-class SchemaDefinitionTest extends TestCase
+class SchemaDefinitionTest extends FrameworkTestCase
 {
     /**
      * Fake schema generator.
