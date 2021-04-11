@@ -2,18 +2,18 @@
 
 namespace Testing\App;
 
+use Closure;
 use Testing\App\Author;
 use Testing\App\Comment;
 use Restql\Traits\RestqlAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Testing\Database\Factories\ArticleFactory;
+use Illuminate\Database\Eloquent\Factory;
 
 class Article extends Model
 {
     use RestqlAttributes;
-    use CreateFactory;
 
     /**
      * Perform any actions required after the model boots.
@@ -67,8 +67,26 @@ class Article extends Model
      */
     public static function factory(?int $count = null, array $state = [])
     {
-        $factory = new ArticleFactory();
+        if (function_exists('factory')) {
+            app(Factory::class)->define(static::class, static::factoryDefinition());
+            return factory(static::class, $count);
+        }
+    }
 
-        return static::createFactory($factory, $count, $state);
+    /**
+     * Default definition of the model factory.
+     *
+     * @return Closure
+     */
+    public static function factoryDefinition(): Closure
+    {
+        return function ($faker): array {
+            return [
+                'title' => $faker->text,
+                'content' => $faker->text(rand(500, 1000)),
+                'public' => true,
+                'author_id' => Author::factory()
+            ];
+        };
     }
 }

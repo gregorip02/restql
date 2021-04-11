@@ -2,16 +2,16 @@
 
 namespace Testing\App;
 
+use Closure;
 use Testing\App\Article;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Restql\Traits\RestqlAttributes;
-use Testing\Database\Factories\AuthorFactory;
+use Illuminate\Database\Eloquent\Factory;
 
 class Author extends Model
 {
     use RestqlAttributes;
-    use CreateFactory;
 
     /**
      * Fillable attributes for the model.
@@ -49,8 +49,26 @@ class Author extends Model
      */
     public static function factory(?int $count = null, array $state = [])
     {
-        $factory = new AuthorFactory();
+        if (function_exists('factory')) {
+            app(Factory::class)->define(static::class, static::factoryDefinition());
+            return factory(static::class, $count);
+        }
+    }
 
-        return static::createFactory($factory, $count, $state);
+    /**
+     * Default definition of the model factory.
+     *
+     * @return Closure
+     */
+    public static function factoryDefinition(): Closure
+    {
+        return function ($faker): array {
+            return [
+                'name' => $faker->name,
+                'email' => $faker->unique()->email,
+                'phone' => $faker->phoneNumber,
+                'address' => $faker->address
+            ];
+        };
     }
 }
