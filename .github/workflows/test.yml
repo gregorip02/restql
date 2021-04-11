@@ -8,14 +8,23 @@ on:
 
 jobs:
   tests:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         php: [7.1, 7.2, 7.3, 7.4]
-        os: [ubuntu-latest]
+        laravel: [5.*, 6.*, 7.*, 8.*]
+        include:
+          - laravel: 8.*
+            testbench: 6.*
+          - laravel: 7.*
+            testbench: 5.*
+          - laravel: 6.*
+            testbench: 4.*
+          - laravel: 5.*
+            testbench: 3.8.*
 
-    name: PHP${{ matrix.php }} on ${{ matrix.os }}
+    name: PHP ${{ matrix.php }} running Laravel ${{ matrix.laravel }}
 
     steps:
       - name: Checkout code
