@@ -35,7 +35,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.authors');
-        $response->assertJsonPath('data.authors.0.id', $id);
+        $this->assertSame($response->json('data.authors.0.id'), $id);
     }
 
     /**
@@ -59,7 +59,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.articles');
-        $response->assertJsonPath('data.articles.0.id', $id);
+        $this->assertSame($response->json('data.articles.0.id'), $id);
     }
 
     /**
@@ -84,7 +84,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.comments');
-        $response->assertJsonPath('data.comments.0.id', $id);
+        $this->assertSame($response->json('data.comments.0.id'), $id);
     }
 
     /**
@@ -121,7 +121,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.articles');
-        $response->assertJsonPath('data.articles.0.id', $id);
+        $this->assertSame($response->json('data.articles.0.id'), $id);
     }
 
     /**
@@ -133,7 +133,7 @@ final class WhereClausuleTest extends TestCase
 
         $response = $this->json('get', 'restql', [
             'articles' => [
-                'where' => ['id', 20]
+                'where' => ['id', $id = 20]
             ]
         ]);
 
@@ -142,7 +142,7 @@ final class WhereClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(1, 'data.articles');
-        $response->assertJsonPath('data.articles.0.id', 20);
+        $this->assertSame($response->json('data.articles.0.id'), $id);
     }
 
     /**
