@@ -17,7 +17,7 @@
     "source": "https://github.com/gregorip02/restql"
   },
   "require": {
-    "php": "^7.1",
+    "php": "^7.1|^8.0",
     "laravel/framework": "^5.8|^6.2|^7.0"
   },
   "require-dev": {
