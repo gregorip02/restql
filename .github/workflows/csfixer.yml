@@ -29,9 +29,7 @@ jobs:
       run: composer update --no-interaction --no-progress
 
     - name: Run PHP-CS-Fixer
-      uses: StephaneBour/actions-php-cs-fixer@1.0
-      with:
-        dir: "./src"
+      run: vendor/bin/php-cs-fixer fix src/
 
     - name: Commit PHP-CS-Fixer Changes
       if: steps.auto-commit-action.outputs.changes_detected == 'true'
