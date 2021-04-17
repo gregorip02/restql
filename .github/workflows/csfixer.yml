@@ -34,5 +34,6 @@ jobs:
     - name: Commit PHP-CS-Fixer Changes
       if: steps.auto-commit-action.outputs.changes_detected == 'true'
       uses: stefanzweifel/git-auto-commit-action@v4
-      commit_message: "Apply code style fixes"
+      with:
+        commit_message: "Apply code style fixes"
 
