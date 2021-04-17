@@ -32,7 +32,6 @@ jobs:
       run: vendor/bin/php-cs-fixer fix src/
 
     - name: Commit PHP-CS-Fixer Changes
-      if: steps.auto-commit-action.outputs.changes_detected == 'true'
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: "Apply code style fixes"
