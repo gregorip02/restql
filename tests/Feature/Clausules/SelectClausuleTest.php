@@ -100,30 +100,4 @@ final class SelectClausuleTest extends TestCase
             ]
         ]);
     }
-
-    /**
-     * @test Can't get specifc attributes from determinated model.
-     */
-    public function cantGetProtectedAttributesFromArticleModel(): void
-    {
-        Article::factory($count = rand(1, 10))->create(['public' => true]);
-        Article::factory(2)->create(['public' => false]);
-
-        $publicAttr = (new \Testing\App\Article())->onSelectFillables();
-
-        $response = $this->json('get', 'restql', [
-            'articles' => [
-                /// TODO: Document this.
-                'select' => array_merge($publicAttr, ['public'])
-            ]
-        ]);
-
-        $response->assertJsonCount($count, 'data.articles');
-        $response->assertDontSee("\"public\":", false);
-        $response->assertJsonStructure([
-            'data' => [
-                'articles' => [array_merge($publicAttr, ['id'])]
-            ]
-        ]);
-    }
 }
