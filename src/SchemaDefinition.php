@@ -5,9 +5,7 @@ namespace Restql;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Restql\Authorizer;
 use Restql\Exceptions\InvalidSchemaDefinitionException;
-use Restql\Resolver;
 use Restql\Resolvers\QueryBuilderResolver;
 use Restql\Traits\HasConfigService;
 

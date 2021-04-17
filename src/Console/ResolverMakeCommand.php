@@ -34,7 +34,7 @@ final class ResolverMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/../../stubs/resolver.stub';
+        return __DIR__.'/../../stubs/resolver.stub';
     }
 
     /**
@@ -45,6 +45,6 @@ final class ResolverMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\\Restql\\Resolvers';
+        return $rootNamespace.'\\Restql\\Resolvers';
     }
 }

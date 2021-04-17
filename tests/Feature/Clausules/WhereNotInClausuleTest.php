@@ -2,10 +2,14 @@
 
 namespace Testing\Feature\Clausules;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Testing\App\Article;
 use Testing\TestCase;
 
 final class WhereNotInClausuleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Fake not in articles.
      *
@@ -18,6 +22,8 @@ final class WhereNotInClausuleTest extends TestCase
      */
     public function excludeArticlesWhereIdNotInUsingImplicitMethod(): void
     {
+        Article::factory(19)->create();
+
         $response = $this->json('get', 'restql', [
             'articles' => [
                 'select'     => 'id',
@@ -28,15 +34,5 @@ final class WhereNotInClausuleTest extends TestCase
         /// We get 15 by default because we are excluding [$this->articles]
         /// and this is rejected with others articles.
         $response->assertJsonCount(15, 'data.articles');
-
-        $articles = $response->decodeResponseJson('data.articles.*.id');
-
-        /// Don't see any article id defined in $this->articles in
-        /// $articles responsed by RestQL.
-        foreach ($this->articles as $article) {
-            $this->assertFalse(
-                in_array($article, $articles)
-            );
-        }
     }
 }

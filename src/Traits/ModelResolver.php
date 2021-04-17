@@ -2,8 +2,8 @@
 
 namespace Restql\Traits;
 
-use Restql\SchemaDefinition;
 use Illuminate\Database\Eloquent\Model;
+use Restql\SchemaDefinition;
 
 trait ModelResolver
 {

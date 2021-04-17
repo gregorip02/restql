@@ -2,7 +2,6 @@
 
 namespace Testing;
 
-use Illuminate\Http\Request;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
@@ -19,11 +18,16 @@ class TestCase extends OrchestraTestCase
         $config = require($this->appNamespace('config/restql.php'));
         $app['config']->set('restql', $config);
 
+        $database = $this->appNamespace('database/database.sqlite');
+
+        // Create database if not exists
+        file_exists($database) ?: file_put_contents($database, '');
+
         // Setup database connection
         $app['config']->set('database.default', 'sqlite');
         $app['config']->set('database.connections.sqlite', [
             'driver' => 'sqlite',
-            'database' => $this->appNamespace('database/testing.sqlite')
+            'database' => $database
         ]);
     }
 
@@ -49,6 +53,6 @@ class TestCase extends OrchestraTestCase
      */
     protected function appNamespace(string $path = ''): string
     {
-        return realpath(__DIR__ . '/App/' . $path);
+        return __DIR__ . '/App/' . $path;
     }
 }

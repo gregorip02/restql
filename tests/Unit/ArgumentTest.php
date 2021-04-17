@@ -2,11 +2,10 @@
 
 namespace Testing\Unit;
 
-use Illuminate\Support\Collection;
+use PHPUnit\Framework\TestCase as FrameworkTestCase;
 use Restql\Argument;
-use Testing\TestCase;
 
-class ArgumentTest extends TestCase
+class ArgumentTest extends FrameworkTestCase
 {
     /**
      * Fake argument explicit values.

@@ -20,9 +20,9 @@ final class ConfigService
     /**
      * Create class instance.
      */
-    public function __construct()
+    public function __construct(array $config = [])
     {
-        $config = Config::get('restql', []);
+        $config = Config::get('restql', $config);
 
         $this->config = Collection::make($config);
     }

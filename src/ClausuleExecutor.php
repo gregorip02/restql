@@ -3,10 +3,10 @@
 namespace Restql;
 
 use Closure;
-use Restql\Traits\HasConfigService;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Restql\Traits\HasConfigService;
 
 final class ClausuleExecutor
 {

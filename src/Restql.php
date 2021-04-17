@@ -3,12 +3,10 @@
 namespace Restql;
 
 use Closure;
-use Restql\Builder;
-use Restql\RequestParser;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
-use Illuminate\Contracts\Support\Responsable;
 
 final class Restql implements Responsable
 {

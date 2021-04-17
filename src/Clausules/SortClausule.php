@@ -2,10 +2,10 @@
 
 namespace Restql\Clausules;
 
-use Restql\Argument;
-use Restql\Clausule;
-use Restql\Arguments\SortArgument;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Restql\Argument;
+use Restql\Arguments\SortArgument;
+use Restql\Clausule;
 
 class SortClausule extends Clausule
 {

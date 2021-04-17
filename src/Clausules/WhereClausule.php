@@ -2,11 +2,11 @@
 
 namespace Restql\Clausules;
 
-use Restql\Argument;
-use Restql\Clausule;
-use Restql\Arguments\WhereArgument;
-use Restql\Exceptions\MissingArgumentException;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Restql\Argument;
+use Restql\Arguments\WhereArgument;
+use Restql\Clausule;
+use Restql\Exceptions\MissingArgumentException;
 
 class WhereClausule extends Clausule
 {
@@ -50,7 +50,7 @@ class WhereClausule extends Clausule
      */
     protected function throwIfArgumentIsMissing(string $class): void
     {
-        if ($this->arguments->isAssoc() && !$this->arguments->getAttribute('value', false)) {
+        if ($this->arguments->isAssoc() && ! $this->arguments->getAttribute('value', false)) {
             throw new MissingArgumentException('value', $class);
         }
     }

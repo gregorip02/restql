@@ -21,7 +21,7 @@ class SortArgument extends ModelArgument
     public function getDefaultArgumentValues(): array
     {
         return [
-            'column'    => $this->getKeyName(),
+            'column' => $this->getKeyName(),
             'direction' => 'asc'
         ];
     }

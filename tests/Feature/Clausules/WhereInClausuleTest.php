@@ -2,10 +2,14 @@
 
 namespace Testing\Feature\Clausules;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Testing\App\Article;
 use Testing\TestCase;
 
 final class WhereInClausuleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Fake in articles id.
      *
@@ -18,6 +22,8 @@ final class WhereInClausuleTest extends TestCase
      */
     public function getArticlesWhereIdInUsingImplicitMethod(): void
     {
+        Article::factory(14)->create();
+
         $response = $this->json('get', 'restql', [
             'articles' => [
                 'whereIn' => [$this->articles],
@@ -26,7 +32,6 @@ final class WhereInClausuleTest extends TestCase
         ]);
 
         $response->assertJsonCount(count($this->articles), 'data.articles');
-
         $response->assertExactJson([
             'data' => [
                 'articles' => array_map(function (int $id) {
@@ -34,9 +39,5 @@ final class WhereInClausuleTest extends TestCase
                 }, $this->articles)
             ]
         ]);
-
-        $articles = $response->decodeResponseJson('data.articles.*.id');
-
-        $this->assertEquals($this->articles, $articles);
     }
 }

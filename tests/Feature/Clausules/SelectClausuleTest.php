@@ -2,10 +2,16 @@
 
 namespace Testing\Feature\Clausules;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Testing\App\Article;
+use Testing\App\Author;
+use Testing\App\Comment;
 use Testing\TestCase;
 
 final class SelectClausuleTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
     * @test Gets empty response.
     */
@@ -23,13 +29,15 @@ final class SelectClausuleTest extends TestCase
     */
     public function getSpecificAttributesUsingImplicitMethod(): void
     {
+        Author::factory($count = random_int(5, 15))->create();
+
         $response = $this->json('get', 'restql', [
             'authors' => [
                 'select' => 'name'
             ]
         ]);
 
-        $response->assertJsonCount(15, 'data.authors');
+        $response->assertJsonCount($count, 'data.authors');
 
         $response->assertJsonStructure([
             'data' => ['authors' => [['name', 'id']]]
@@ -41,14 +49,15 @@ final class SelectClausuleTest extends TestCase
     */
     public function getSpecificAttributesUsingExplicitMethod(): void
     {
+        Author::factory($count = rand(1, 15))->create();
+
         $response = $this->json('get', 'restql', [
             'authors' => [
                 'select' => ['name']
             ]
         ]);
 
-        $response->assertJsonCount(15, 'data.authors');
-
+        $response->assertJsonCount($count, 'data.authors');
         $response->assertJsonStructure([
             'data' => ['authors' => [['name', 'id']]]
         ]);
@@ -59,23 +68,29 @@ final class SelectClausuleTest extends TestCase
     */
     public function getSpecificAttributesFromDiferentsModels(): void
     {
+        Author::factory($authorsCount = rand(1, 10))->create();
+        Article::factory($articlesCount = rand(2, 10))->create();
+        Comment::factory($commentsCount = rand(1, 10))->create();
+
         $response = $this->json('get', 'restql', [
             'authors' => [
-                'select' => ['name', 'email']
+                'select' => ['name', 'email'],
+                'take' => $authorsCount
             ],
             'articles' => [
                 'select' => 'title',
-                'take' => 20
+                'take' => $articlesCount - 1
             ],
             'comments' => [
-                'select' => ['content']
+                'select' => ['content'],
+                'take' => $commentsCount
             ]
         ]);
 
         $response->assertJsonCount(3, 'data');
-        $response->assertJsonCount(15, 'data.authors');
-        $response->assertJsonCount(20, 'data.articles');
-        $response->assertJsonCount(15, 'data.comments');
+        $response->assertJsonCount($authorsCount, 'data.authors');
+        $response->assertJsonCount($articlesCount - 1, 'data.articles');
+        $response->assertJsonCount($commentsCount, 'data.comments');
 
         $response->assertJsonStructure([
             'data' => [
@@ -84,28 +99,5 @@ final class SelectClausuleTest extends TestCase
                 'comments' => [['id', 'content']]
             ]
         ]);
-    }
-
-    /**
-     * @test Can't get specifc attributes from determinated model.
-     */
-    public function cantGetProtectedAttributesFromArticleModel(): void
-    {
-        $publicAttr = (new \Testing\App\Article())->onSelectFillables();
-
-        $response = $this->json('get', 'restql', [
-            'articles' => [
-                /// TODO: Document this.
-                'select' => array_merge($publicAttr, ['public'])
-            ]
-        ]);
-
-        $response->assertJsonStructure([
-            'data' => [
-                'articles' => [array_merge($publicAttr, ['id'])]
-            ]
-        ]);
-
-        $response->assertDontSee("\"public\":", false);
     }
 }

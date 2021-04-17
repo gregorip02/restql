@@ -1,4 +1,4 @@
-name: tests
+name: Run tests
 
 on:
   push:
@@ -8,14 +8,26 @@ on:
 
 jobs:
   tests:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php: [7.1, 7.2, 7.3, 7.4]
-        os: [ubuntu-latest]
+        php: ["8.0", "7.4", "7.3", "7.1"]
+        include:
+          - php: 8.0
+            laravel: 8.*
+            testbench: 6.*
+          - php: 7.4
+            laravel: 7.*
+            testbench: 5.*
+          - php: 7.3
+            laravel: 6.*
+            testbench: 4.*
+          - php: 7.1
+            laravel: 5.*
+            testbench: 3.8.*
 
-    name: PHP${{ matrix.php }} on ${{ matrix.os }}
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
     steps:
       - name: Checkout code
@@ -34,7 +46,9 @@ jobs:
           key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
 
       - name: Install dependencies
-        run: composer install --prefer-dist
+        run: |
+            composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+            composer update --no-interaction
 
       - name: Execute tests
         run: composer test

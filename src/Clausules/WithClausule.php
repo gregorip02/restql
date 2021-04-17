@@ -2,10 +2,10 @@
 
 namespace Restql\Clausules;
 
-use Restql\Clausule;
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Restql\Argument;
 use Restql\Arguments\WithArgument;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Restql\Clausule;
 
 class WithClausule extends Clausule
 {

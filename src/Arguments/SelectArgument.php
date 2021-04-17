@@ -2,9 +2,9 @@
 
 namespace Restql\Arguments;
 
-use Restql\ModelArgument;
-use Restql\Contracts\ArgumentContract;
 use Illuminate\Support\Collection;
+use Restql\Contracts\ArgumentContract;
+use Restql\ModelArgument;
 
 class SelectArgument extends ModelArgument implements ArgumentContract
 {
