@@ -1,0 +1,39 @@
+name: Format PHP Code
+
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "**.php"
+  pull_request:
+    paths:
+      - "**.php"
+
+jobs:
+  fixer:
+    runs-on: ubuntu-latest
+    name: Code style fixer
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.0
+        tools: composer:v2
+        coverage: none
+
+    - name: Install Dependencies
+      run: composer update --no-interaction --no-progress
+
+    - name: Run PHP-CS-Fixer
+      uses: docker://oskarstark/php-cs-fixer-ga
+      run: vendor/bin/php-cs-fixer fix
+
+    - name: Commit PHP-CS-Fixer Changes
+      if: steps.auto-commit-action.outputs.changes_detected == 'true'
+      uses: stefanzweifel/git-auto-commit-action@v4
+      commit_message: "Apply code style fixes"
+

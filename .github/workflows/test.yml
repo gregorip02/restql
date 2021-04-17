@@ -1,4 +1,4 @@
-name: tests
+name: Run tests
 
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
       - name: Install dependencies
         run: |
             composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-            composer update --no-interaction --no-suggest
+            composer update --no-interaction
 
       - name: Execute tests
         run: composer test
