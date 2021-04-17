@@ -2,13 +2,13 @@
 
 namespace Restql\Clausules;
 
-use Restql\Argument;
-use Restql\Clausule;
-use Restql\Arguments\SelectArgument;
-use Restql\Support\ReflectionSupport;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
+use Restql\Argument;
+use Restql\Arguments\SelectArgument;
+use Restql\Clausule;
+use Restql\Support\ReflectionSupport;
 
 class SelectClausule extends Clausule
 {
@@ -67,6 +67,7 @@ class SelectClausule extends Clausule
     protected function getBelongsToAttributes(Collection $withParams): array
     {
         $model = $this->executor->getModel();
+
         return $withParams->filter(function ($method) use ($model) {
             if (! method_exists($model, $method)) {
                 /// Exclude methods not found in the model

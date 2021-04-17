@@ -34,7 +34,7 @@ final class RestqlServiceProvider extends ServiceProvider
      */
     protected function runningInConsole(): bool
     {
-        return $this->app->runningInConsole() && !$this->app->runningUnitTests();
+        return $this->app->runningInConsole() && ! $this->app->runningUnitTests();
     }
 
     /**
@@ -48,17 +48,17 @@ final class RestqlServiceProvider extends ServiceProvider
     }
 
     /**
-     * Set the config path
+     * Set the config path.
      *
      * @return string
      */
     protected function configPath(): string
     {
-        return __DIR__ . '/../../config/restql.php';
+        return __DIR__.'/../../config/restql.php';
     }
 
     /**
-     * Register the config for publishing
+     * Register the config for publishing.
      *
      */
     public function boot(): void

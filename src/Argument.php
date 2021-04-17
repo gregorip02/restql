@@ -10,7 +10,7 @@ use Restql\Contracts\ArgumentContract;
 class Argument implements ArgumentContract
 {
     /**
-     * The argument values
+     * The argument values.
      *
      * @var array
      */

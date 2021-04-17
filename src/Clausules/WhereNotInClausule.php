@@ -2,7 +2,6 @@
 
 namespace Restql\Clausules;
 
-use Restql\Clausules\WhereInClausule;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 
 class WhereNotInClausule extends WhereInClausule

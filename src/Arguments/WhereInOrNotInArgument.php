@@ -2,8 +2,8 @@
 
 namespace Restql\Arguments;
 
-use Restql\ModelArgument;
 use Restql\Contracts\ArgumentContract;
+use Restql\ModelArgument;
 
 class WhereInOrNotInArgument extends ModelArgument implements ArgumentContract
 {
@@ -41,7 +41,7 @@ class WhereInOrNotInArgument extends ModelArgument implements ArgumentContract
     {
         return [
             'column' => $this->getKeyName(),
-            'value'  => []
+            'value' => []
         ];
     }
 }

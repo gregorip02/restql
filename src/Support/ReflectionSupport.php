@@ -2,8 +2,8 @@
 
 namespace Restql\Support;
 
-use ReflectionType;
 use ReflectionClass;
+use ReflectionType;
 
 final class ReflectionSupport extends ReflectionClass
 {

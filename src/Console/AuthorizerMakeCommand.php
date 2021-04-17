@@ -34,7 +34,7 @@ final class AuthorizerMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/../../stubs/authorizer.stub';
+        return __DIR__.'/../../stubs/authorizer.stub';
     }
 
     /**
@@ -45,6 +45,6 @@ final class AuthorizerMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\\Restql\\Authorizers';
+        return $rootNamespace.'\\Restql\\Authorizers';
     }
 }

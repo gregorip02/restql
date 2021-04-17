@@ -6,7 +6,6 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Restql\Exceptions\AccessDeniedHttpException;
-use Restql\SchemaDefinition;
 use Restql\Traits\HasConfigService;
 
 final class Builder
@@ -130,7 +129,7 @@ final class Builder
             function (array $reducer, SchemaDefinition $schemaDefinition) {
                 foreach ($schemaDefinition->getMiddlewares() as $key => $value) {
                     $middlewareClass = $this->routeMiddleware[$value] ?? false;
-                    if ($middlewareClass && !in_array($middlewareClass, $reducer)) {
+                    if ($middlewareClass && ! in_array($middlewareClass, $reducer)) {
                         $reducer[] = $middlewareClass;
                     }
                 }

@@ -2,8 +2,8 @@
 
 namespace Restql\Arguments;
 
-use Restql\ModelArgument;
 use Restql\Contracts\ArgumentContract;
+use Restql\ModelArgument;
 
 class WhereArgument extends ModelArgument implements ArgumentContract
 {
@@ -40,10 +40,10 @@ class WhereArgument extends ModelArgument implements ArgumentContract
     public function getDefaultArgumentValues(): array
     {
         return [
-            'column'   => $this->getKeyName(),
+            'column' => $this->getKeyName(),
             'operator' => '=',
-            'value'    => null,
-            'boolean'  => 'and'
+            'value' => null,
+            'boolean' => 'and'
         ];
     }
 }

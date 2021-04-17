@@ -2,9 +2,8 @@
 
 namespace Restql;
 
-use Restql\Argument;
-use Restql\Traits\RestqlAttributes;
 use Illuminate\Database\Eloquent\Model;
+use Restql\Traits\RestqlAttributes;
 
 abstract class ModelArgument extends Argument
 {
@@ -23,7 +22,7 @@ abstract class ModelArgument extends Argument
      */
     public function __construct(Model $model, array $values = [])
     {
-        $this->model  = $model;
+        $this->model = $model;
         $this->values = $values;
     }
 

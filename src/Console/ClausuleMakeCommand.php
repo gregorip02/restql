@@ -34,7 +34,7 @@ final class ClausuleMakeCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__ . '/../../stubs/clausule.stub';
+        return __DIR__.'/../../stubs/clausule.stub';
     }
 
     /**
@@ -45,6 +45,6 @@ final class ClausuleMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\\Restql\\Clausules';
+        return $rootNamespace.'\\Restql\\Clausules';
     }
 }

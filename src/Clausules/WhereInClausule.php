@@ -2,10 +2,9 @@
 
 namespace Restql\Clausules;
 
-use Restql\Argument;
-use Restql\Clausules\WhereClausule;
-use Restql\Arguments\WhereInOrNotInArgument;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Restql\Argument;
+use Restql\Arguments\WhereInOrNotInArgument;
 
 class WhereInClausule extends WhereClausule
 {

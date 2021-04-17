@@ -2,11 +2,11 @@
 
 namespace Restql\Resolvers;
 
-use Restql\Resolver;
-use Restql\SchemaDefinition;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Restql\Contracts\SchemaHandlerContract;
+use Restql\Resolver;
+use Restql\SchemaDefinition;
 
 final class WhoamiResolver extends Resolver implements SchemaHandlerContract
 {

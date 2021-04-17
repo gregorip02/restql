@@ -2,8 +2,8 @@
 
 namespace Restql\Clausules;
 
-use Restql\Clausule;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Restql\Clausule;
 
 class TakeClausule extends Clausule
 {

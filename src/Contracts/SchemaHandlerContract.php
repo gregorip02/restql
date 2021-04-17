@@ -2,8 +2,8 @@
 
 namespace Restql\Contracts;
 
-use Restql\SchemaDefinition;
 use Illuminate\Support\Collection;
+use Restql\SchemaDefinition;
 
 interface SchemaHandlerContract
 {

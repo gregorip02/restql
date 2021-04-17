@@ -2,11 +2,9 @@
 
 namespace Restql;
 
-use Restql\Argument;
-use Restql\ClausuleExecutor;
-use Restql\Exceptions\AccessDeniedHttpException;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Str;
+use Restql\Exceptions\AccessDeniedHttpException;
 
 abstract class Clausule
 {
@@ -39,7 +37,7 @@ abstract class Clausule
      */
     public function __construct(ClausuleExecutor $executor, array $arguments = [])
     {
-        $this->executor  = $executor;
+        $this->executor = $executor;
         $this->arguments = $this->createArgumentsInstance($arguments);
         $this->canBuild();
     }
