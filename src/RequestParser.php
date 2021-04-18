@@ -74,7 +74,7 @@ final class RequestParser
 
         $paramValue = $this->request->input($paramName);
 
-        if (!is_array($paramValue)) {
+        if (! is_array($paramValue)) {
             throw new Exception(sprintf('The value of param %s must be array', $paramName));
         }
 
