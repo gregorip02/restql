@@ -77,9 +77,9 @@ final class RequestParser
     /**
      * Get the request param value.
      *
-     * @return string
+     * @return mixed
      */
-    protected function getQueryParamValue(): string
+    protected function getQueryParamValue()
     {
         $paramName = $this->getQueryParamName();
 
