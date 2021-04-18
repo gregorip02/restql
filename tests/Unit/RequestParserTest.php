@@ -3,10 +3,10 @@
 namespace Testing\Unit;
 
 use Illuminate\Http\Request;
-use PHPUnit\Framework\TestCase as FrameworkTestCase;
 use Restql\RequestParser;
+use Testing\TestCase;
 
-class RequestParserTest extends FrameworkTestCase
+class RequestParserTest extends TestCase
 {
     /**
      * Fake request body.
@@ -20,27 +20,15 @@ class RequestParserTest extends FrameworkTestCase
     ];
 
     /**
-     * Create generic encoded request.
-     *
-     * @return \Illuminate\Http\Request
-     */
-    protected static function genericEncodedRequest(): Request
-    {
-        $body = base64_encode(json_encode(self::$body));
-
-        return new Request([
-            'query' => $body
-        ]);
-    }
-
-    /**
      * Create generic request.
      *
      * @return \Illuminate\Http\Request
      */
     protected static function genericRequest(): Request
     {
-        return new Request(self::$body);
+        return new Request([
+            'query' => self::$body
+        ]);
     }
 
     /**
@@ -48,14 +36,8 @@ class RequestParserTest extends FrameworkTestCase
      */
     public function theParserExcludeUnknowResources(): void
     {
-        $encoded = RequestParser::filter(self::genericEncodedRequest());
-
         $decoded = RequestParser::filter(self::genericRequest());
-
-        $this->assertFalse($encoded->has('unknow_schema_definition'));
         $this->assertFalse($decoded->has('unknow_schema_definition'));
-
-        $this->assertTrue($encoded->has('authors'));
         $this->assertTrue($decoded->has('authors'));
     }
 }
