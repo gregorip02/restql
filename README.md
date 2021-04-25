@@ -5,48 +5,35 @@
 [![Total Downloads](https://poser.pugx.org/gregorip02/restql/downloads)](//packagist.org/packages/gregorip02/restql)
 [![Actions Status](https://github.com/gregorip02/restql/workflows/tests/badge.svg)](https://github.com/gregorip02/restql/actions)
 
-RestQL is a Laravel eloquent-based data resolution package. This package tries to
-adopt **GraphQL** principles solving only the data that the client requests.
-RestQL uses your **Laravel** models as an entry point to add queries to then
-based in the eloquent methods.
+RestQL is a Laravel eloquent-based data resolution package. This package tries to adopt **GraphQL** principles solving only the data that the client requests. RestQL uses your **Laravel** models as an entry point to add queries to then based in the eloquent methods. 
+
+**Please see the [documentation](https://github.com/gregorip02/restql/wiki).**
 
 <img src="./example.png" alt="Laravel RestQL"/>
 
-## **The Data Resolution Packages**
-
-Data resolution packages are the way to optimize queries and responses based on
-parameters received from the client. This is based on the REST fundamentals but tries
-to add GraphQL principles.
-
-See more in the <a href="https://github.com/gregorip02/restql/wiki">docs</a>
-
 ## **Why?**
 
-Imagine you have an application that manages authors, these authors can publish
-articles and those articles can have comments from different authors. You have a
-web client, for example, that uses axios to consume the data offered by your service.
-Somewhere in your code, you need a list of the **author's names only**.
+Imagine you have an application that manages authors, these authors can publish articles and those articles can have comments from different authors. You have a web client, for example, that uses **fetch** to consume the data offered by your service and somewhere in your code, you need a list of the **author's names only**.
 
 They wear something like that.
 
 ```js
-axios.get('http://api.laravel.app/api/authors').then(({ data: authors }) => {
-  // Do something...
-  console.log(authors)
-});
+fetch('https://laravel.app/api/authors')
+  .then((res) => res.json())
+  .then(({ data }) => console.log(data.authors));
 ```
 
 So, you have a route like this.
 
+`routes/api.php`
+
 ```php
 <?php
-// api.php
 
 use App\Author;
 use Illuminate\Http\Request;
 
-Route::get('authors', function (Request $request) {
-  // Do something...
+Route::get('/authors', function (Request $request) {
   $authors = Author::take(25)->get();
 
   return ['data' => compact('authors')];
@@ -82,9 +69,7 @@ Finally you would have a response similar to this.
 }
 ```
 
-But what if you only need a **author's names** collection for example? Imagine
-that your application becomes huge and your user model handles a large number of
-attributes.
+But what if you only need a **author's names** collection for example? Imagine that your application becomes huge and your user model handles a large number of attributes.
 
 ## **Get started**
 
@@ -110,7 +95,7 @@ Add the `RestqlAttributes` trait to your eloquent models.
 use Illuminate\Database\Eloquent\Model;
 use Restql\Traits\RestqlAttributes;
 
-class Article extends Model
+class Author extends Model
 {
     use RestqlAttributes;
 
@@ -118,14 +103,13 @@ class Article extends Model
 }
 ```
 
-Generate an `authorizer` for your `App\Author` model.
+Generate an `authorizer` for your `App\Models\Author` model.
 
 ```bash
 php artisan restql:authorizer AuthorAuthorizer
 ```
 
-This creates a new class in the namespace `App\Restql\Authorizers\AuthorAuthorizer`
-like the following.
+This creates a new class in the namespace `App\Restql\Authorizers\AuthorAuthorizer` like the following.
 
 ```php
 <?php
@@ -167,27 +151,25 @@ final class AuthorAuthorizer extends Authorizer
 
 Then, set your schema definition.
 
-> Since version 2.x of this package the configuration has been updated to increase
-flexibility and internal behavior modification.
+> Since version 2.x of this package the configuration has been updated to increase flexibility and internal behavior modification.
 
-You must define your entire schema in the config file, RestQL will then interpret
-it and execute the queries based on this file. With this there is a possibility
-that you can remove internal functions, modify them or even create your own
-implementations.
+You must define your entire schema in the config file, RestQL will then interpret it and execute the queries based on this file. With this there is a possibility that you can remove internal functions, modify them or even create your own implementations. See <a href="https://github.com/gregorip02/restql/wiki/Install#schema-definition">Schema definition.</a>
 
-See <a href="https://github.com/gregorip02/restql/wiki/Install#schema-definition">Schema definition.</a>
+`config/restql.php`
 
 ```php
 <?php
-// config/restql.php
+
+use App\Models\Author;
+use App\Restql\Authorizers\AuthorAuthorizer;
 
 return [
     // ...
 
     'schema' => [
         'authors' => [
-           'class'  => 'App\Author',
-           'authorizer' => 'App\Restql\Authorizers\AuthorAuthorizer',
+           'class'  => Author::class,
+           'authorizer' => AuthorAuthorizer::class,
            'middlewares' => []
         ]
     ],
@@ -196,43 +178,15 @@ return [
 ];
 ```
 
-> **Specify the return type of your relationships.**
+The developer must specify the return type of the relationships defined in the eloquent model. **You should set the return type of your associative methods** (relationships). For example.
 
-The developer must specify the return type of the relationships defined in the
-eloquent model. This means that if your model has a `hasMany` type relationship
-like the following it will not work.
+`app/Models/Author.php`
 
 ```php
 <?php
 
-namespace App;
+namespace App\Models;
 
-use App\Article;
-use Illuminate\Database\Eloquent\Model;
-
-class Author extends Model
-{
-    /**
-     * Get the author articles.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function articles()
-    {
-        return $this->hasMany(Article::class); // This doesn't work
-    }
-}
-```
-
-Instead, you should set the return type of your associative methods (relationships).
-Obtaining a code like the following. See also [Returning values](https://www.php.net/manual/en/functions.returning-values.php).
-
-```php
-<?php
-
-namespace App;
-
-use App\Article;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -243,73 +197,45 @@ class Author extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function articles(): HasMany
-    {
-        return $this->hasMany(Article::class);
-    }
+    public function articles(): {} // Bad
+    public function articles(): HasMany {} // Good
 }
 ```
 
 Configure your endpoint.
 
+`routes/api.php`
+
 ```php
 <?php
-// api.php
 
 use Restql\Restql;
 use Illuminate\Http\Request;
 
-Route::any('restql', function (Request $request) {
-  return Restql::resolve($request);
-});
+Route::get('/restql', fn (Request $request) => Restql::resolve($request));
 ```
 
 ## **Refactor time**
 
-Now, you can re-factor your client's code so that it sends a parameter in the
-request with the data it needs, in this case a collection of author names. They wear
-something like that.
+Now, you can re-factor your client's code so that it sends a parameter in the request with the data it needs, in this case a collection of author names. They wear something like that.
 
 ```js
-// This is an example using the request parameters directly.
-axios.get('http://api.laravel.app/api/restql', {
-  params: {
+const { stringify } = require('qs');
+
+// Define your queries.
+const getAuthorsQuery = {
     authors: {
-        take: 25,
-        select: 'name'
+        select: ['name']
     }
-  }
-}).then(({ data: authors }) => {
-    // Do something...
-    console.log(authors)
-});
+};
+
+// Consume the restql endpoint.
+fetch(`https://laravel.app/restql?${stringify(getAuthorsQuery)}`)
+    .then((res) => res.json())
+    .then((res) => console.log(res));
 ```
 
-The parameters of the query can be a json object that defines the clauses accepted
-by RestQL, or **you can encode this JSON in base64** if you want your URL to
-appear "more secure".
-
-```js
-// This is an example using the base64 encoded request parameters.
-const toBase64 = (string) => new Buffer.from(string).toString('base64');
-
-axios.get('http://api.laravel.app/api/restql', {
-  params: {
-    query: toBase64(JSON.stringify({
-      authors: {
-        take: 25,
-        select: 'name'
-      }
-    }))
-  }
-}).then(({ data: authors }) => {
-  // Do something...
-  console.log(authors)
-});
-```
-
-Instead of having a long JSON response with unnecessary data, you would get
-something like this.
+The parameters of the query should be a parsed objects that defines the clauses accepted by your schema definition. For your web clients **we recommend [qs](https://www.npmjs.com/package/qs).** Instead of having a long JSON response with unnecessary data, you would get something like this.
 
 ```javascript
 {
@@ -318,21 +244,73 @@ something like this.
         { "id": 1, "name": "Kasey Yost" },
         { "id": 2, "name": "Ike Barton" },
         { "id": 3, "name": "Emie Daniel" },
-        { /* 22 more author's names */ }
+        { /* 22 more authors */ }
       ]
   }
 }
 ```
 
-Likewise, this will considerably optimize your queries to the database management
-system. In this case, it will run just a `select id, name from authors` for example.
+Likewise, this will considerably optimize your queries to the database management system. In this case, it will run just a `select id, name from authors` for example.
+
+
+
+## **The good parts**
+
+So, let's say you now have a requirement in your application that tells you to have the `id` and `title` of the last **two** articles published by each author.
+
+```js
+const { stringify } = require('qs');
+
+// Define your queries.
+const getAuthorsAndTwoLatestArticlesQuery = {
+    authors: {
+        select: ['name'],
+        with: {
+            articles: {
+                take: 2
+                select: 'title',
+                sort: {
+                    column: 'published_at',
+                    direction: 'desc'
+                },
+            }
+        }
+    }
+};
+
+// Consume the restql endpoint.
+fetch(`https://laravel.app/restql?${stringify(getAuthorsAndTwoLatestArticlesQuery)}`)
+    .then((res) => res.json())
+    .then((res) => console.log(res));
+```
+
+You wold get a response like this.
+
+```json
+{
+  "data": {
+    "authors": [
+        {
+            "id": 1,
+            "name": "Kasey Yost",
+            "articles": [
+                {
+                    "id": 3434,
+                	"title": "My awesome article"
+                }
+            ]
+        },
+        { /* 24 more authors */ }
+      ]
+  }
+}
+```
+
+
 
 ## **How it works**
 
-Basically, RestQL filters the keys of the models received in the HTTP request and
-compares them with the keys of the user configuration. These keys represent a
-specific eloquent model. The values of these keys are eloquent clauses (methods)
-accepted by RestQL and the arguments of these clauses are sent as values.
+Basically, RestQL filters the keys of the models received in the HTTP request and compares them with the keys of the user configuration. These keys represent a specific eloquent model. The values of these keys are eloquent clauses (methods) accepted by RestQL and the arguments of these clauses are sent as values.
 
 For example, if a params like the following is sent in the request.
 
