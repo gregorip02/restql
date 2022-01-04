@@ -17,12 +17,12 @@
     "source": "https://github.com/gregorip02/restql"
   },
   "require": {
-    "php": "^7.1|^8.0",
-    "laravel/framework": "^5.8|^6.20|^7.3|^8.0"
+    "php": "^7.2|^8.0",
+    "laravel/framework": "^6|^7|^8"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5|^8",
-    "orchestra/testbench": "^3.7|^4|^5|^6",
+    "orchestra/testbench": "^4|^5|^6",
     "friendsofphp/php-cs-fixer": "^2.18"
   },
   "autoload": {
