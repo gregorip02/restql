@@ -12,10 +12,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [7.3, 7.4]
-        os: [ubuntu-latest]
+        php: ["8.0", "7.4", "7.3"]
+        include:
+          - php: 8.0
+            laravel: 8.*
+            testbench: 6.*
+          - php: 7.4
+            laravel: 7.*
+            testbench: 5.*
+          - php: 7.3
+            laravel: 6.*
+            testbench: 4.*
 
-    name: PHP${{ matrix.php }} on ${{ matrix.os }}
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
     steps:
       - name: Checkout code
